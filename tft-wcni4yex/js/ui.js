@@ -1,5 +1,6 @@
-// Renders the planning screen and handles touch and keyboard input.
+// Renders the planning screen and handles tap, drag and keyboard input.
 import { spriteStyle } from './sprite.js';
+import { Arena } from './arena.js';
 import * as eco from './economy.js';
 
 const $ = id => document.getElementById(id);
@@ -9,6 +10,7 @@ export class UI {
   constructor(game) {
     this.g = game;
     this.selected = null; // uid of the unit picked up
+    this.arena = new Arena($('court'), (where, k, inst) => this.tapSlot(inst, where, k));
     this.bind();
   }
 
@@ -23,7 +25,7 @@ export class UI {
     $('level').textContent = `Lv ${you.level}` + (toNext === null ? ' (max)' : ` · ${toNext} XP to next`);
     $('courtCount').textContent = `${eco.onCourt(you).length} / ${eco.courtMax(you, cfg)}`;
 
-    $('court').replaceChildren(...you.court.map((inst, k) => this.slot(inst, 'court', k)));
+    this.arena.render(you, null, g.unitsById, cfg, this.selected);
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
@@ -40,8 +42,10 @@ export class UI {
 
   slot(inst, where, k) {
     const b = el('button', { type: 'button', className: 'slot' + (inst ? ' filled' : '') + (inst && inst.uid === this.selected ? ' selected' : '') });
+    b.dataset.drop = `${where}:${k}`;
     if (inst) {
       const u = this.g.unitsById[inst.id];
+      b.dataset.uid = inst.uid;
       b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
       b.setAttribute('aria-label', `${u.display}, ${inst.star} star, ${u.style}, ${where} slot ${k + 1}${inst.uid === this.selected ? ', selected' : ''}`);
       b.setAttribute('aria-pressed', String(inst.uid === this.selected));
@@ -80,20 +84,61 @@ export class UI {
   }
 
   tapSlot(inst, where, k) {
+    if (this.suppressClick) { this.suppressClick = false; return; }
     if (this.selected !== null) {
-      const picked = eco.owned(this.g.you).find(i => i.uid === this.selected);
       if (inst && inst.uid === this.selected) { this.selected = null; this.say('Put down'); }
-      else {
-        const r = this.g.move(this.selected, where, k);
-        this.say(r.ok ? `${this.g.unitsById[picked.id].display} to ${where} ${k + 1}` : r.reason);
-        if (r.ok) this.selected = null;
-      }
+      else this.moveSelected(where, k);
     } else if (inst) {
       this.selected = inst.uid;
       const u = this.g.unitsById[inst.id];
-      this.say(`${u.display} picked up: ${u.style}, ${u.keyword}. Tap a slot to move, or Sell.`);
+      this.say(`${u.display} picked up: ${u.style}, ${u.keyword}. Tap a hex or bench slot to move, or Sell.`);
     }
     this.render();
+  }
+
+  moveSelected(where, k) {
+    const picked = eco.owned(this.g.you).find(i => i.uid === this.selected);
+    const r = this.g.move(this.selected, where, k);
+    this.say(r.ok ? `${this.g.unitsById[picked.id].display} moved to ${where === 'court' ? 'court' : 'bench'}` : r.reason);
+    if (r.ok) this.selected = null;
+  }
+
+  // Drag: press on a unit, move more than a few pixels, release over a hex or bench slot.
+  drag(e) {
+    const src = e.target.closest('[data-uid]');
+    if (!src || e.button > 0) return;
+    const uid = Number(src.dataset.uid);
+    const inst = eco.owned(this.g.you).find(i => i.uid === uid);
+    if (!inst) return;
+    const u = this.g.unitsById[inst.id];
+    const start = [e.clientX, e.clientY];
+    let ghost = null, over = null;
+    const onMove = ev => {
+      if (!ghost) {
+        if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
+        ghost = el('div', { className: 'ghost' }, el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 96) }));
+        document.body.append(ghost);
+      }
+      ghost.style.left = `${ev.clientX}px`; ghost.style.top = `${ev.clientY}px`;
+      ghost.hidden = true;
+      const t = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('[data-drop]');
+      ghost.hidden = false;
+      if (t !== over) { over?.classList.remove('drop'); over = t; over?.classList.add('drop'); }
+    };
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
+      if (!ghost) return; // a plain tap: the click handler takes it
+      ghost.remove();
+      over?.classList.remove('drop');
+      this.suppressClick = true;
+      setTimeout(() => { this.suppressClick = false; }, 0);
+      if (over) { const [where, k] = over.dataset.drop.split(':'); this.selected = uid; this.moveSelected(where, Number(k)); this.selected = null; this.render(); }
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onUp);
   }
 
   bind() {
@@ -102,11 +147,14 @@ export class UI {
     $('xp').addEventListener('click', () => { const r = this.g.buyXp(); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
     $('next').addEventListener('click', () => { const r = this.g.nextRound(); this.say(`Round ${this.g.round.label}. +${r.income} gold.`); this.render(); });
     $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) { this.g.newGame(); this.selected = null; this.say('New game'); this.render(); } });
+    for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));
+    $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {
       if (e.target.matches('input, select, textarea')) return;
       const map = { s: 'sell', r: 'reroll', x: 'xp', n: 'next' };
       if (map[e.key.toLowerCase()]) { e.preventDefault(); $(map[e.key.toLowerCase()]).click(); }
       if (e.key === 'Escape' && this.selected !== null) { this.selected = null; this.say('Put down'); this.render(); }
     });
+    addEventListener('resize', () => this.render());
   }
 }

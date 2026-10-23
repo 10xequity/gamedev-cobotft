@@ -134,4 +134,25 @@ assert.equal(eco.roundInfo(6, cfg).practice, true, '2-4 is a practice round');
 assert.equal(eco.incomeFor(s, eco.roundInfo(0, cfg), cfg), cfg.income.practiceRounds[0]);
 s.streak = 4; assert.equal(eco.incomeFor(s, eco.roundInfo(3, cfg), cfg), cfg.income.base + cfg.income.streakBonus['4']);
 
-console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok`);
+// Hex grid: neighbours, distance, pathing, slot mapping.
+const hex = await import(pathToFileURL(join(GAME, 'js', 'hex.js')).href);
+assert.equal(hex.neighbors(0, 0).length, 2, 'corner has two neighbours');
+assert.equal(hex.neighbors(3, 3).length, 6, 'interior hex has six neighbours');
+assert.equal(hex.distance([0, 0], [0, 0]), 0);
+assert.equal(hex.distance([0, 0], [6, 0]), 6, 'same row distance is column gap');
+assert.equal(hex.distance([0, 0], [0, 7]), 7, 'straight down the board is 7 steps');
+for (const n of hex.neighbors(2, 5)) assert.equal(hex.distance([2, 5], n), 1, 'every neighbour is distance 1');
+const route = hex.path([0, 7], [6, 0]);
+assert.ok(route && route.length === hex.distance([0, 7], [6, 0]), 'open-board path is as long as the distance');
+assert.deepEqual(route.at(-1), [6, 0], 'path ends at the goal');
+const wall = new Set([0, 1, 2, 3, 4, 5].map(c => hex.key(c, 4)));
+const around = hex.path([3, 7], [3, 0], wall);
+assert.ok(around && around.length > hex.distance([3, 7], [3, 0]), 'a wall forces a detour');
+assert.equal(hex.path([0, 0], [1, 0], new Set([hex.key(1, 0)]))?.at(-1)?.join(), '1,0', 'goal itself may be occupied');
+assert.equal(hex.path([0, 4], [3, 0], new Set(hex.neighbors(0, 4).map(n => hex.key(...n)))), null, 'boxed in → no path');
+for (let k = 0; k < 28; k++) { const [c, r] = hex.slotToHex(k, 'near'); assert.equal(hex.hexToSlot(c, r), k, `near slot ${k} round-trips`); assert.ok(r >= hex.HALF); }
+for (let k = 0; k < 28; k++) { const [c, r] = hex.slotToHex(k, 'far'); assert.equal(hex.hexToSlot(c, r), k, `far slot ${k} round-trips`); assert.ok(r < hex.HALF); }
+assert.deepEqual(hex.slotToHex(0, 'near'), [0, 4], 'near slot 0 is at the net, left');
+assert.deepEqual(hex.slotToHex(0, 'far'), [6, 3], 'far slot 0 mirrors across the net');
+
+console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok`);

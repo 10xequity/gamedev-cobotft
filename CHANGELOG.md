@@ -2,6 +2,17 @@
 
 Player names never appear in this file.
 
+## v0.4.0 — 2026-10-23 · Milestone 4: perspective court, net, hex placement
+
+- The court is a 7x8 hex board drawn in perspective over the Fieldhouse stage art, net across the middle,
+  your half nearest. Tiles are buttons; sprites stand on them and shrink with distance. `js/arena.js` does the
+  projection maths in plain 2D so it works on any phone. `assets/stages/` holds the four public backgrounds.
+- Placement by tap (unit, then hex), by drag (press, move, release over a hex or bench slot) and by keyboard
+  (Tab to the court, arrow keys between hexes, Enter to pick up or drop).
+- `js/hex.js`: odd-r hex coordinates, neighbours, distance, breadth-first path, slot-to-hex mapping for both
+  halves. Tested in `tools/check.mjs`.
+- Save format v2 (court is now 28 hex slots); older saves start a fresh game.
+
 ## v0.3.0 — 2026-10-23 · Milestone 3: shop, bench, economy
 
 - `index.html` is now the planning screen: status bar (HP, gold, round, level), 6 court slots capped by level,

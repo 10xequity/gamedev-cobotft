@@ -5,7 +5,7 @@ import { deriveAll } from './units.js';
 import * as eco from './economy.js';
 
 const SAVE_KEY = 'tacticalboom.save';
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2; // 2: court is 28 hex slots
 
 export class Game {
   constructor(cfg, roster, lookCount) {

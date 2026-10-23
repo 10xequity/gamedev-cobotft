@@ -55,7 +55,7 @@ export function newPlayer(cfg) {
   return {
     hp: cfg.game.startHp, gold: cfg.game.startGold, xp: 0, level: 1, streak: 0,
     bench: Array(cfg.game.benchSize).fill(null),
-    court: Array(cfg.game.courtMax).fill(null),
+    court: Array(cfg.game.hex.cols * cfg.game.hex.rowsPerSide).fill(null), // slot k = row * cols + col, row 0 at the net
     shop: Array(cfg.shop.slots).fill(null),
     nextUid: 1,
   };
