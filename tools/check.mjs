@@ -1,8 +1,8 @@
 // Self-checks that must pass before a push. Run: node tools/check.mjs
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const GAME = join(ROOT, 'tft-wcni4yex');
@@ -47,4 +47,27 @@ for (const [name, s] of Object.entries(cfg.styles)) {
 }
 for (const [role, r] of Object.entries(cfg.roles)) for (const s of r.styles) assert.ok(cfg.styles[s], `${role}: unknown style ${s}`);
 
-console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}`);
+// Sprite manifest: every look has a sheet file, every pose cell is inside the grid.
+const manifest = JSON.parse(readFileSync(join(GAME, 'assets', 'sprites', 'manifest.json'), 'utf8'));
+for (const look of manifest.looks) assert.ok(existsSync(join(GAME, 'assets', 'sprites', `${look}.webp`)), `missing sheet ${look}`);
+for (const [pose, cells] of Object.entries(manifest.poses)) {
+  for (const [r, c] of Array.isArray(cells[0]) ? cells : [cells]) assert.ok(r < manifest.rows && c < manifest.cols, `pose ${pose} outside grid`);
+}
+
+// Unit derivation: deterministic, every unit in a known role/style/archetype, roles roughly uniform.
+const { deriveAll } = await import(pathToFileURL(join(GAME, 'js', 'units.js')).href);
+const a = deriveAll(roster, cfg, manifest.looks.length), b = deriveAll(roster, cfg, manifest.looks.length);
+assert.deepEqual(a, b, 'deriveUnit must be deterministic');
+const roleCount = {};
+for (const u of a) {
+  assert.ok(cfg.roles[u.role] && cfg.styles[u.style] && cfg.archetypes.includes(u.archetype), `bad derivation for ${u.display}`);
+  assert.ok(cfg.roles[u.role].styles.includes(u.style), `${u.display}: style ${u.style} not in role ${u.role}`);
+  assert.ok(u.look >= 0 && u.look < manifest.looks.length, 'look out of range');
+  assert.ok(u.base.hp > 0 && u.base.attack > 0, 'stats must be positive');
+  roleCount[u.role] = (roleCount[u.role] || 0) + 1;
+}
+const expected = roster.length / Object.keys(cfg.roles).length;
+for (const [role, n] of Object.entries(roleCount)) assert.ok(n > expected * 0.5 && n < expected * 1.6, `role ${role} count ${n} far from uniform ${expected.toFixed(0)}`);
+assert.ok((roleCount.Utility || 0) >= cfg.pool.minUtilityInDraw, 'not enough Utility units in the whole roster for the draw rule');
+
+console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}`);

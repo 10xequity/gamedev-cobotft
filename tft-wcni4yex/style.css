@@ -1,0 +1,41 @@
+:root {
+  --teal: #0E7C86; --teal-dark: #065A62; --teal-light: #E4F2F3;
+  --gold: #E5B800; --gold-dark: #C49A00; --cream: #FFF9F0; --black: #111111;
+  --display: 'Montserrat', sans-serif; --body: 'Open Sans', sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { background: var(--teal); color: var(--cream); font-family: var(--body); font-size: 15px; line-height: 1.4; }
+h1, h2, h3 { font-family: var(--display); font-weight: 800; margin: 0; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.top { position: sticky; top: 0; z-index: 5; background: var(--teal-dark); padding: 10px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.top h1 { font-size: 20px; color: var(--gold); flex: 1 1 auto; }
+.top select, .top input { font: inherit; padding: 6px 8px; border: 2px solid var(--gold); border-radius: 6px; background: var(--cream); color: var(--black); }
+.top .count { font-weight: 600; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 16px; }
+.card { background: var(--cream); color: var(--black); border-radius: 10px; border: 4px solid var(--ring); padding: 8px; text-align: left; display: grid; gap: 4px; justify-items: center; }
+.card .spr { background-repeat: no-repeat; image-rendering: auto; }
+.card .name { font-family: var(--display); font-weight: 800; font-size: 15px; }
+.card .team { font-weight: 600; font-size: 12px; color: var(--teal-dark); }
+.card .role { font-size: 12px; font-weight: 600; }
+.card .arch { font-size: 12px; font-weight: 600; color: var(--gold-dark); }
+.card[data-level="National"] .team::before { content: "● "; color: var(--teal); }
+.card[data-level="Regional"] .team::before { content: "● "; color: var(--gold); }
+.card[data-level="Colorado"] .team::before { content: "● "; color: var(--teal-dark); }
+
+dialog { border: 4px solid var(--gold); border-radius: 12px; background: var(--cream); color: var(--black); padding: 16px; width: min(92vw, 520px); }
+dialog::backdrop { background: rgba(6, 90, 98, .85); }
+dialog .stage { display: grid; place-items: end center; background: var(--teal-light); border-radius: 8px; min-height: 260px; padding: 8px; }
+dialog .poses { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+dialog .poses button { padding: 6px 10px; border: 2px solid var(--black); background: var(--black); color: var(--cream); border-radius: 6px; font-weight: 600; }
+dialog .poses button[aria-pressed="true"] { background: var(--gold); color: var(--black); border-color: var(--gold); }
+dialog dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 10px 0; font-size: 14px; }
+dialog dt { font-weight: 800; }
+dialog dd { margin: 0; }
+dialog .close { float: right; border: 2px solid var(--black); background: var(--black); color: var(--cream); border-radius: 6px; padding: 6px 12px; font-weight: 700; }
+.note { padding: 0 16px 16px; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .hop { animation: none !important; } }

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0E7C86">
+  <title>Tactical Boom Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Tactical Boom · staff gallery</h1>
+    <label>Game role <select id="fRole"><option value="">All</option></select></label>
+    <label>Club level <select id="fLevel"><option value="">All</option></select></label>
+    <label>Archetype <select id="fArch"><option value="">All</option></select></label>
+    <label><span class="vh">Search name</span><input id="fName" type="search" placeholder="Search name"></label>
+    <span class="count" id="count" aria-live="polite"></span>
+  </header>
+  <p class="note">Placeholder looks, drawn from a fixed seed, never matched to the real player. Tap or press Enter on a card to see every pose.</p>
+  <main class="grid" id="grid" aria-label="Units"></main>
+  <dialog id="dlg" aria-labelledby="dlgName">
+    <button class="close" id="dlgClose" type="button">Close</button>
+    <h2 id="dlgName"></h2>
+    <div class="stage" id="stage"></div>
+    <div class="poses" id="poses" role="group" aria-label="Pose"></div>
+    <dl id="dlgFacts"></dl>
+  </dialog>
+  <script type="module" src="js/gallery.js"></script>
+</body>
+</html>

@@ -95,5 +95,5 @@
   },
   "archetypes": ["Hype Captain", "Snack Boss", "Early Bird", "Clutch Closer", "Group Chat Queen", "Gym Rat", "Sunshine", "Mastermind"],
   "jerseyByLevel": { "National": "#0E7C86", "Regional": "#E5B800", "Colorado": "#065A62" },
-  "tierRing": { "1": "#FFF9F0", "2": "#E4F2F3", "3": "#0E7C86", "4": "#E5B800", "5": "#111111" }
+  "tierRing": { "1": "#E4F2F3", "2": "#0E7C86", "3": "#E5B800", "4": "#C49A00", "5": "#111111" }
 }
