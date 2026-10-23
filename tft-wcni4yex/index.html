@@ -8,20 +8,41 @@
   <title>Tactical Boom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root{--teal:#0E7C86;--teal-dark:#065A62;--teal-light:#E4F2F3;--gold:#E5B800;--gold-dark:#C49A00;--cream:#FFF9F0;--black:#111111}
-    html,body{margin:0;min-height:100%;background:var(--teal);color:var(--cream);font-family:'Open Sans',sans-serif}
-    main{min-height:100vh;display:grid;place-items:center;padding:16px;text-align:center}
-    h1{font-family:Montserrat,sans-serif;font-weight:800;font-size:clamp(28px,8vw,48px);margin:0 0 8px;color:var(--gold)}
-    p{margin:0;font-weight:600}
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <main>
-    <div>
-      <h1>Tactical Boom</h1>
-      <p>Staff test build. Milestone 1: roster and checks. Game arrives at milestone 3.</p>
-    </div>
-  </main>
+<body class="game">
+  <header class="bar" aria-label="Status">
+    <span class="stat"><span class="k">HP</span> <b id="hp">20</b></span>
+    <span class="stat"><span class="k">Gold</span> <b id="gold">0</b></span>
+    <span class="stat"><span class="k">Round</span> <b id="round">1-1</b></span>
+    <span class="stat" id="level">Lv 1</span>
+    <button type="button" id="newgame" class="ghost">New game</button>
+  </header>
+
+  <section class="zone" aria-labelledby="hCourt">
+    <h2 id="hCourt">Court <span class="sub" id="courtCount">0 / 1</span></h2>
+    <div class="slots court" id="court" role="group" aria-label="Court slots"></div>
+  </section>
+
+  <section class="zone" aria-labelledby="hBench">
+    <h2 id="hBench">Bench</h2>
+    <div class="slots bench" id="bench" role="group" aria-label="Bench slots"></div>
+  </section>
+
+  <p class="msg" id="msg" aria-hidden="true"></p>
+  <div id="live" class="vh" aria-live="polite"></div>
+
+  <section class="zone" aria-labelledby="hShop">
+    <h2 id="hShop">Shop</h2>
+    <div class="shop" id="shop" role="group" aria-label="Shop cards"></div>
+  </section>
+
+  <nav class="actions" aria-label="Actions">
+    <button type="button" id="sell" disabled>Sell</button>
+    <button type="button" id="reroll">Reroll <small>1g · R</small></button>
+    <button type="button" id="xp">Buy XP <small>4g · X</small></button>
+    <button type="button" id="next" class="primary">Next round <small>N</small></button>
+  </nav>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

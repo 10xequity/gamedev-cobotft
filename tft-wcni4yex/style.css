@@ -39,3 +39,37 @@ dialog dd { margin: 0; }
 dialog .close { float: right; border: 2px solid var(--black); background: var(--black); color: var(--cream); border-radius: 6px; padding: 6px 12px; font-weight: 700; }
 .note { padding: 0 16px 16px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .hop { animation: none !important; } }
+
+/* ---- game screen ---- */
+body.game { padding-bottom: 96px; }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--teal-dark); padding: 8px 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-weight: 600; }
+.bar .stat .k { color: var(--gold); font-family: var(--display); font-size: 12px; }
+.bar .stat b { font-size: 18px; }
+.bar .ghost { margin-left: auto; background: transparent; color: var(--cream); border: 2px solid var(--cream); border-radius: 6px; padding: 4px 10px; font-weight: 600; }
+.zone { padding: 10px 12px 0; }
+.zone h2 { font-size: 15px; color: var(--gold); margin-bottom: 6px; }
+.zone h2 .sub { color: var(--cream); font-family: var(--body); font-weight: 600; font-size: 13px; margin-left: 8px; }
+.slots { display: grid; gap: 6px; }
+.slots.court { grid-template-columns: repeat(6, 1fr); }
+.slots.bench { grid-template-columns: repeat(9, 1fr); }
+.slot { position: relative; aspect-ratio: 3 / 4; border-radius: 8px; border: 2px dashed rgba(255, 249, 240, .6); background: rgba(6, 90, 98, .5); padding: 2px; display: grid; grid-template-rows: 1fr auto auto; justify-items: center; align-items: end; color: var(--cream); overflow: hidden; }
+.slot.filled { border: 3px solid var(--ring); background: var(--cream); color: var(--black); }
+.slot.selected { outline: 4px solid var(--gold); outline-offset: -2px; transform: translateY(-4px); }
+.slot .spr { background-repeat: no-repeat; max-width: 100%; }
+.slot .stars { color: var(--gold-dark); font-size: 11px; line-height: 1; }
+.slot .nm { font-size: 10px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msg { margin: 8px 12px; min-height: 1.4em; font-weight: 600; }
+.shop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.shopcard { border-radius: 10px; border: 3px solid var(--ring); background: var(--cream); color: var(--black); padding: 6px 4px; display: grid; justify-items: center; gap: 2px; min-height: 150px; }
+.shopcard:disabled { background: var(--teal-light); border-style: dashed; }
+.shopcard .spr { background-repeat: no-repeat; }
+.shopcard .nm { font-family: var(--display); font-weight: 800; font-size: 11px; text-align: center; }
+.shopcard .tr { font-size: 9.5px; font-weight: 600; text-align: center; color: var(--teal-dark); }
+.shopcard .cost { font-weight: 800; color: var(--gold-dark); font-size: 13px; }
+.actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: 1fr 1fr 1fr 1.4fr; gap: 6px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--teal-dark); }
+.actions button { padding: 10px 4px; border-radius: 8px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; font-size: 13px; display: grid; gap: 2px; }
+.actions button small { font-weight: 600; font-size: 10px; color: var(--gold); }
+.actions button.primary { background: var(--gold); color: var(--black); border-color: var(--gold); }
+.actions button.primary small { color: var(--black); }
+.actions button:disabled { background: var(--teal-dark); border: 2px dashed var(--cream); color: var(--cream); }
+@media (min-width: 700px) { .zone, .bar, .actions { max-width: 760px; margin-inline: auto; } .actions { left: 50%; transform: translateX(-50%); width: 100%; } .slot .nm { font-size: 12px; } .shopcard .nm { font-size: 13px; } .shopcard .tr { font-size: 11px; } }
