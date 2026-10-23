@@ -1,0 +1,99 @@
+{
+  "game": {
+    "title": "Tactical Boom",
+    "players": 8,
+    "startHp": 20,
+    "startGold": 5,
+    "courtMax": 6,
+    "benchSize": 9,
+    "hex": { "cols": 7, "rowsPerSide": 4 },
+    "planningSeconds": 30,
+    "stages": { "practiceRounds": 3, "roundsPerStage": 4, "practiceStageRound4": [2, 4, 6] }
+  },
+  "tiers": { "14": 1, "15": 2, "16": 3, "12": 4, "13": 4, "17": 5 },
+  "pool": {
+    "drawPerTier": { "1": 14, "2": 13, "3": 14, "4": 10, "5": 8 },
+    "copiesPerTier": { "1": 30, "2": 25, "3": 18, "4": 10, "5": 9 },
+    "minUtilityInDraw": 12
+  },
+  "shop": {
+    "slots": 5,
+    "rerollCost": 1,
+    "xpCost": 4,
+    "xpPerBuy": 4,
+    "oddsByLevel": {
+      "1": [100, 0, 0, 0, 0],
+      "2": [100, 0, 0, 0, 0],
+      "3": [75, 25, 0, 0, 0],
+      "4": [55, 30, 15, 0, 0],
+      "5": [45, 33, 20, 2, 0],
+      "6": [30, 40, 25, 5, 0],
+      "7": [19, 30, 40, 10, 1],
+      "8": [15, 20, 32, 30, 3],
+      "9": [10, 17, 25, 33, 15]
+    }
+  },
+  "xp": {
+    "cumulativeToReach": { "2": 2, "3": 4, "4": 8, "5": 14, "6": 22, "7": 32, "8": 44, "9": 58 },
+    "autoPerRoundByStage": { "1": 2, "2": 2, "3": 3, "4": 3, "5": 4, "6": 4, "7": 4 }
+  },
+  "income": {
+    "practiceRounds": [3, 3, 4],
+    "base": 5,
+    "streakBonus": { "2": 1, "4": 2, "6": 3 },
+    "sell": { "1": "cost", "2": "3*cost-1", "3": "9*cost-1" }
+  },
+  "damage": { "perStage": { "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7 }, "perTwoSurvivors": 1 },
+  "stats": {
+    "byTier": {
+      "1": { "hp": 550, "attack": 50, "armor": 20, "mana": 60 },
+      "2": { "hp": 700, "attack": 60, "armor": 25, "mana": 60 },
+      "3": { "hp": 850, "attack": 75, "armor": 30, "mana": 70 },
+      "4": { "hp": 1050, "attack": 90, "armor": 35, "mana": 70 },
+      "5": { "hp": 1300, "attack": 110, "armor": 40, "mana": 80 }
+    },
+    "starMultiplier": [1, 1.8, 3.24],
+    "rollPercent": 6,
+    "manaPerAction": 10,
+    "manaPerHitTaken": 5
+  },
+  "roles": {
+    "Outside":  { "attack": 1.15, "hp": 0.9,  "armor": 0,  "speed": 1.1, "styles": ["Outside", "Pin"] },
+    "Middle":   { "attack": 0.9,  "hp": 1.2,  "armor": 15, "speed": 0.9, "styles": ["Defensive Middle", "Offensive Middle"] },
+    "Setter":   { "attack": 0.85, "hp": 1.0,  "armor": 0,  "speed": 0.9, "manaGain": 1.5, "styles": ["Setter"] },
+    "Libero":   { "attack": 1.0,  "hp": 0.95, "armor": 0,  "speed": 1.0, "dodge": 0.15, "styles": ["Libero"] },
+    "Opposite": { "attack": 1.1,  "hp": 1.0,  "armor": 0,  "speed": 1.0, "styles": ["Opposite", "Pin"] },
+    "Utility":  { "attack": 0.95, "hp": 0.95, "armor": 0,  "speed": 0.95, "styles": ["Utility"] }
+  },
+  "keywords": {
+    "Rebound Attack": { "desc": "Every third action, acts twice (hit into the block, hit again).", "every": 3 },
+    "Follow Through": { "desc": "Attacks deal a share of their damage to hexes next to the target.", "splash": 0.4 },
+    "Block":          { "desc": "Absorbs a share of each hit taken and returns part of it to the attacker.", "absorb": 0.4, "return": 0.25 },
+    "First Touch":    { "desc": "Ignores the first hit it takes each fight." },
+    "Pregame":        { "desc": "At combat start the two nearest allies gain mana.", "mana": 20 },
+    "Target":         { "desc": "Draws attacks first while within two rows of the net.", "rows": 2 },
+    "Second Wind":    { "desc": "Returns once at a share of max HP, keywords off.", "hp": 0.3 }
+  },
+  "styles": {
+    "Outside":          { "keyword": "Rebound Attack", "ability": "Spike",      "countsAs": ["Outside"] },
+    "Pin":              { "keyword": "Rebound Attack", "ability": "Spike",      "countsAs": ["Outside", "Opposite"] },
+    "Opposite":         { "keyword": "Follow Through", "ability": "Ace Serve",  "countsAs": ["Opposite"] },
+    "Defensive Middle": { "keyword": "Block",          "ability": "Big Block",  "countsAs": ["Middle"] },
+    "Offensive Middle": { "keyword": "First Touch",    "ability": "Slide",      "countsAs": ["Middle"] },
+    "Setter":           { "keyword": "Pregame",        "ability": "Set",        "countsAs": ["Setter"] },
+    "Libero":           { "keyword": "Target",         "ability": "Dig",        "countsAs": ["Libero"] },
+    "Utility":          { "keyword": "Second Wind",    "ability": "Tip",        "countsAs": ["Utility"] }
+  },
+  "starKeyword": { "2": "double the keyword's number", "3": "add a second keyword drawn by seed" },
+  "aggro": { "Target": 6, "MiddleCentre": 4, "Hitter": 2, "FrontRowBonus": 1, "Setter": 0.5 },
+  "combat": { "maxActions": 60, "actionsPerSideAlternate": true },
+  "traits": {
+    "role":      { "breakpoints": [2, 3] },
+    "noSpecialization": { "breakpoints": [2, 4, 6], "statBonus": [0.08, 0.16, 0.28], "allUtilityDoubleCast": true },
+    "level":     { "Colorado": [3, 5], "National": [2, 4], "Regional": [2, 4] },
+    "archetype": { "breakpoints": [2, 3, 4] }
+  },
+  "archetypes": ["Hype Captain", "Snack Boss", "Early Bird", "Clutch Closer", "Group Chat Queen", "Gym Rat", "Sunshine", "Mastermind"],
+  "jerseyByLevel": { "National": "#0E7C86", "Regional": "#E5B800", "Colorado": "#065A62" },
+  "tierRing": { "1": "#FFF9F0", "2": "#E4F2F3", "3": "#0E7C86", "4": "#E5B800", "5": "#111111" }
+}

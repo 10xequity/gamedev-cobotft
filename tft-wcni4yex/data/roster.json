@@ -1,0 +1,1582 @@
+[
+ {
+  "id": "0040e807",
+  "first": "Liv",
+  "display": "Liv F.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "0054a077",
+  "first": "Lena",
+  "display": "Lena E.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "00b29533",
+  "first": "Shae",
+  "display": "Shae H.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "017838e2",
+  "first": "Avery",
+  "display": "Avery N.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "0205aa13",
+  "first": "Brooklynn",
+  "display": "Brooklynn C.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "04184a6a",
+  "first": "Evelynn",
+  "display": "Evelynn D.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "076a2c9a",
+  "first": "Olivia",
+  "display": "Olivia K.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "0857dbb6",
+  "first": "Montana",
+  "display": "Montana J.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "0b691465",
+  "first": "Paige",
+  "display": "Paige S.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "0cd74a4a",
+  "first": "Cassidy",
+  "display": "Cassidy T.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "0dfa6c7e",
+  "first": "Khloe",
+  "display": "Khloe C.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "0ff822ba",
+  "first": "Maddie",
+  "display": "Maddie M.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "102cf64f",
+  "first": "Sloane",
+  "display": "Sloane J.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "12c7a47f",
+  "first": "Harper",
+  "display": "Harper S.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "13b14bfc",
+  "first": "Abigail",
+  "display": "Abigail E.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "16189c4d",
+  "first": "Lillian",
+  "display": "Lillian C.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "16629a1d",
+  "first": "Cecilia",
+  "display": "Cecilia R.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "1671221f",
+  "first": "Ashlynn",
+  "display": "Ashlynn J.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "16f242b6",
+  "first": "Jola",
+  "display": "Jola O.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "1717c27f",
+  "first": "Sophia",
+  "display": "Sophia P.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "187994fe",
+  "first": "Addyson",
+  "display": "Addyson E.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "18ea6207",
+  "first": "Nico",
+  "display": "Nico M.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "19a1c733",
+  "first": "Tessa",
+  "display": "Tessa F.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "1d8dbebe",
+  "first": "Betanya",
+  "display": "Betanya M.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "1fd2c4c0",
+  "first": "Nylah",
+  "display": "Nylah D.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "21acdbd8",
+  "first": "Zayra",
+  "display": "Zayra A.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "25585115",
+  "first": "Joelle",
+  "display": "Joelle C.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "26e722bf",
+  "first": "Karolina",
+  "display": "Karolina B.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "281e885c",
+  "first": "Ellie",
+  "display": "Ellie M.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "2f94ffad",
+  "first": "Piper",
+  "display": "Piper B.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "3118c505",
+  "first": "Morgan",
+  "display": "Morgan B.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "314b11cd",
+  "first": "Haylee",
+  "display": "Haylee C.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "31e2f053",
+  "first": "Isabel",
+  "display": "Isabel S.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "33418b68",
+  "first": "Caidyn",
+  "display": "Caidyn M.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "39a7c0b9",
+  "first": "Gioia",
+  "display": "Gioia S.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "3a83f432",
+  "first": "Natalie",
+  "display": "Natalie M.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "3c7123c5",
+  "first": "Hailey",
+  "display": "Hailey H.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "3da56d77",
+  "first": "Alana",
+  "display": "Alana E.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "3eeb9e50",
+  "first": "Naomi",
+  "display": "Naomi F.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "3f09b743",
+  "first": "Zohra",
+  "display": "Zohra F.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "40a195fb",
+  "first": "Rebecca",
+  "display": "Rebecca T.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "42286db6",
+  "first": "Harley",
+  "display": "Harley R.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "4331c0e6",
+  "first": "Ava",
+  "display": "Ava F.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "43eb617c",
+  "first": "Dani",
+  "display": "Dani M.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "46977a3f",
+  "first": "Sloan",
+  "display": "Sloan S.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "47afc429",
+  "first": "Nahkialya",
+  "display": "Nahkialya M.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "485ab85f",
+  "first": "Beatrice",
+  "display": "Beatrice C.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "4b1b3c93",
+  "first": "Getsemana",
+  "display": "Getsemana P.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "4bb7fa55",
+  "first": "Kenna",
+  "display": "Kenna N.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "4d0d796a",
+  "first": "Kiyari",
+  "display": "Kiyari M.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "4d94c906",
+  "first": "Ivy",
+  "display": "Ivy T.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "4eb917e1",
+  "first": "Madison",
+  "display": "Madison Wh.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "501852df",
+  "first": "Elleni",
+  "display": "Elleni C.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "56290dd2",
+  "first": "Samantha",
+  "display": "Samantha H.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "566a5d25",
+  "first": "Anelie",
+  "display": "Anelie D.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "57f2f10f",
+  "first": "Stella",
+  "display": "Stella J.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "58bfb3b0",
+  "first": "Jaelynn",
+  "display": "Jaelynn S.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "5d54cb1c",
+  "first": "Olivia",
+  "display": "Olivia F.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "618cdc2a",
+  "first": "Addison",
+  "display": "Addison G.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "631141a0",
+  "first": "Emma",
+  "display": "Emma K.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "63d001f5",
+  "first": "Elyse",
+  "display": "Elyse P.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "64937386",
+  "first": "Ali",
+  "display": "Ali M.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "64eaf317",
+  "first": "Roisen",
+  "display": "Roisen L.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "66de58d5",
+  "first": "Abigail",
+  "display": "Abigail H.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "68bbbd74",
+  "first": "Beckett",
+  "display": "Beckett H.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "6c056357",
+  "first": "Avery",
+  "display": "Avery S.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "6dddac54",
+  "first": "Mia",
+  "display": "Mia S.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "6e33ea88",
+  "first": "Scarlett",
+  "display": "Scarlett R.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "7057e6b2",
+  "first": "Ashlyn",
+  "display": "Ashlyn W.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "710a974b",
+  "first": "Emma",
+  "display": "Emma O.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "712a0202",
+  "first": "Keira",
+  "display": "Keira P.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "74676c37",
+  "first": "Octavia",
+  "display": "Octavia L.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "756c98e7",
+  "first": "Adyson",
+  "display": "Adyson F.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "757b5c5e",
+  "first": "Pippa",
+  "display": "Pippa F.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "779e057d",
+  "first": "Avery",
+  "display": "Avery K.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "7a11ce2b",
+  "first": "Andrea",
+  "display": "Andrea A.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "7b091176",
+  "first": "Sara",
+  "display": "Sara Z.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "7d0267db",
+  "first": "Izana",
+  "display": "Izana A.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "7e290122",
+  "first": "Maisie",
+  "display": "Maisie M.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "80b11f96",
+  "first": "Adina",
+  "display": "Adina R.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "820e21a6",
+  "first": "Teghan",
+  "display": "Teghan B.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "8273ed24",
+  "first": "Eisley",
+  "display": "Eisley S.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "840e01b2",
+  "first": "Brooke",
+  "display": "Brooke W.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "84ac9d60",
+  "first": "Margot",
+  "display": "Margot J.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "857ffbf3",
+  "first": "Ellianna",
+  "display": "Ellianna H.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "8849d737",
+  "first": "Bentleigh",
+  "display": "Bentleigh B.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "88dbdbaf",
+  "first": "Syniah",
+  "display": "Syniah J.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "8a56a705",
+  "first": "Lia",
+  "display": "Lia L.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "8b7e7695",
+  "first": "Charlotte",
+  "display": "Charlotte L.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "8db9f068",
+  "first": "Alyssa",
+  "display": "Alyssa W.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "8ed944ed",
+  "first": "Mary",
+  "display": "Mary L.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "917364e9",
+  "first": "Sivan",
+  "display": "Sivan G.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "93e7f36e",
+  "first": "Emilia",
+  "display": "Emilia G.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "9480bf88",
+  "first": "Averly",
+  "display": "Averly S.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "9ac66d2f",
+  "first": "Cassia",
+  "display": "Cassia M.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "9d3e2018",
+  "first": "Lilly",
+  "display": "Lilly B.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "9dffb483",
+  "first": "Jenna",
+  "display": "Jenna S.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "9f502dc9",
+  "first": "Maliah",
+  "display": "Maliah W.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "a1a34748",
+  "first": "Denver",
+  "display": "Denver A.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "a5ef8a85",
+  "first": "Hailey",
+  "display": "Hailey D.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "a5fe4370",
+  "first": "Germayoli",
+  "display": "Germayoli R.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "a77ad2c6",
+  "first": "Skylar",
+  "display": "Skylar C.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "a7c86330",
+  "first": "Brooke",
+  "display": "Brooke M.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "acf13ddc",
+  "first": "Brianna",
+  "display": "Brianna S.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "acf90c33",
+  "first": "Avaya",
+  "display": "Avaya C.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "afa02722",
+  "first": "Carol",
+  "display": "Carol N.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "b1007389",
+  "first": "Nava",
+  "display": "Nava E.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "b1632797",
+  "first": "Alexa",
+  "display": "Alexa H.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "b1efa5e0",
+  "first": "Eva",
+  "display": "Eva H.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "b288a888",
+  "first": "Fiona",
+  "display": "Fiona M.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "b304ee66",
+  "first": "Haylee",
+  "display": "Haylee B.",
+  "team": {
+   "age": 17,
+   "level": "National",
+   "title": "17 National"
+  }
+ },
+ {
+  "id": "b555eb27",
+  "first": "Addison",
+  "display": "Addison Cl.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "b59e93f9",
+  "first": "Kaylee",
+  "display": "Kaylee W.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "b6c8346c",
+  "first": "Amina",
+  "display": "Amina M.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "b7d71086",
+  "first": "Aryanna",
+  "display": "Aryanna A.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "b925af75",
+  "first": "Jane",
+  "display": "Jane B.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "b9512df1",
+  "first": "Armaghan",
+  "display": "Armaghan B.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "bb0812d9",
+  "first": "Addy",
+  "display": "Addy W.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "bb756805",
+  "first": "Layla",
+  "display": "Layla R.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "bc1fd9f1",
+  "first": "Aubrey",
+  "display": "Aubrey P.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "bc2a1387",
+  "first": "Mila",
+  "display": "Mila D.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "bc367767",
+  "first": "Alli",
+  "display": "Alli B.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "bc9c6a0a",
+  "first": "Aimee",
+  "display": "Aimee R.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "bd080f8b",
+  "first": "Brooke",
+  "display": "Brooke H.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "bd5065da",
+  "first": "Lily",
+  "display": "Lily M.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "bd70c58d",
+  "first": "Olivia",
+  "display": "Olivia P.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "bf4998d4",
+  "first": "Brylee",
+  "display": "Brylee B.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "bffec71a",
+  "first": "Layla",
+  "display": "Layla P.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "c26fa319",
+  "first": "Jolie",
+  "display": "Jolie D.",
+  "team": {
+   "age": 15,
+   "level": "Colorado",
+   "title": "15 Colorado"
+  }
+ },
+ {
+  "id": "c3892e87",
+  "first": "Evie",
+  "display": "Evie S.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "c4abf179",
+  "first": "Vitoria",
+  "display": "Vitoria R.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "c6e07ea7",
+  "first": "Essomanda",
+  "display": "Essomanda D.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "c7bddd9c",
+  "first": "Abigail",
+  "display": "Abigail A.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "ca0cf8ba",
+  "first": "Alice",
+  "display": "Alice N.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "cad34b6c",
+  "first": "Addison",
+  "display": "Addison Co.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "cecac8a5",
+  "first": "Juliet",
+  "display": "Juliet M.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "d2fafa9b",
+  "first": "Geegen",
+  "display": "Geegen T.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "d334ce0a",
+  "first": "Marlaa",
+  "display": "Marlaa G.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "d34458db",
+  "first": "Cailin",
+  "display": "Cailin K.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "d5f176c9",
+  "first": "Aven",
+  "display": "Aven M.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "da06f4ca",
+  "first": "Caroline",
+  "display": "Caroline R.",
+  "team": {
+   "age": 17,
+   "level": "Colorado",
+   "title": "17 Colorado"
+  }
+ },
+ {
+  "id": "ddd2e497",
+  "first": "Madison",
+  "display": "Madison Wo.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "e160c12f",
+  "first": "Olive",
+  "display": "Olive H.",
+  "team": {
+   "age": 15,
+   "level": "Regional",
+   "title": "15 Regional"
+  }
+ },
+ {
+  "id": "e75b974d",
+  "first": "Anna",
+  "display": "Anna N.",
+  "team": {
+   "age": 16,
+   "level": "Regional",
+   "title": "16 Regional"
+  }
+ },
+ {
+  "id": "ea7c1868",
+  "first": "Marlow",
+  "display": "Marlow S.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "ecff20b9",
+  "first": "Autumn",
+  "display": "Autumn C.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ },
+ {
+  "id": "edbeb1ec",
+  "first": "Jillian",
+  "display": "Jillian C.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "ee2a1ba4",
+  "first": "Madison",
+  "display": "Madison T.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "ee4c1dd2",
+  "first": "Elliana",
+  "display": "Elliana F.",
+  "team": {
+   "age": 14,
+   "level": "National",
+   "title": "14 National"
+  }
+ },
+ {
+  "id": "f109e685",
+  "first": "Maddison",
+  "display": "Maddison J.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "f2c836b1",
+  "first": "Kix",
+  "display": "Kix T.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "f5b8f0d5",
+  "first": "Sophia",
+  "display": "Sophia V.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "f5d06122",
+  "first": "Mallory",
+  "display": "Mallory H.",
+  "team": {
+   "age": 14,
+   "level": "Colorado",
+   "title": "14 Colorado"
+  }
+ },
+ {
+  "id": "f654fdc2",
+  "first": "Haley",
+  "display": "Haley C.",
+  "team": {
+   "age": 15,
+   "level": "National",
+   "title": "15 National"
+  }
+ },
+ {
+  "id": "f9722461",
+  "first": "Mackenzie",
+  "display": "Mackenzie A.",
+  "team": {
+   "age": 13,
+   "level": "Colorado",
+   "title": "13 Colorado"
+  }
+ },
+ {
+  "id": "fd3280ea",
+  "first": "Mariella",
+  "display": "Mariella N.",
+  "team": {
+   "age": 16,
+   "level": "Colorado",
+   "title": "16 Colorado"
+  }
+ },
+ {
+  "id": "fe1de7e3",
+  "first": "London",
+  "display": "London J.",
+  "team": {
+   "age": 12,
+   "level": "Colorado",
+   "title": "12 Colorado"
+  }
+ },
+ {
+  "id": "ff08b251",
+  "first": "Anaiah",
+  "display": "Anaiah Q.",
+  "team": {
+   "age": 16,
+   "level": "National",
+   "title": "16 National"
+  }
+ }
+]
