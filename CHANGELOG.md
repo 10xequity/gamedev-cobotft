@@ -2,6 +2,24 @@
 
 Player names never appear in this file.
 
+## v0.5.0 — 2026-10-23 · Milestone 5: rally combat and balance script
+
+- `js/combat.js`: sides alternate actions like a rally; the actor is a seeded draw weighted by speed, the
+  target a seeded draw weighted by the aggro table (Libero near the net 6, Middle in the centre columns 4,
+  hitters 2 plus 1 in the front row, Setter 0.5). Hit or cast when mana is full; armor formula
+  damage x 100 / (100 + armor); shields, dodge, heals, splash on adjacent hexes, column hits for Ace Serve.
+  Ends when a side is wiped or at 120 actions, then higher HP percent wins. Output is an event list for the
+  playback in milestone 9. No clock reads, no movement: positions matter for aggro and splash only.
+- Abilities and their numbers live in config: Spike, Ace Serve, Big Block, Slide, Set, Dig, Tip.
+- First balance pass: attack raised per tier (150/180/220/265/330) so fights finish in about 65 actions
+  instead of timing out; Dig heal 1.0x attack, Libero dodge 10%. `tools/balance-sim.mjs` fights eight lines
+  against each other and prints the win matrix. Snapshot before traits and keywords exist: only Balanced sits
+  in the 50-55% band; Diggers 89%, Engine 1%. Tuning is milestone 10, after traits (6) and keywords (7).
+- Tests: deterministic events, mirror fairness over 300 seeds (51% near), six beat one, 5-cost 3-star beats a
+  1-cost, action cap, empty side loses at once.
+- Page links carry a version string so phones pick up new builds without a hard refresh.
+- Nothing visible changes in the game yet; combat reaches the screen with bots in milestone 8.
+
 ## v0.4.0 — 2026-10-23 · Milestone 4: perspective court, net, hex placement
 
 - The court is a 7x8 hex board drawn in perspective over the Fieldhouse stage art, net across the middle,

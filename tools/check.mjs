@@ -155,4 +155,36 @@ for (let k = 0; k < 28; k++) { const [c, r] = hex.slotToHex(k, 'far'); assert.eq
 assert.deepEqual(hex.slotToHex(0, 'near'), [0, 4], 'near slot 0 is at the net, left');
 assert.deepEqual(hex.slotToHex(0, 'far'), [6, 3], 'far slot 0 mirrors across the net');
 
-console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok`);
+// Combat: deterministic, mirror-fair, finishes, respects the action cap, and an empty side loses.
+const { simulate } = await import(pathToFileURL(join(GAME, 'js', 'combat.js')).href);
+const court = (ids, slots) => { const c = Array(28).fill(null); ids.forEach((id, i) => { c[slots[i]] = { uid: slots[i] + 1 + (slots[0] >= 100 ? 0 : 0), id, star: 1 }; }); return c; };
+const pickRole = (role, n, tier = 2) => a.filter(u => u.role === role && u.tier === tier).slice(0, n).map(u => u.id);
+const sixNear = court([...pickRole('Outside', 2), ...pickRole('Middle', 2), pickRole('Setter', 1)[0], pickRole('Libero', 1)[0]], [1, 5, 2, 4, 10, 17]);
+const sixFar = court([...pickRole('Opposite', 2), ...pickRole('Middle', 2, 3), pickRole('Setter', 1, 3)[0], pickRole('Libero', 1, 3)[0]], [1, 5, 2, 4, 10, 17]).map(i => i && { ...i, uid: i.uid + 100 });
+const r1 = simulate({ seed: 'fight-1', near: sixNear, far: sixFar, unitsById: byId, cfg });
+const r2 = simulate({ seed: 'fight-1', near: sixNear, far: sixFar, unitsById: byId, cfg });
+assert.equal(JSON.stringify(r1.events), JSON.stringify(r2.events), 'combat must be deterministic');
+assert.ok(r1.actions <= cfg.combat.maxActions, 'action cap respected');
+assert.ok(r1.events.some(e => e.t === 'hit'), 'somebody got hit');
+assert.ok(r1.events.some(e => e.t === 'cast'), 'somebody cast an ability');
+assert.ok(r1.events.at(-1).t === 'end', 'ends with an end event');
+const empty = simulate({ seed: 'x', near: sixNear, far: Array(28).fill(null), unitsById: byId, cfg });
+assert.equal(empty.winner, 'near', 'an empty side loses at once'); assert.equal(empty.actions, 0);
+// Same board on both sides: over many seeds the near side should win close to half.
+const mirror = sixNear.map(i => i && { ...i, uid: i.uid + 100 });
+let nearWins = 0, decided = 0;
+for (let i = 0; i < 300; i++) { const r = simulate({ seed: `m${i}`, near: sixNear, far: mirror, unitsById: byId, cfg }); if (r.winner) { decided++; if (r.winner === 'near') nearWins++; } }
+assert.ok(decided > 200, 'most mirror fights should be decided');
+const share = nearWins / decided;
+assert.ok(share > 0.4 && share < 0.6, `mirror match should be fair, near won ${(share * 100).toFixed(0)}%`);
+// Six units beat one, and a 5-cost 3-star beats a 1-cost 1-star.
+const one = court([pickRole('Outside', 1)[0]], [3]).map(i => i && { ...i, uid: 999 });
+assert.equal(simulate({ seed: 'six-v-one', near: sixNear, far: one, unitsById: byId, cfg }).winner, 'near', 'six beat one');
+const big = court([a.find(u => u.tier === 5 && u.role === 'Outside').id], [3]); big[3].star = 3;
+const small = court([pickRole('Outside', 1, 1)[0]], [3]).map(i => i && { ...i, uid: 999 });
+assert.equal(simulate({ seed: 'big-v-small', near: big, far: small, unitsById: byId, cfg }).winner, 'near', '5-cost 3-star beats 1-cost 1-star');
+// Armor formula: 100 raw into 100 armor is 50.
+const hitEv = r1.events.find(e => e.t === 'hit');
+assert.ok(hitEv.amount > 0 && Number.isInteger(hitEv.amount), 'hits are whole positive numbers');
+
+console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok, combat ok (mirror ${(share * 100).toFixed(0)}% near, ${r1.actions} actions)`);

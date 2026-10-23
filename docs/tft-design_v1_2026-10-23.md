@@ -183,7 +183,7 @@ Game folder `tft-wcni4yex/`: `index.html`, `style.css`, `data/roster.json`,
 2. Unit derivation, placeholder sprites cut from the owner's 25 sheets, staff gallery of all 158, prompt for the next sheet set. ✔ v0.2.0
 3. Shop, bench, buy, sell, merge, reroll, XP, levels, court cap 6. ✔ v0.3.0
 4. 3D court, net, hex placement by touch, drag and keyboard. ✔ v0.4.0
-5. Rally combat, aggro weights, determinism check, balance script with 8 lines.
+5. Rally combat, aggro weights, determinism check, balance script with 8 lines. ✔ v0.5.0
 6. Traits including Utility and Pin wild cards and No Specialization.
 7. Keywords, styles and star upgrades.
 8. Bots, pairing, health, elimination, placement. First full game.
