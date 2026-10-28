@@ -2,6 +2,27 @@
 
 Player names never appear in this file.
 
+## v0.6.0 — 2026-10-28 · Milestone 6: traits and wild cards
+
+- `js/traits.js`: each distinct player on court counts once toward her game role, club level and archetype
+  (17 traits, numbers in `config.json` under `traits`). Copies of the same player do not stack.
+- Wild cards: in board order, each Pin and Utility joins the role one short of a breakpoint, preferring the
+  highest breakpoint reached. A Pin with nothing in reach stays in her own role; a Utility with nothing in reach
+  fills nothing and keeps Tip. A Utility that fills a role casts that role's ability (Middle → Big Block).
+- Combat applies the bonuses at fight start. Scope follows the design table's wording: "team" bonuses go to
+  everyone, Middle armor to the front row, the rest (Colorado, National, Gym Rat, Snack Boss, Early Bird,
+  Clutch Closer, Group Chat Queen, Mastermind, No Specialization) only to the players holding the trait.
+  No Specialization 6 makes every Utility cast twice. New event `mana` for Group Chat Queen; heals of 0 are no
+  longer logged.
+- Planning screen: a Traits panel under the court lists each trait's count, breakpoints and active bonus, and
+  names which wild card filled which role.
+- Roster rebuilt from the public teams page: 160 players (2 new).
+- Tests: definitions cover every tag, two copies count once, Utility and Pin wild-card picks, Outside 2 adds
+  10% attack in combat, all-Utility court casts twice.
+- Balance snapshot (tier 2, 1-star, 200 fights per pair): AllUtility 100%, Pins 76%, Diggers 58%, Balanced 54%,
+  Hitters 48%, Wall 42%, Servers 22%, Engine 0%. All-Utility (+28% stats and double Tip) is far too strong;
+  Engine still never wins. Tuning stays in milestone 10 after keywords (7).
+
 ## v0.5.0 — 2026-10-23 · Milestone 5: rally combat and balance script
 
 - `js/combat.js`: sides alternate actions like a rally; the actor is a seeded draw weighted by speed, the

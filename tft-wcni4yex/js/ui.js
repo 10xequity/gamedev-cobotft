@@ -2,6 +2,7 @@
 import { spriteStyle } from './sprite.js';
 import { Arena } from './arena.js';
 import * as eco from './economy.js';
+import { computeTraits } from './traits.js';
 
 const $ = id => document.getElementById(id);
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
@@ -26,6 +27,7 @@ export class UI {
     $('courtCount').textContent = `${eco.onCourt(you).length} / ${eco.courtMax(you, cfg)}`;
 
     this.arena.render(you, null, g.unitsById, cfg, this.selected);
+    this.renderTraits();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
@@ -33,6 +35,20 @@ export class UI {
     $('sell').textContent = this.selected === null ? 'Sell' : `Sell for ${this.sellValue()}g`;
     $('reroll').disabled = you.gold < cfg.shop.rerollCost;
     $('xp').disabled = you.gold < cfg.shop.xpCost || toNext === null;
+  }
+
+  renderTraits() {
+    const { filled, traits } = computeTraits(this.g.you.court, this.g.unitsById, this.g.cfg);
+    $('traits').replaceChildren(...(traits.length ? traits.map(t => {
+      if (!t.level) return el('li', { textContent: `${t.name} ${t.count}/${t.next}`, ariaLabel: `${t.name}: ${t.count} of ${t.next} to start` });
+      const marks = t.breakpoints.map(b => t.count >= b ? `[${b}]` : b).join(' / ');
+      return el('li', { className: 'on' },
+        el('b', { textContent: `${t.name} ${t.count}` }),
+        el('span', { className: 'bp', textContent: ` ${marks}` }),
+        el('span', { className: 'd', textContent: ` · ${t.desc}` }));
+    }) : [el('li', { textContent: 'Place units on the court to start traits.' })]));
+    const wild = this.g.you.court.filter(i => i && filled[i.uid]).map(i => `${this.g.unitsById[i.id].display} as ${filled[i.uid]}`);
+    $('wild').textContent = wild.length ? `wild cards: ${wild.join(', ')}` : '';
   }
 
   sellValue() {

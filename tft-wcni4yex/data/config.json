@@ -377,46 +377,23 @@
     "timeoutRule": "higher total HP percent wins, equal is a draw"
   },
   "traits": {
-    "role": {
-      "breakpoints": [
-        2,
-        3
-      ]
-    },
-    "noSpecialization": {
-      "breakpoints": [
-        2,
-        4,
-        6
-      ],
-      "statBonus": [
-        0.08,
-        0.16,
-        0.28
-      ],
-      "allUtilityDoubleCast": true
-    },
-    "level": {
-      "Colorado": [
-        3,
-        5
-      ],
-      "National": [
-        2,
-        4
-      ],
-      "Regional": [
-        2,
-        4
-      ]
-    },
-    "archetype": {
-      "breakpoints": [
-        2,
-        3,
-        4
-      ]
-    }
+    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.10, 0.25], "desc": "Team attack +10% / +25%" },
+    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [20, 45], "desc": "Front-row armor +20 / +45" },
+    "Setter": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "manaPerAction", "values": [3, 7], "desc": "Team mana per action +3 / +7" },
+    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.10, 0.20], "desc": "Team dodge +10% / +20%" },
+    "Opposite": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "abilityDamage", "values": [0.15, 0.35], "desc": "Ability damage +15% / +35%" },
+    "No Specialization": { "family": "Role", "breakpoints": [2, 4, 6], "applies": "holders", "effect": "allStats", "values": [0.08, 0.16, 0.28], "doubleCastAt": 6, "desc": "Utility units +8% / +16% / +28% all stats; 6: every Utility casts twice" },
+    "Colorado": { "family": "Club level", "breakpoints": [3, 5], "applies": "holders", "effect": "speed", "values": [0.08, 0.16], "desc": "Attack speed +8% / +16%" },
+    "National": { "family": "Club level", "breakpoints": [2, 4], "applies": "holders", "effect": "abilityDamage", "values": [0.10, 0.20], "desc": "Ability damage +10% / +20%" },
+    "Regional": { "family": "Club level", "breakpoints": [2, 4], "applies": "team", "effect": "hpPct", "values": [0.12, 0.28], "desc": "Team HP +12% / +28%" },
+    "Hype Captain": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "speed", "values": [0.06, 0.12, 0.20], "desc": "Team attack speed +6% / +12% / +20%" },
+    "Snack Boss": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "regen", "values": [0.01, 0.02, 0.03], "desc": "Regen 1% / 2% / 3% max HP per action" },
+    "Early Bird": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "startMana", "values": [20, 40, 60], "desc": "Start with 20 / 40 / 60 mana" },
+    "Clutch Closer": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "clutch", "values": [0.15, 0.30, 0.50], "desc": "Below 40% HP: +15% / +30% / +50% damage", "below": 0.4 },
+    "Group Chat Queen": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "castShare", "values": [10, 20, 30], "desc": "When one casts, adjacent allies +10 / +20 / +30 mana" },
+    "Gym Rat": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "hpFlat", "values": [100, 250, 450], "desc": "+100 / +250 / +450 HP" },
+    "Sunshine": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "shield", "values": [0.08, 0.15, 0.25], "desc": "Team shield 8% / 15% / 25% HP at start" },
+    "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.10, 0.20, 0.30], "desc": "Abilities cost 10% / 20% / 30% less" }
   },
   "archetypes": [
     "Hype Captain",

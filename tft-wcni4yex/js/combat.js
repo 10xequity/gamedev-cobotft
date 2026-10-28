@@ -5,6 +5,7 @@
 import { rngFrom } from './rng.js';
 import { statsAt } from './units.js';
 import { neighbors, key, slotToHex, HALF } from './hex.js';
+import { computeTraits, tagsOf, abilityOf } from './traits.js';
 
 function weightedPick(rng, items, weightOf) {
   const weights = items.map(weightOf);
@@ -13,21 +14,44 @@ function weightedPick(rng, items, weightOf) {
   return items[items.length - 1];
 }
 
-// Build the fighters from two courts (arrays of 28 slots). `far` is the opponent.
+// Build the fighters from one court (28 slots), traits applied. `far` is the opponent.
+const NO_MODS = { attack: 0, armor: 0, manaPerAction: 0, dodge: 0, abilityDamage: 0, allStats: 0, speed: 0, hpPct: 0, regen: 0, startMana: 0, clutch: 0, castShare: 0, hpFlat: 0, shield: 0, manaCost: 0 };
 function fighters(court, side, unitsById, cfg) {
+  const { filled, traits } = computeTraits(court, unitsById, cfg);
   const out = [];
   court.forEach((inst, k) => {
     if (!inst) return;
     const unit = unitsById[inst.id];
-    const s = statsAt(unit, inst.star, cfg);
     const [col, row] = slotToHex(k, side);
     out.push({
-      side, uid: inst.uid, id: inst.id, unit, star: inst.star, col, row,
+      side, uid: inst.uid, id: inst.id, unit, star: inst.star, col, row, base: statsAt(unit, inst.star, cfg),
       rowFromNet: side === 'near' ? row - HALF : HALF - 1 - row,
-      hp: s.hp, maxHp: s.hp, attack: s.attack, armor: s.armor, mana: 0, manaToCast: s.mana,
-      speed: s.speed, dodge: s.dodge, manaGain: s.manaGain, shield: 0, buff: 0, buffLeft: 0, alive: true,
+      filled: filled[inst.uid] || null, tags: tagsOf(unit, filled[inst.uid]), ability: abilityOf(unit, filled[inst.uid], cfg),
+      mods: { ...NO_MODS }, doubleCast: false, buff: 0, buffLeft: 0, alive: true,
     });
   });
+  for (const t of traits) {
+    if (!t.level) continue;
+    const def = cfg.traits[t.name], v = def.values[t.level - 1];
+    for (const f of out) {
+      const hit = def.applies === 'team' || (def.applies === 'front' && f.rowFromNet === 0) || (def.applies === 'holders' && f.tags.includes(t.name));
+      if (!hit) continue;
+      f.mods[def.effect] += v;
+      if (def.doubleCastAt && t.count >= def.doubleCastAt) f.doubleCast = true;
+    }
+  }
+  for (const f of out) {
+    const s = f.base, m = f.mods;
+    f.maxHp = f.hp = Math.round((s.hp * (1 + m.allStats) + m.hpFlat) * (1 + m.hpPct));
+    f.attack = s.attack * (1 + m.allStats + m.attack);
+    f.armor = Math.round(s.armor * (1 + m.allStats)) + m.armor;
+    f.speed = s.speed * (1 + m.speed);
+    f.dodge = s.dodge + m.dodge;
+    f.manaGain = s.manaGain;
+    f.manaToCast = Math.round(s.mana * (1 - m.manaCost));
+    f.mana = Math.min(f.manaToCast, m.startMana);
+    f.shield = Math.round(f.maxHp * m.shield);
+  }
   return out;
 }
 
@@ -50,8 +74,11 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
     return hitter + (f.rowFromNet === 0 ? A.FrontRowBonus : 0);
   };
 
+  const clutchBelow = cfg.traits['Clutch Closer'].below;
   function damage(src, tgt, raw, kind) {
     if (!tgt.alive) return 0;
+    if (kind !== 'hit') raw *= 1 + src.mods.abilityDamage;
+    if (src.mods.clutch && src.hp < src.maxHp * clutchBelow) raw *= 1 + src.mods.clutch;
     let amount = Math.round(raw * 100 / (100 + tgt.armor));
     if (tgt.shield > 0) { const used = Math.min(tgt.shield, amount); tgt.shield -= used; amount -= used; }
     tgt.hp -= amount;
@@ -62,7 +89,7 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
   }
   const heal = (src, tgt, raw) => {
     const amount = Math.min(raw, tgt.maxHp - tgt.hp); tgt.hp += amount;
-    events.push({ t: 'heal', from: src.uid, to: tgt.uid, amount: Math.round(amount), hp: tgt.hp });
+    if (amount > 0) events.push({ t: 'heal', from: src.uid, to: tgt.uid, amount: Math.round(amount), hp: tgt.hp });
   };
   const adjacentEnemies = (f, of) => neighbors(of.col, of.row).map(([c, r]) => at.get(key(c, r))).filter(e => e && e.alive && e.side !== f.side);
   const nearestAllies = (f, n) => alliesOf(f).filter(a => a !== f).sort((a, b) => (Math.abs(a.col - f.col) + Math.abs(a.row - f.row)) - (Math.abs(b.col - f.col) + Math.abs(b.row - f.row)) || a.uid - b.uid).slice(0, n);
@@ -77,7 +104,18 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
   }
 
   function cast(f) {
-    const name = f.unit.ability, a = AB[name];
+    for (let i = f.doubleCast ? 2 : 1; i > 0; i--) castOnce(f);
+    if (f.mods.castShare) for (const [c, r] of neighbors(f.col, f.row)) {
+      const ally = at.get(key(c, r));
+      if (!ally || !ally.alive || ally.side !== f.side) continue;
+      ally.mana = Math.min(ally.manaToCast, ally.mana + f.mods.castShare);
+      events.push({ t: 'mana', from: f.uid, to: ally.uid, mana: ally.mana });
+    }
+    f.mana = 0;
+  }
+
+  function castOnce(f) {
+    const name = f.ability, a = AB[name];
     const enemies = enemiesOf(f);
     events.push({ t: 'cast', uid: f.uid, ability: name });
     switch (name) {
@@ -93,7 +131,6 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
       case 'Tip': default: { if (!enemies.length) break; const tgt = weightedPick(rng, enemies, aggroWeight);
         for (const e of [tgt, ...adjacentEnemies(f, tgt)]) { e.armor = Math.max(0, e.armor - a.shred); damage(f, e, power(f) * a.mult, 'Tip'); } break; }
     }
-    f.mana = 0;
   }
 
   // Who serves first: the side with more units, else the seed decides.
@@ -103,7 +140,8 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
   while (actions < cfg.combat.maxActions && living('near').length && living('far').length) {
     const actor = weightedPick(rng, living(side), f => f.speed);
     events.push({ t: 'action', n: actions, side, uid: actor.uid });
-    if (actor.mana >= actor.manaToCast) cast(actor); else { hit(actor); actor.mana = Math.min(actor.manaToCast, actor.mana + ST.manaPerAction * actor.manaGain); }
+    if (actor.mana >= actor.manaToCast) cast(actor); else { hit(actor); actor.mana = Math.min(actor.manaToCast, actor.mana + ST.manaPerAction * actor.manaGain + actor.mods.manaPerAction); }
+    if (actor.mods.regen && actor.alive) heal(actor, actor, Math.round(actor.maxHp * actor.mods.regen));
     if (actor.buffLeft > 0 && --actor.buffLeft === 0) actor.buff = 0;
     side = side === 'near' ? 'far' : 'near';
     actions++;

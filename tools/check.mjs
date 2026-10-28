@@ -187,4 +187,37 @@ assert.equal(simulate({ seed: 'big-v-small', near: big, far: small, unitsById: b
 const hitEv = r1.events.find(e => e.t === 'hit');
 assert.ok(hitEv.amount > 0 && Number.isInteger(hitEv.amount), 'hits are whole positive numbers');
 
+// Traits: every tag a unit can carry has a definition; counting, wild cards and bonuses.
+const tr = await import(pathToFileURL(join(GAME, 'js', 'traits.js')).href);
+for (const [name, t] of Object.entries(cfg.traits)) assert.equal(t.values.length, t.breakpoints.length, `${name}: one value per breakpoint`);
+for (const u of a) for (const tag of tr.tagsOf(u, null)) assert.ok(cfg.traits[tag], `no trait definition for ${tag}`);
+const nonPin = role => a.filter(u => u.role === role && u.style !== 'Pin');
+const at = (insts) => { const c = Array(28).fill(null); insts.forEach((u, i) => { c[i] = { uid: 500 + i, id: u.id, star: 1 }; }); return c; };
+const lvl = (res, name) => res.traits.find(t => t.name === name)?.level ?? 0;
+const [o1, o2] = nonPin('Outside');
+assert.equal(lvl(tr.computeTraits(at([o1, o2]), byId, cfg), 'Outside'), 1, 'two Outsides open Outside');
+assert.equal(lvl(tr.computeTraits(at([o1, o1]), byId, cfg), 'Outside'), 0, 'two copies of one player count once');
+const util = a.filter(u => u.role === 'Utility');
+const m1 = nonPin('Middle')[0];
+const wc = tr.computeTraits(at([m1, util[0]]), byId, cfg);
+assert.equal(wc.filled[501], 'Middle', 'Utility fills the role one short of a breakpoint');
+assert.equal(lvl(wc, 'Middle'), 1, 'wild card opens Middle');
+assert.equal(tr.abilityOf(util[0], 'Middle', cfg), cfg.styles[cfg.roles.Middle.styles[0]].ability, 'Utility borrows the filled role ability');
+assert.equal(tr.computeTraits(at([util[0]]), byId, cfg).filled[500], null, 'a lone Utility fills nothing and keeps Tip');
+const pin = a.find(u => u.style === 'Pin' && u.role === 'Outside');
+const op1 = nonPin('Opposite')[0];
+assert.equal(tr.computeTraits(at([op1, pin]), byId, cfg).filled[501], 'Opposite', 'Pin swings to Opposite when that opens a breakpoint');
+assert.equal(tr.computeTraits(at([pin]), byId, cfg).filled[500], 'Outside', 'Pin with no breakpoint in reach stays in its own role');
+const six = tr.computeTraits(at(util.slice(0, 6)), byId, cfg);
+assert.equal(lvl(six, 'No Specialization'), 3, 'six Utility units reach No Specialization 6');
+// Bonuses land in combat: Outside 2 raises team attack; six Utility cast twice.
+const fight = (court) => simulate({ seed: 'traits', near: court, far: one, unitsById: byId, cfg }).byUid;
+const withTrait = fight(at([o1, o2]))[500], base1 = byId[o1.id].base;
+assert.ok(Math.abs(withTrait.attack - base1.attack * (1 + cfg.traits.Outside.values[0])) < 1e-9, 'Outside 2 gives +10% attack');
+assert.equal(fight(at([o1]))[500].attack, base1.attack, 'no trait, no bonus');
+assert.ok(Object.values(fight(at(util.slice(0, 6)))).filter(f => f.side === 'near').every(f => f.doubleCast), 'all-Utility court casts twice');
+const twice = simulate({ seed: 'traits', near: at(util.slice(0, 6)), far: sixFar, unitsById: byId, cfg }).events;
+const castIdx = twice.findIndex(e => e.t === 'cast' && e.uid >= 500 && e.uid < 600);
+assert.ok(castIdx >= 0 && twice.slice(castIdx + 1).find(e => e.t === 'cast' || e.t === 'action')?.t === 'cast', 'double cast emits two casts in a row');
+
 console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok, combat ok (mirror ${(share * 100).toFixed(0)}% near, ${r1.actions} actions)`);
