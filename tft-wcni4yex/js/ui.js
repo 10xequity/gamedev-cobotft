@@ -9,6 +9,7 @@ import { play, isMuted, setMuted } from './sound.js';
 import * as history from './history.js';
 import * as ladder from './ladder.js';
 import * as achievements from './achievements.js';
+import * as guide from './guide.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
@@ -89,6 +90,13 @@ export class UI {
     this.say(`Replay of ${r.label} finished`);
   }
 
+  renderTip() {
+    const state = guide.load(), tip = this.fighting ? null : guide.next(this.g, state);
+    $('tip').hidden = !tip;
+    if (tip && $('tip').dataset.id !== tip.id) { $('tip').dataset.id = tip.id; $('tipText').textContent = tip.text; }
+    $('tipsOn').checked = !state.off;
+  }
+
   renderFights() {
     const fs = this.g.fights || [];
     $('fights').hidden = !fs.length;
@@ -128,6 +136,7 @@ export class UI {
     this.renderPlayers();
     this.renderDamage();
     this.renderFights();
+    this.renderTip();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
@@ -454,6 +463,9 @@ export class UI {
     $('historyBtn').addEventListener('click', () => this.showHistory());
     $('settingsBtn').addEventListener('click', () => $('settings').showModal());
     $('setClose').addEventListener('click', () => $('settings').close());
+    $('tipOk').addEventListener('click', () => { const s = guide.load(); s.done.push($('tip').dataset.id); guide.save(s); this.renderTip(); });
+    $('tipOff').addEventListener('click', () => { const s = guide.load(); s.off = true; guide.save(s); this.renderTip(); this.say('Tips hidden. Turn them back on in Settings.'); });
+    $('tipsOn').addEventListener('change', () => { const s = guide.load(); s.off = !$('tipsOn').checked; if (!s.off) s.done = []; guide.save(s); this.renderTip(); });
     $('speedPref').addEventListener('change', () => { setPref('speed', $('speedPref').value); this.playback.speed = Number($('speedPref').value); this.say(`Fights play at ${$('speedPref').value}x`); });
     $('motion').addEventListener('change', () => { setPref('motion', $('motion').value); applyPrefs(); this.say($('motion').value === 'reduce' ? 'Motion reduced' : 'Motion follows this device'); });
     $('textSize').addEventListener('change', () => { setPref('textSize', $('textSize').value); applyPrefs(); this.say('Text size changed'); this.render(); });

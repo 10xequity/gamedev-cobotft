@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v2.9.0 — 2026-10-29 · Milestone 29: guided first game
+
+- `js/guide.js`: six tips, each shown once when its moment comes: place your first player, buy and merge, buy
+  XP to level up, traits, "from 2-1 every round is a fight", and replays plus unit cards. One at a time, as a
+  gold row in the header (it stays in view while you scroll), read out to screen readers.
+- "Got it" moves on; "Hide tips" turns them off; Settings → Tips turns them back on from the start.
+- Augments and the carousel have no tip: their panels already explain them.
+- Tests: a new game starts on the "place" tip, then "shop"; hidden tips stay hidden; each shows once.
+
 ## v2.8.0 — 2026-10-29 · Milestone 28: hit effects
 
 - Every hit bursts a spark on the target (ability hits a bigger gold one); a hit worth more than a quarter of the

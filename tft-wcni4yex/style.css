@@ -205,3 +205,8 @@ html[data-motion="reduce"] .hop { animation: none !important; }
 @keyframes kopop { 0% { transform: translateX(-50%) scale(.4); opacity: 0; } 20% { transform: translateX(-50%) scale(1.15); opacity: 1; } 75% { opacity: 1; } 100% { transform: translateX(-50%) translateY(-10px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .spark, .ko { display: none; } }
 html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: none; }
+/* ---- guided tips ---- */
+.tip { flex-basis: 100%; margin: 0 -12px -8px; padding: 8px 12px; background: var(--gold); color: var(--black); font-weight: 600; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; border-bottom: 2px solid var(--black); }
+.tip span { flex: 1 1 220px; }
+.tip button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }
+.tip #tipOff { background: transparent; color: var(--black); }

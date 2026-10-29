@@ -403,6 +403,16 @@ assert.equal(got.includes('win'), fin.you.place === 1, 'Champion only for 1st');
 assert.deepEqual(ach.earned(ctx, Object.fromEntries(got.map(id => [id, 'x']))), [], 'earned achievements are not earned again');
 assert.ok(typeof fin.you.bestStreak === 'number' && typeof fin.you.lowHp === 'number' && fin.you.mostGold > 0, 'the game tracks streak, lowest HP and most gold');
 
+// Guided tips: the first game starts with "place"; each tip shows once; hidden tips stay hidden.
+const guideMod = await import(pathToFileURL(join(GAME, 'js', 'guide.js')).href);
+const tg2 = new Game(cfg, roster, manifest.looks.length); tg2.newGame('guide');
+assert.equal(guideMod.next(tg2, { done: [], off: false })?.id, 'place', 'first tip: place a player');
+const starterUid = tg2.you.bench.find(Boolean).uid;
+tg2.move(starterUid, 'court', 3);
+assert.equal(guideMod.next(tg2, { done: ['place'], off: false })?.id, 'shop', 'then: the shop');
+assert.equal(guideMod.next(tg2, { done: [], off: true }), null, 'tips off shows nothing');
+assert.equal(guideMod.next(tg2, { done: guideMod.TIPS.map(t => t.id), off: false }), null, 'every tip shows once');
+
 // Stage art: every name the seed can pick has a drawn theme that builds a well-formed image;
 // club colours exist for every level.
 const { THEMES, stageSVG } = await import(pathToFileURL(join(GAME, 'js', 'stage.js')).href);
