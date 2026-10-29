@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v2.7.0 — 2026-10-29 · Milestone 27: achievements
+
+- `js/achievements.js`: 17 achievements kept on this device, checked when a game ends: Opening Serve, Top Half,
+  Champion, Giant Killer (win on Hard), Daily Grind, Three Stars, Full Rotation, Maxed Out (a trait at its top
+  breakpoint), Well Rounded (six traits), No Specialization (six Utility), On a Run (five wins in a row),
+  Comeback (top 4 after 5 HP or less), Booster Fund (50 gold), Varsity (level 9), Fully Boosted (three
+  augments), Season Ticket (10 games), Gold Medal (Gold rank).
+- The game-over panel names any new ones; History lists all 17 with earned ones highlighted (and the date, for
+  screen readers).
+- Each game now tracks your best win streak, lowest HP and most gold for these.
+- Tests: ids unique; every test runs on a real finished game; earned ones never repeat.
+
 ## v2.6.0 — 2026-10-29 · Milestone 26: local ladder
 
 - `js/ladder.js`: a rating on this device, starting at 1000, that moves with each finished game: 1st +40, 2nd

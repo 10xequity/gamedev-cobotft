@@ -8,6 +8,7 @@ import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
 import * as history from './history.js';
 import * as ladder from './ladder.js';
+import * as achievements from './achievements.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
@@ -158,6 +159,10 @@ export class UI {
     $('histUnits').replaceChildren(...stats.slice(0, 10).map(s => el('tr', {},
       el('th', { scope: 'row', textContent: s.name }), el('td', { textContent: s.games }), el('td', { textContent: s.avgPlace.toFixed(1) }), el('td', { textContent: s.wins }))));
     $('histUnitsWrap').hidden = !stats.length;
+    const have = achievements.load();
+    $('achTitle').textContent = `Achievements ${Object.keys(have).length} / ${achievements.LIST.length}`;
+    $('achList').replaceChildren(...achievements.LIST.map(a => el('li', { className: have[a.id] ? 'got' : '' },
+      el('b', { textContent: a.name }), ` ${a.desc}`, el('span', { className: 'vh', textContent: have[a.id] ? ` Earned ${have[a.id]}.` : ' Not earned yet.' }))));
     $('histDownload').disabled = $('histClear').disabled = !recs.length;
     $('history').showModal();
   }
@@ -279,6 +284,8 @@ export class UI {
       const sign = lad.delta >= 0 ? '+' : '';
       const moved = lad.rank === lad.prevRank ? '' : `, ${lad.delta >= 0 ? 'up' : 'down'} from ${lad.prevRank}`;
       $('overText').textContent += ` Rating ${sign}${lad.delta} to ${lad.rating} (${lad.rank}${moved}).`;
+      const fresh = achievements.record({ g, records: history.load(), rating: lad.rating });
+      $('overAch').textContent = fresh.length ? `New achievement${fresh.length > 1 ? 's' : ''}: ${fresh.map(a => a.name).join(', ')}` : '';
       $('over').showModal();
       play(g.you.place === 1 ? 'win' : 'lose');
       this.say(`Game over. You finished ${ordinal(g.you.place)}.`);

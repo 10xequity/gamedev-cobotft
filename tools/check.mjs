@@ -392,6 +392,17 @@ assert.deepEqual([s1.rating, s1.games, s1.peak, s1.prevRank], [cfg.ladder.start 
 assert.equal(lad.apply({ rating: 10, games: 3, peak: 900 }, 8, 'easy', cfg).rating, 0, 'rating floors at 0');
 for (let i = 1; i < cfg.ladder.ranks.length; i++) assert.ok(cfg.ladder.ranks[i][1] > cfg.ladder.ranks[i - 1][1], 'rank thresholds rise');
 
+// Achievements: ids unique; every test runs on a real finished game; earned ones never repeat; key ones fire.
+const ach = await import(pathToFileURL(join(GAME, 'js', 'achievements.js')).href);
+assert.equal(new Set(ach.LIST.map(a => a.id)).size, ach.LIST.length, 'achievement ids are unique');
+const { g: fin } = playGame('achievements');
+const ctx = { g: fin, records: Array(10).fill({}), rating: 2000 };
+const got = ach.earned(ctx, {});
+assert.ok(got.includes('first-game') && got.includes('ten-games') && got.includes('gold-rank'), 'basic achievements fire');
+assert.equal(got.includes('win'), fin.you.place === 1, 'Champion only for 1st');
+assert.deepEqual(ach.earned(ctx, Object.fromEntries(got.map(id => [id, 'x']))), [], 'earned achievements are not earned again');
+assert.ok(typeof fin.you.bestStreak === 'number' && typeof fin.you.lowHp === 'number' && fin.you.mostGold > 0, 'the game tracks streak, lowest HP and most gold');
+
 // Stage art: every name the seed can pick has a drawn theme that builds a well-formed image;
 // club colours exist for every level.
 const { THEMES, stageSVG } = await import(pathToFileURL(join(GAME, 'js', 'stage.js')).href);

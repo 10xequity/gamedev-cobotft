@@ -162,7 +162,7 @@ export class Game {
     }
     this.eliminate(living);
     const income = p => eco.incomeFor(p, info, cfg) + this.augSum(p, 'goldPerRound');
-    for (const p of this.living) p.gold += income(p);
+    for (const p of this.living) { p.gold += income(p); p.mostGold = Math.max(p.mostGold || 0, p.gold); }
     this.roundIdx += 1;
     for (const p of this.living) eco.addXp(p, eco.autoXpFor(this.round, cfg), cfg);
     this.last.income = this.you.place === null ? income(this.you) : 0;
@@ -182,6 +182,8 @@ export class Game {
   result(p, outcome, loss) {
     p.hp -= loss;
     p.streak = outcome > 0 ? Math.max(p.streak, 0) + 1 : outcome < 0 ? Math.min(p.streak, 0) - 1 : 0;
+    p.bestStreak = Math.max(p.bestStreak || 0, p.streak); // for achievements
+    p.lowHp = Math.min(p.lowHp ?? p.hp, p.hp);
   }
 
   // Seeded shuffle, retried so nobody meets last round's opponent when it can be avoided.

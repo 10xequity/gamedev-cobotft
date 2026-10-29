@@ -11,28 +11,29 @@
   <link rel="manifest" href="app.webmanifest">
   <link rel="icon" href="assets/icons/icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=2.6.0">
+  <link rel="stylesheet" href="style.css?v=2.7.0">
   <script type="importmap">
   {
     "imports": {
-      "./js/arena.js": "./js/arena.js?v=2.6.0",
-      "./js/bots.js": "./js/bots.js?v=2.6.0",
-      "./js/combat.js": "./js/combat.js?v=2.6.0",
-      "./js/economy.js": "./js/economy.js?v=2.6.0",
-      "./js/gallery.js": "./js/gallery.js?v=2.6.0",
-      "./js/game.js": "./js/game.js?v=2.6.0",
-      "./js/hex.js": "./js/hex.js?v=2.6.0",
-      "./js/history.js": "./js/history.js?v=2.6.0",
-      "./js/ladder.js": "./js/ladder.js?v=2.6.0",
-      "./js/main.js": "./js/main.js?v=2.6.0",
-      "./js/playback.js": "./js/playback.js?v=2.6.0",
-      "./js/rng.js": "./js/rng.js?v=2.6.0",
-      "./js/sound.js": "./js/sound.js?v=2.6.0",
-      "./js/sprite.js": "./js/sprite.js?v=2.6.0",
-      "./js/stage.js": "./js/stage.js?v=2.6.0",
-      "./js/traits.js": "./js/traits.js?v=2.6.0",
-      "./js/ui.js": "./js/ui.js?v=2.6.0",
-      "./js/units.js": "./js/units.js?v=2.6.0"
+      "./js/achievements.js": "./js/achievements.js?v=2.7.0",
+      "./js/arena.js": "./js/arena.js?v=2.7.0",
+      "./js/bots.js": "./js/bots.js?v=2.7.0",
+      "./js/combat.js": "./js/combat.js?v=2.7.0",
+      "./js/economy.js": "./js/economy.js?v=2.7.0",
+      "./js/gallery.js": "./js/gallery.js?v=2.7.0",
+      "./js/game.js": "./js/game.js?v=2.7.0",
+      "./js/hex.js": "./js/hex.js?v=2.7.0",
+      "./js/history.js": "./js/history.js?v=2.7.0",
+      "./js/ladder.js": "./js/ladder.js?v=2.7.0",
+      "./js/main.js": "./js/main.js?v=2.7.0",
+      "./js/playback.js": "./js/playback.js?v=2.7.0",
+      "./js/rng.js": "./js/rng.js?v=2.7.0",
+      "./js/sound.js": "./js/sound.js?v=2.7.0",
+      "./js/sprite.js": "./js/sprite.js?v=2.7.0",
+      "./js/stage.js": "./js/stage.js?v=2.7.0",
+      "./js/traits.js": "./js/traits.js?v=2.7.0",
+      "./js/ui.js": "./js/ui.js?v=2.7.0",
+      "./js/units.js": "./js/units.js?v=2.7.0"
     }
   }
   </script>
@@ -139,6 +140,8 @@
       <h3>Players on your final boards</h3>
       <table class="histunits"><thead><tr><th scope="col">Player</th><th scope="col">Games</th><th scope="col">Avg place</th><th scope="col">Wins</th></tr></thead><tbody id="histUnits"></tbody></table>
     </div>
+    <h3 id="achTitle">Achievements</h3>
+    <ul class="achs" id="achList"></ul>
     <p class="note">Kept on this device only. The feedback file holds these game facts and nothing else.</p>
     <div class="histbtns"><button type="button" id="histDownload">Download feedback file</button><button type="button" id="histClear">Clear history</button></div>
   </dialog>
@@ -170,12 +173,13 @@
   <dialog id="over" aria-labelledby="overTitle">
     <h2 id="overTitle">Game over</h2>
     <p id="overText"></p>
+    <p class="rank" id="overAch"></p>
     <ol class="players" id="finalPlaces"></ol>
     <div class="histbtns">
       <button type="button" id="again">Free play</button>
       <button type="button" id="againDaily">Today's challenge</button>
     </div>
   </dialog>
-  <script type="module" src="js/main.js?v=2.6.0"></script>
+  <script type="module" src="js/main.js?v=2.7.0"></script>
 </body>
 </html>
