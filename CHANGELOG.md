@@ -2,6 +2,11 @@
 
 Player names never appear in this file.
 
+## v2.14.0 — 2026-10-29 · Milestone 34: sprite clean-up
+
+- Erased six stray thin floor-line fragments left under feet in sheets 02, 07, 22 and 23; figure boxes
+  recomputed. No gameplay or data change.
+
 ## v2.13.0 — 2026-10-29 · Milestone 33: role poses, kit colours, figure cut-outs, smoother drag
 
 - Shop, bench and carousel cards show each role in its own pose: Outsides and Pins spike, Opposites spike
