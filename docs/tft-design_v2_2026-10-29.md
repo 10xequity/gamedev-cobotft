@@ -203,7 +203,7 @@ Second ten, approved 2026-10-29. All offline: no accounts, no chat, no network a
 14. Carousel: a shared draft at each stage start, lowest HP picks first. ✔ v1.4.0 (stages 3-7; 2-1 has the augment)
 15. Scouting: view any player's board while planning; damage chart after each fight. ✔ v1.5.0
 16. Sound: synthesized effects (no audio files), mute switch. ✔ v1.6.0
-17. Unit card (hold, or press I) and a short how-to-play overlay.
+17. Unit card (hold, or press I) and a short how-to-play overlay. ✔ v1.7.0
 18. Stage art picked by seed; jersey colour by club level.
 19. Local game history and per-unit stats; download a feedback file.
 20. Works offline and installs on phones; accessibility and speed audit.

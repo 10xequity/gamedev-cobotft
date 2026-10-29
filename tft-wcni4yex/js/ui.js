@@ -3,13 +3,14 @@ import { spriteStyle } from './sprite.js';
 import { Arena } from './arena.js';
 import * as eco from './economy.js';
 import { computeTraits } from './traits.js';
-import { keywordsAt } from './units.js';
+import { keywordsAt, statsAt } from './units.js';
 import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
 export const DIFF_KEY = 'tacticalboom.difficulty';
+export const HELP_KEY = 'tacticalboom.seenHelp';
 const ordinal = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th'); // places run 1-8 only
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
@@ -113,6 +114,7 @@ export class UI {
         el('span', { className: 'tr', textContent: u.style }),
         el('span', { className: 'tr', textContent: by !== null ? `Taken: ${g.players[by].name}` : `${u.tier}-cost` }));
       b.style.setProperty('--ring', g.cfg.tierRing[String(u.tier)]);
+      b.dataset.id = id;
       b.setAttribute('aria-label', by !== null ? `${u.display}, taken by ${g.players[by].name}` : `Take ${u.display}, ${u.tier}-cost ${u.style}`);
       b.addEventListener('click', () => {
         const r = g.chooseCarousel(k);
@@ -251,7 +253,8 @@ export class UI {
     if (!id) { b.disabled = true; b.setAttribute('aria-label', 'Sold'); b.textContent = 'Sold'; return b; }
     const u = this.g.unitsById[id];
     b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
-    b.disabled = this.g.you.gold < u.tier;
+    b.dataset.id = id;
+    if (this.g.you.gold < u.tier) b.setAttribute('aria-disabled', 'true'); // still focusable, so its card can be read
     b.setAttribute('aria-label', `Buy ${u.display} for ${u.tier} gold, ${u.style}, ${u.team.level}, ${u.archetype}`);
     b.append(
       el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 84) }),
@@ -261,6 +264,7 @@ export class UI {
       el('span', { className: 'cost', textContent: `${u.tier}g` }),
     );
     b.addEventListener('click', () => {
+      if (this.suppressClick) { this.suppressClick = false; return; }
       const stars = eco.owned(this.g.you).reduce((a, i) => a + i.star, 0);
       const r = this.g.buy(k);
       if (r.ok) play(eco.owned(this.g.you).reduce((a, i) => a + i.star, 0) <= stars ? 'merge' : 'buy');
@@ -268,6 +272,41 @@ export class UI {
       this.render();
     });
     return b;
+  }
+
+  // ---- unit card: hold a unit for half a second, or focus it and press I ----
+  showUnitFrom(t) {
+    if (t.dataset.id) return this.showUnit(t.dataset.id, 1);
+    const uid = Number(t.dataset.uid);
+    const inst = this.g.players.flatMap(p => eco.owned(p)).find(i => i.uid === uid) ||
+      [...(this.lastFight?.near || []), ...(this.lastFight?.far || [])].find(i => i && i.uid === uid);
+    if (inst) this.showUnit(inst.id, inst.star);
+  }
+  showUnit(id, star) {
+    const g = this.g, cfg = g.cfg, u = g.unitsById[id], s = statsAt(u, star, cfg);
+    const kws = Object.entries(keywordsAt(u, star, cfg));
+    $('unitName').textContent = `${u.display} ${'★'.repeat(star)}`;
+    $('unitSprite').style.cssText = spriteStyle(u.look, 'idle', 0, 150);
+    const ability = cfg.abilities[u.ability];
+    const rows = [
+      ['Team', u.team.title], ['Cost', `${u.tier} gold`], ['Game role', `${u.role} (${u.style})`],
+      ...kws.map(([k, m]) => [m > 1 ? `Keyword x${m}` : 'Keyword', `${k}: ${cfg.keywords[k].desc}`]),
+      ['Ability', `${u.ability}: ${ability.desc}`],
+      ['Traits', `${u.role === 'Utility' ? 'No Specialization (wild card)' : u.style === 'Pin' ? 'Outside or Opposite (wild card)' : u.role}, ${u.team.level}, ${u.archetype}`],
+      ['Stats', `HP ${s.hp} · attack ${s.attack} · armor ${s.armor} · mana ${s.mana} · speed ${s.speed}${s.dodge ? ` · dodge ${Math.round(s.dodge * 100)}%` : ''}`],
+    ];
+    $('unitFacts').replaceChildren(...rows.flatMap(([k, v]) => [el('dt', { textContent: k }), el('dd', { textContent: v })]));
+    $('unitcard').showModal();
+  }
+  // Long press: a held pointer that does not move opens the card instead of a tap or drag.
+  holdForCard(e) {
+    const t = e.target.closest('[data-uid], [data-id]');
+    if (!t || e.button > 0) return;
+    const start = [e.clientX, e.clientY];
+    const timer = setTimeout(() => { cancel(); this.suppressClick = true; this.showUnitFrom(t); }, 500);
+    const move = ev => { if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) > 6) cancel(); };
+    const cancel = () => { clearTimeout(timer); document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', cancel); document.removeEventListener('pointercancel', cancel); };
+    document.addEventListener('pointermove', move); document.addEventListener('pointerup', cancel); document.addEventListener('pointercancel', cancel);
   }
 
   tapSlot(inst, where, k) {
@@ -336,6 +375,11 @@ export class UI {
     $('xp').addEventListener('click', () => { const lv = this.g.you.level; const r = this.g.buyXp(); if (r.ok) play(this.g.you.level > lv ? 'level' : 'buy'); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
     $('next').addEventListener('click', () => this.runRound());
     $('skip').addEventListener('click', () => this.playback.skip());
+    document.addEventListener('pointerdown', e => this.holdForCard(e));
+    document.addEventListener('contextmenu', e => { if (e.target.closest('[data-uid], [data-id]')) e.preventDefault(); }); // phones open a menu on long press
+    $('unitClose').addEventListener('click', () => $('unitcard').close());
+    $('helpBtn').addEventListener('click', () => $('help').showModal());
+    $('helpClose').addEventListener('click', () => $('help').close());
     const showMute = () => { $('mute').setAttribute('aria-pressed', String(isMuted())); $('mute').textContent = isMuted() ? 'Sound off' : 'Sound on'; };
     showMute();
     $('mute').addEventListener('click', () => { setMuted(!isMuted()); showMute(); play('pick'); this.say(isMuted() ? 'Sound off' : 'Sound on'); });
@@ -369,6 +413,7 @@ export class UI {
     document.addEventListener('keydown', e => {
       if (e.target.matches?.('input, select, textarea')) return;
       if (this.fighting) { if (e.key === 'Escape') { e.preventDefault(); this.playback.skip(); } return; }
+      if (e.key.toLowerCase() === 'i') { const t = document.activeElement?.closest('[data-uid], [data-id]'); if (t) { e.preventDefault(); this.showUnitFrom(t); } return; }
       const map = { s: 'sell', r: 'reroll', x: 'xp', n: 'next' };
       if (map[e.key.toLowerCase()]) { e.preventDefault(); $(map[e.key.toLowerCase()]).click(); }
       if (e.key === 'Escape' && this.selected !== null) { this.selected = null; this.say('Put down'); this.render(); }

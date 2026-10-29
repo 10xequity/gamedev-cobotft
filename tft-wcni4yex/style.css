@@ -156,3 +156,8 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 .dmglist .bar i { display: block; height: 100%; background: var(--gold); }
 .dmglist li.them .bar i { background: var(--cream); }
 .dmglist .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+/* ---- unit card and how to play ---- */
+.shopcard[aria-disabled="true"] { background: var(--teal-light); border-style: dashed; }
+#unitcard .stage .spr { background-repeat: no-repeat; }
+.help { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; }
+.bar #helpBtn { min-width: 32px; font-weight: 800; }

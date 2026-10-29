@@ -8,25 +8,25 @@
   <title>Tactical Boom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1.6.0">
+  <link rel="stylesheet" href="style.css?v=1.7.0">
   <script type="importmap">
   {
     "imports": {
-      "./js/arena.js": "./js/arena.js?v=1.6.0",
-      "./js/bots.js": "./js/bots.js?v=1.6.0",
-      "./js/combat.js": "./js/combat.js?v=1.6.0",
-      "./js/economy.js": "./js/economy.js?v=1.6.0",
-      "./js/gallery.js": "./js/gallery.js?v=1.6.0",
-      "./js/game.js": "./js/game.js?v=1.6.0",
-      "./js/hex.js": "./js/hex.js?v=1.6.0",
-      "./js/main.js": "./js/main.js?v=1.6.0",
-      "./js/playback.js": "./js/playback.js?v=1.6.0",
-      "./js/rng.js": "./js/rng.js?v=1.6.0",
-      "./js/sound.js": "./js/sound.js?v=1.6.0",
-      "./js/sprite.js": "./js/sprite.js?v=1.6.0",
-      "./js/traits.js": "./js/traits.js?v=1.6.0",
-      "./js/ui.js": "./js/ui.js?v=1.6.0",
-      "./js/units.js": "./js/units.js?v=1.6.0"
+      "./js/arena.js": "./js/arena.js?v=1.7.0",
+      "./js/bots.js": "./js/bots.js?v=1.7.0",
+      "./js/combat.js": "./js/combat.js?v=1.7.0",
+      "./js/economy.js": "./js/economy.js?v=1.7.0",
+      "./js/gallery.js": "./js/gallery.js?v=1.7.0",
+      "./js/game.js": "./js/game.js?v=1.7.0",
+      "./js/hex.js": "./js/hex.js?v=1.7.0",
+      "./js/main.js": "./js/main.js?v=1.7.0",
+      "./js/playback.js": "./js/playback.js?v=1.7.0",
+      "./js/rng.js": "./js/rng.js?v=1.7.0",
+      "./js/sound.js": "./js/sound.js?v=1.7.0",
+      "./js/sprite.js": "./js/sprite.js?v=1.7.0",
+      "./js/traits.js": "./js/traits.js?v=1.7.0",
+      "./js/ui.js": "./js/ui.js?v=1.7.0",
+      "./js/units.js": "./js/units.js?v=1.7.0"
     }
   }
   </script>
@@ -43,6 +43,7 @@
     <label class="auto"><input type="checkbox" id="auto" checked> Auto-advance</label>
     <label class="auto">Bots <select id="difficulty" aria-describedby="diffNote"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select></label>
     <span class="vh" id="diffNote">Applies from the next new game</span>
+    <button type="button" id="helpBtn" class="ghost" aria-label="How to play">?</button>
     <button type="button" id="newgame" class="ghost">New game</button>
   </header>
 
@@ -87,6 +88,27 @@
     <button type="button" id="xp">Buy XP <small>4g · X</small></button>
     <button type="button" id="next" class="primary">Next round <small>N</small></button>
   </nav>
+  <dialog id="unitcard" aria-labelledby="unitName">
+    <button type="button" class="close" id="unitClose">Close</button>
+    <h2 id="unitName"></h2>
+    <div class="stage"><span class="spr" id="unitSprite"></span></div>
+    <dl id="unitFacts"></dl>
+  </dialog>
+  <dialog id="help" aria-labelledby="helpTitle">
+    <button type="button" class="close" id="helpClose">Close</button>
+    <h2 id="helpTitle">How to play</h2>
+    <ul class="help">
+      <li><b>Goal:</b> be the last of eight teams standing. Lose a fight and you lose HP; at 0 you are out.</li>
+      <li><b>Build:</b> buy players in the Shop with gold, then tap a player and a hex to put her on your court. Your level sets how many can play.</li>
+      <li><b>Upgrade:</b> three copies of a player merge into a 2-star; three 2-stars make a 3-star.</li>
+      <li><b>Traits:</b> players share game roles, club levels and archetypes. Field enough of one and its bonus switches on (see Traits). Pin and Utility players are wild cards.</li>
+      <li><b>Fights</b> play themselves, rally style. Front-row Liberos and Middles take the hits; hitters score.</li>
+      <li><b>Gold:</b> income every round, more on a win or loss streak. Reroll the shop for 1, buy XP for 4.</li>
+      <li><b>Extras:</b> pick an augment at 2-1, 3-2 and 4-2; take a free player from the carousel at the start of stages 3 to 7.</li>
+      <li><b>Look closer:</b> hold a player (or press I) for her card; tap a team in Players to scout their board.</li>
+      <li><b>Keys:</b> R reroll, X buy XP, S sell, N next round, Escape skips a fight, arrow keys move around the court.</li>
+    </ul>
+  </dialog>
   <dialog id="carousel" aria-labelledby="carTitle">
     <h2 id="carTitle">Carousel</h2>
     <p>Lowest HP picks first. Take one player for free; if time runs out you get the first open one.</p>
@@ -103,6 +125,6 @@
     <ol class="players" id="finalPlaces"></ol>
     <button type="button" id="again" class="primary">New game</button>
   </dialog>
-  <script type="module" src="js/main.js?v=1.6.0"></script>
+  <script type="module" src="js/main.js?v=1.7.0"></script>
 </body>
 </html>

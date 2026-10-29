@@ -2,6 +2,16 @@
 
 Player names never appear in this file.
 
+## v1.7.0 — 2026-10-29 · Milestone 17: unit card, how to play
+
+- Unit card: hold any player (court, bench, shop, carousel) for half a second, or focus her and press I. It
+  shows team, cost, game role and style, keywords at her star level with their descriptions, ability, the
+  traits she counts toward (wild cards marked), and her stats at that star. Holding never also picks her up.
+- Shop cards you cannot afford stay focusable (marked unavailable instead of disabled) so their card can be
+  read; buying them still says "Not enough gold".
+- How to play: a short guide, opened once on a device's first visit and any time from the "?" button.
+- Long press no longer opens the phone's own context menu over a player.
+
 ## v1.6.0 — 2026-10-29 · Milestone 16: sound
 
 - `js/sound.js`: short synthesized tones (Web Audio oscillators), no audio files and no downloads. Buy, merge
