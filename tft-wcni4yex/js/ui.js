@@ -65,18 +65,18 @@ export class UI {
     this.scout = null;
     const r = this.g.nextRound();
     this.lastFight = r.events ? r : null;
-    if (r.events) await this.playFight(r, 'fight against');
+    if (r.events) await this.playFight(r, `${r.label}: fight against ${r.opponent}${r.ghost ? ' (a copy)' : ''}.`);
     this.render();
     this.afterRound(r);
     this.resetTimer();
   }
 
-  async playFight(r, what) {
+  async playFight(r, sentence) {
     this.setFighting(true);
     $('speed').textContent = this.playback.speed === 2 ? '1x' : '2x'; $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));
     const mineNear = r.side === 'near';
     this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
-    this.say(`${r.label}: ${what} ${r.opponent}${r.ghost ? ' (a copy)' : ''}. Escape skips.`);
+    this.say(`${sentence} Escape skips.`);
     await this.playback.play(r.events, r.maxHp, r.side);
     this.setFighting(false);
   }
@@ -85,7 +85,7 @@ export class UI {
     if (this.fighting) return;
     const r = this.g.replay(i);
     this.lastFight = r;
-    await this.playFight(r, 'replay of your fight against');
+    await this.playFight(r, `${r.label}: replay of your fight against ${r.opponent}.`);
     this.render();
     this.say(`Replay of ${r.label} finished`);
   }
@@ -97,9 +97,27 @@ export class UI {
     $('tipsOn').checked = !state.off;
   }
 
+  async watch(i) {
+    if (this.fighting) return;
+    const r = this.g.replayLobby(i);
+    this.lastFight = r;
+    await this.playFight(r, `${r.label}: ${r.teamA} against ${r.opponent}${r.ghost ? ' (a copy)' : ''}.`);
+    this.render();
+    this.say(`${r.teamA} against ${r.opponent} finished`);
+  }
+
   renderFights() {
     const fs = this.g.fights || [];
-    $('fights').hidden = !fs.length;
+    const lobby = this.g.lobby || [];
+    $('fights').hidden = !fs.length && !lobby.length;
+    $('lobbyWrap').hidden = !lobby.length;
+    $('lobbyList').replaceChildren(...lobby.map((f, i) => {
+      const winner = f.won === true ? f.teamA : f.won === false ? f.opponent : null;
+      const b = el('button', { type: 'button', textContent: `${f.teamA} vs ${f.opponent}${f.ghost ? ' (copy)' : ''}: ${winner ? `${winner} won` : 'draw'}` });
+      b.setAttribute('aria-label', `Watch ${b.textContent}`);
+      b.addEventListener('click', () => this.watch(i));
+      return el('li', {}, b);
+    }));
     $('fightList').replaceChildren(...fs.map((f, i) => {
       const b = el('button', { type: 'button', textContent: `${f.label} vs ${f.opponent}: ${f.won === true ? 'won' : f.won === false ? `lost −${f.hpLoss}` : 'draw'}` });
       b.setAttribute('aria-label', `Replay ${b.textContent}`);
@@ -111,7 +129,7 @@ export class UI {
   setFighting(on) {
     this.fighting = on;
     $('fightbar').hidden = !on; $('courtHint').hidden = on;
-    for (const b of document.querySelectorAll('.actions button, #shop button, #bench button, #fightList button')) b.disabled = on;
+    for (const b of document.querySelectorAll('.actions button, #shop button, #bench button, #fightList button, #lobbyList button')) b.disabled = on;
     if (on) $('skip').focus();
     else $('next').disabled = false;
   }
@@ -272,9 +290,9 @@ export class UI {
     const side = (court, who) => court.filter(Boolean).map(i => ({ who, name: this.g.unitsById[i.id].display, n: dealt[i.uid] || 0 }));
     const rows = [...side(mineNear ? r.near : r.far, 'you'), ...side(mineNear ? r.far : r.near, 'them')].sort((a, b) => b.n - a.n);
     const max = Math.max(1, ...rows.map(x => x.n));
-    $('damageTitle').textContent = `Fight damage, ${r.label} vs ${r.opponent}`;
+    $('damageTitle').textContent = r.teamA ? `Fight damage, ${r.label}: ${r.teamA} vs ${r.opponent}` : `Fight damage, ${r.label} vs ${r.opponent}`;
     $('damageList').replaceChildren(...rows.map(x => el('li', { className: x.who },
-      el('span', { className: 'nm', textContent: `${x.name}${x.who === 'them' ? ` (${r.opponent})` : ''}` }),
+      el('span', { className: 'nm', textContent: `${x.name}${x.who === 'them' ? ` (${r.opponent})` : r.teamA ? ` (${r.teamA})` : ''}` }),
       el('span', { className: 'bar' }, el('i', { style: `width:${(100 * x.n / max).toFixed(1)}%` })),
       el('span', { className: 'n', textContent: x.n.toLocaleString() }))));
   }

@@ -437,6 +437,15 @@ for (let i = 0; i < 12 && !rg.over; i++) {
 assert.ok(originals.length >= 3 && rg.fights.length === originals.length, 'every fight of yours is kept for replay');
 rg.fights.forEach((f, i) => assert.equal(JSON.stringify(rg.replay(i).events), originals[i], `replay ${f.label} matches the original fight`));
 assert.ok(JSON.stringify(rg.fights).length < 40000, 'replay inputs stay small enough to save');
+// The latest round's other fights: every pairing without you, each one replayable.
+if (!rg.over) {
+  while (rg.round.practice) rg.nextRound();
+  const living = rg.living.length;
+  rg.nextRound();
+  assert.ok(rg.lobby.length >= Math.floor(living / 2) - 1, 'every pairing without you is kept');
+  assert.ok(rg.lobby.every(f => f.teamA !== 'You' && f.opponent !== 'You'), 'other fights exclude yours');
+  rg.lobby.forEach((f, i) => { const e = rg.replayLobby(i).events; assert.equal(e.at(-1).t, 'end'); assert.equal(e.at(-1).winner === 'near', f.won === true, `${f.teamA} vs ${f.opponent} replays to the same result`); });
+}
 
 // Health loss: stage damage plus one per two surviving enemy units.
 const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');

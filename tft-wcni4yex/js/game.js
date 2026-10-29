@@ -38,6 +38,7 @@ export class Game {
     this.last = null;
     this.carousel = null;
     this.fights = [];
+    this.lobby = [];
     this.startPlanning();
   }
 
@@ -143,6 +144,7 @@ export class Game {
     if (this.you.offer) this.chooseAugment(this.you, 0); // the planning time ran out: take the first
     if (this.carousel) this.chooseCarousel(this.carouselOpen[0]); // likewise for a waiting carousel pick
     this.last = { label: info.label, practice: info.practice, standings: null };
+    this.lobby = [];
     if (!info.practice) {
       for (const [a, b, ghost] of this.pairUp(living)) {
         const near = a.court.map(i => i && { ...i }), far = b.court.map(i => i && { ...i, uid: i.uid + FAR_UID }); // copies, so later merges never change a past fight
@@ -150,6 +152,7 @@ export class Game {
         const r = simulate({ seed: simSeed, near, far, unitsById: this.unitsById, cfg, augments: augs });
         const lossA = r.winner === 'far' ? this.hpLoss(info, r.survivors.far) : 0;
         const lossB = r.winner === 'near' ? this.hpLoss(info, r.survivors.near) : 0;
+        if (a !== this.you && b !== this.you) this.lobby.push({ label: info.label, teamA: a.name, opponent: b.name, ghost, side: 'near', won: r.winner === 'near' ? true : r.winner ? false : null, simSeed, near, far, augs });
         this.result(a, r.winner === 'near' ? 1 : r.winner === 'far' ? -1 : 0, lossA);
         if (!ghost) this.result(b, r.winner === 'far' ? 1 : r.winner === 'near' ? -1 : 0, lossB);
         for (const [me, them, side, loss] of [[a, b, 'near', lossA], [b, a, 'far', lossB]]) {
@@ -171,8 +174,10 @@ export class Game {
   }
 
   // Replays one of your fights from this game: same seed, same boards, same augments, so same events.
-  replay(i) {
-    const f = this.fights[i];
+  replay(i) { return this.rerun(this.fights[i]); }
+  // The latest round's fights between other teams (yours is in fights).
+  replayLobby(i) { return this.rerun(this.lobby[i]); }
+  rerun(f) {
     const r = simulate({ seed: f.simSeed, near: f.near, far: f.far, unitsById: this.unitsById, cfg: this.cfg, augments: f.augs });
     return { ...f, events: r.events, maxHp: Object.fromEntries(Object.values(r.byUid).map(x => [x.uid, x.maxHp])) };
   }
@@ -221,14 +226,14 @@ export class Game {
   // ---- persistence ----
   save() {
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, stage: this.stage, difficulty: this.difficulty, carousel: this.carousel, fights: this.fights, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, stage: this.stage, difficulty: this.difficulty, carousel: this.carousel, fights: this.fights, lobby: this.lobby, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
     } catch { /* private mode, full, or no storage: play on without saving */ }
   }
   load() {
     try {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!s || s.v !== SAVE_VERSION) return false;
-      Object.assign(this, { seed: s.seed, stage: s.stage || this.cfg.game.stageArt[0], difficulty: s.difficulty || 'normal', carousel: s.carousel || null, fights: s.fights || [], roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
+      Object.assign(this, { seed: s.seed, stage: s.stage || this.cfg.game.stageArt[0], difficulty: s.difficulty || 'normal', carousel: s.carousel || null, fights: s.fights || [], lobby: s.lobby || [], roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
       for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; } // saves from before augments
       return true;
     } catch { return false; }

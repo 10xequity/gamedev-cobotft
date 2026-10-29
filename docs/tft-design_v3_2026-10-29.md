@@ -226,6 +226,6 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 27. Achievements (local), shown in History. ✔ v2.7.0
 28. Hit sparks, screen shake, knockout effects (reduced-motion safe). ✔ v2.8.0
 29. Guided first game: step-by-step tips. ✔ v2.9.0
-30. Watch the other fights of each round.
+30. Watch the other fights of each round. ✔ v2.10.0
 31. Spanish language switch.
 32. Balance pass 3, now counting augments and carousel.

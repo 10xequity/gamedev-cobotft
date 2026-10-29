@@ -2,6 +2,14 @@
 
 Player names never appear in this file.
 
+## v2.10.0 — 2026-10-29 · Milestone 30: watch other fights
+
+- The Fights section now also lists the latest round's other fights ("Team Block vs Team Pancake: Team Block
+  won"). Tap one to watch it on the court with all the effects and its damage chart (both teams named).
+- Kept as inputs only (seed, boards, augments) for the latest round and saved with the game; they re-run
+  deterministically. Your own fights stay replayable for the whole game.
+- Tests: the other fights exclude yours and replay to the same winner.
+
 ## v2.9.0 — 2026-10-29 · Milestone 29: guided first game
 
 - `js/guide.js`: six tips, each shown once when its moment comes: place your first player, buy and merge, buy
