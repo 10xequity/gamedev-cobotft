@@ -79,7 +79,10 @@ console.log(`lines in the 50-55% band: ${inBand.length} (${inBand.join(', ') || 
 if (process.env.LEN === '0') process.exit(0);
 const { Game } = await import(pathToFileURL(join(GAME, 'js', 'game.js')).href);
 const bots = await import(pathToFileURL(join(GAME, 'js', 'bots.js')).href);
-const GAMES = 20, firstOut = [], lastRound = [], favWins = {};
+// LOBBY=n plays n games instead of 20 (the lobby report below needs a few hundred to settle).
+const GAMES = Number(process.env.LOBBY || 20), firstOut = [], lastRound = [], favWins = {};
+const placeBy = { role: {}, augment: {} }; // average finishing place, with augments and carousels in play
+const tally = (map, key, place) => { const s = map[key] ??= { n: 0, sum: 0 }; s.n += 1; s.sum += place; };
 for (let i = 0; i < GAMES; i++) {
   const g = new Game(cfg, roster, 25); g.newGame(`len-${i}`);
   g.you.pers = bots.personality(g.seed, 0, cfg);
@@ -96,7 +99,19 @@ for (let i = 0; i < GAMES; i++) {
   firstOut.push(first); lastRound.push(g.roundIdx - 1);
   const champ = g.players.find(p => p.place === 1);
   if (champ) favWins[champ.pers.favorite] = (favWins[champ.pers.favorite] || 0) + 1;
+  for (const p of g.players) {
+    if (p.place === null) continue;
+    tally(placeBy.role, p.pers.favorite, p.place);
+    for (const id of p.augments) tally(placeBy.augment, id, p.place);
+  }
 }
 const { roundInfo } = await import(pathToFileURL(join(GAME, 'js', 'economy.js')).href);
 const avgLabel = xs => { const m = Math.round(xs.reduce((a, b) => a + b, 0) / xs.length); return `${roundInfo(m, cfg).label} (round ${m})`; };
 console.log(`${GAMES} bot games: first player out ${avgLabel(firstOut)}, last fight ${avgLabel(lastRound)}; winners by favourite role ${JSON.stringify(favWins)}`);
+// Lobby report: average place (4.5 is fair; lower is stronger) by the bot's favourite role and by each augment taken.
+const avgRows = map => Object.entries(map).map(([k, s]) => [k, s.sum / s.n, s.n]).sort((a, b) => a[1] - b[1]);
+console.log('avg place by favourite role: ' + avgRows(placeBy.role).map(([k, a, n]) => `${k} ${a.toFixed(2)} (${n})`).join(', '));
+const augRows = avgRows(placeBy.augment);
+console.log('avg place by augment, strongest first: ' + augRows.map(([k, a, n]) => `${k} ${a.toFixed(2)} (${n})`).join(', '));
+const off = augRows.filter(([, a, n]) => n >= 15 && (a < 3.8 || a > 5.2)).map(([k, a]) => `${k} ${a.toFixed(2)}`);
+console.log(`augments outside 3.8-5.2: ${off.length ? off.join(', ') : 'none'}`);

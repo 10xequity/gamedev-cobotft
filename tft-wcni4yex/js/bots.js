@@ -94,8 +94,12 @@ export function arrange(p, unitsById, cfg, fav, traitAware = false) {
   while (picks.length < max && picks.length < all.length) {
     const seen = new Set(picks.map(i => i.id));
     const cands = all.filter(i => !picks.includes(i));
-    const fresh = cands.filter(i => !seen.has(i.id));
-    const pool = fresh.length ? fresh : cands; // duplicates only if short, so the bench never overflows
+    // Support roles (Setters set for hitters, Liberos soak hits) are capped so a team keeps its hitters.
+    const support = picks.filter(i => cfg.bots.supportRoles.includes(unitsById[i.id].role)).length;
+    const roomy = cands.filter(i => support < cfg.bots.maxSupport || !cfg.bots.supportRoles.includes(unitsById[i.id].role));
+    const open = roomy.length ? roomy : cands;
+    const fresh = open.filter(i => !seen.has(i.id));
+    const pool = fresh.length ? fresh : open; // duplicates only if short, so the bench never overflows
     const value = i => score(i, unitsById, fav) + (traitAware ? 3 * traitLevels([...picks, i], unitsById, cfg) : 0);
     picks.push(pool.reduce((best, i) => (value(i) > value(best) ? i : best)));
   }

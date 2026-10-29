@@ -9,7 +9,7 @@ shows: a player's first name, the first letters of the last name, and the team t
 ```
 node tools/build-roster.mjs   # refresh data/roster.json from the public teams page
 node tools/check.mjs          # self-checks, run before every push
-node tools/balance-sim.mjs    # win matrix of the 8 test lines + game length from 20 bot games
+node tools/balance-sim.mjs    # win matrix of the 8 test lines + game length; LOBBY=300 adds a full-game report
 ```
 
 To try balance numbers without editing the config, pass overrides as JSON:

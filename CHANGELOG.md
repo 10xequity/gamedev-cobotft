@@ -2,6 +2,23 @@
 
 Player names never appear in this file.
 
+## v2.12.0 — 2026-10-29 · Milestone 32: balance pass 3 (with augments and carousel)
+
+- `tools/balance-sim.mjs` now also reports full 8-bot games (`LOBBY=300`), where augments, carousels, shops
+  and levels all play: average finishing place by each bot's favourite role and by each augment taken (4.5 is
+  fair). Before this pass: Setter-loving bots averaged 6.66 and Opposite ones 3.35.
+- Rule changes (config switches): casting Set now also sets the ball, so the strongest hitter attacks as part of
+  the cast (`abilities.Set.alsoSets`; casts used to be a no-damage turn a third of a Setter's actions); bots field
+  at most three support players (Setters, Liberos), as a person would (`bots.maxSupport`).
+- Numbers: Opposite trait +50/+90% ability damage (75/135), Ace Serve 3.0x (3.45), Outside trait +12/+26%
+  (7/18), Middle trait +5/+18 armor (7/23), Middle HP x1.1 (1.2), Libero HP x1.4 and attack x1.2, Dig heal 2.0x,
+  Setter HP x1.6, set bonus +60% (35), No Specialization +8/+11/+25% (top tier was 16), Tip 0.6x; augments Jack
+  of All Trades +8% (12), Setter School +14 mana (8). Descriptions updated in both languages.
+- Result. Full games (300): every favourite role averages between 4.02 and 4.96; every augment between 3.8 and
+  5.2. Head-to-head lines (200 fights a pair): four in the 50-55% band (Wall 54.3, Servers 53.8, Engine 52.1,
+  Diggers 50.7); Hitters 59.1 above it; All-Utility 45.0, Pins 45.5, Balanced 39.5 below. Game length unchanged
+  (first out 4-3, last fight 6-4).
+
 ## v2.11.0 — 2026-10-29 · Milestone 31: Spanish
 
 - Settings → Language: English or Español, remembered on this device; the page's `lang` follows it.

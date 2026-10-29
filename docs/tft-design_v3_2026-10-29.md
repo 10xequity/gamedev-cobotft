@@ -228,4 +228,4 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 29. Guided first game: step-by-step tips. ✔ v2.9.0
 30. Watch the other fights of each round. ✔ v2.10.0
 31. Spanish language switch. ✔ v2.11.0
-32. Balance pass 3, now counting augments and carousel.
+32. Balance pass 3, now counting augments and carousel. ✔ v2.12.0

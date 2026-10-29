@@ -157,7 +157,9 @@ export function simulate({ seed, near, far, unitsById, cfg, augments = {} }) {
       case 'Big Block': { for (const ally of [f, ...nearestAllies(f, 6).filter(x => Math.abs(x.col - f.col) + Math.abs(x.row - f.row) === 1)]) { ally.shield += Math.round(power(f) * a.shield); events.push({ t: 'shield', from: f.uid, to: ally.uid, amount: ally.shield }); } break; }
       case 'Slide': { if (!enemies.length) break; const tgt = weightedPick(rng, enemies, aggroWeight); damage(f, tgt, power(f) * a.mult, 'Slide');
         const adj = adjacentEnemies(f, tgt).sort((x, y) => y.hp - x.hp || x.uid - y.uid)[0]; if (adj) damage(f, adj, power(f) * a.mult, 'Slide'); break; }
-      case 'Set': { for (const ally of alliesOf(f).filter(a => a !== f).sort((a, b) => b.attack - a.attack || a.uid - b.uid).slice(0, 2)) { ally.mana = Math.min(ally.manaToCast, ally.mana + a.mana); ally.buff = a.attackBuff; ally.buffLeft = a.buffActions; events.push({ t: 'buff', from: f.uid, to: ally.uid, mana: ally.mana }); } break; }
+      case 'Set': { for (const ally of alliesOf(f).filter(a => a !== f).sort((a, b) => b.attack - a.attack || a.uid - b.uid).slice(0, 2)) { ally.mana = Math.min(ally.manaToCast, ally.mana + a.mana); ally.buff = a.attackBuff; ally.buffLeft = a.buffActions; events.push({ t: 'buff', from: f.uid, to: ally.uid, mana: ally.mana }); }
+        if (a.alsoSets) hit(f); // the cast also sets the ball: the strongest hitter attacks now
+        break; }
       case 'Dig': { const tgt = alliesOf(f).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp || x.uid - y.uid)[0]; if (tgt) heal(f, tgt, power(f) * a.heal); break; }
       case 'Tip': default: { if (!enemies.length) break; const tgt = weightedPick(rng, enemies, aggroWeight);
         for (const e of [tgt, ...adjacentEnemies(f, tgt)]) { e.armor = Math.max(0, e.armor - a.shred); damage(f, e, power(f) * a.mult, 'Tip'); } break; }
