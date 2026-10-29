@@ -195,39 +195,46 @@
       "desc": "Every third action, acts twice (hit into the block, hit again). 2-star: three times.",
       "every": 3,
       "extra": 1,
-      "scales": "extra"
+      "scales": "extra",
+      "desc_es": "Cada tercera acción, actúa dos veces (golpe al bloqueo y otro golpe). 2 estrellas: tres veces."
     },
     "Follow Through": {
       "desc": "Attacks deal 50% of their damage to hexes next to the target. 2-star: 100%.",
       "splash": 0.5,
-      "scales": "splash"
+      "scales": "splash",
+      "desc_es": "Los ataques hacen el 50% de su daño a los hexágonos junto al objetivo. 2 estrellas: 100%."
     },
     "Block": {
       "desc": "Absorbs 28% of each hit taken and returns 25% of what it absorbed to the attacker. 2-star: returns 50%.",
       "absorb": 0.28,
       "return": 0.25,
-      "scales": "return"
+      "scales": "return",
+      "desc_es": "Absorbe el 28% de cada golpe recibido y devuelve el 25% de lo absorbido a la atacante. 2 estrellas: devuelve el 50%."
     },
     "First Touch": {
       "desc": "Ignores the first hit it takes each fight. 2-star: the first two.",
       "hits": 1,
-      "scales": "hits"
+      "scales": "hits",
+      "desc_es": "Ignora el primer golpe que recibe en cada partido. 2 estrellas: los dos primeros."
     },
     "Pregame": {
       "desc": "At combat start the two nearest allies gain 20 mana. 2-star: 40.",
       "mana": 20,
       "allies": 2,
-      "scales": "mana"
+      "scales": "mana",
+      "desc_es": "Al empezar el partido, sus dos aliadas más cercanas ganan 20 de maná. 2 estrellas: 40."
     },
     "Target": {
       "desc": "Draws attacks first while within two rows of the net. 2-star: anywhere on the court.",
       "rows": 2,
-      "scales": "rows"
+      "scales": "rows",
+      "desc_es": "Atrae los ataques mientras está a dos filas o menos de la red. 2 estrellas: en cualquier parte de la cancha."
     },
     "Second Wind": {
       "desc": "Returns once at 10% of max HP with keywords off. 2-star: 20%.",
       "hp": 0.1,
-      "scales": "hp"
+      "scales": "hp",
+      "desc_es": "Vuelve una vez con el 10% de su vida máx. y sin palabras clave. 2 estrellas: 20%."
     }
   },
   "styles": {
@@ -280,49 +287,78 @@
   "ladder": {
     "start": 1000,
     "pointsByPlace": [40, 30, 20, 10, -10, -20, -30, -40],
-    "difficultyFactor": { "easy": 0.5, "normal": 1, "hard": 1.5 },
-    "ranks": [["Bronze", 0], ["Silver", 1000], ["Gold", 1150], ["Platinum", 1300], ["Diamond", 1500], ["Master", 1750]]
+    "difficultyFactor": {
+      "easy": 0.5,
+      "normal": 1,
+      "hard": 1.5
+    },
+    "ranks": [
+      ["Bronze", 0],
+      ["Silver", 1000],
+      ["Gold", 1150],
+      ["Platinum", 1300],
+      ["Diamond", 1500],
+      ["Master", 1750]
+    ]
   },
   "carousel": {
     "rounds": ["3-1", "4-1", "5-1", "6-1", "7-1"],
-    "tiersByStage": { "3": [1, 2, 3], "4": [2, 3, 4], "5": [3, 4], "6": [3, 4, 5], "7": [4, 5] }
+    "tiersByStage": {
+      "3": [1, 2, 3],
+      "4": [2, 3, 4],
+      "5": [3, 4],
+      "6": [3, 4, 5],
+      "7": [4, 5]
+    }
   },
   "augments": {
     "rounds": ["2-1", "3-2", "4-2"],
     "choices": 3,
     "list": [
-      { "id": "booster-club", "name": "Booster Club", "kind": "econ", "gold": 10, "desc": "+10 gold now." },
-      { "id": "concession-stand", "name": "Concession Stand", "kind": "econ", "goldPerRound": 2, "desc": "+2 gold every round." },
-      { "id": "film-session", "name": "Film Session", "kind": "econ", "xp": 12, "desc": "+12 XP now." },
-      { "id": "scouting-report", "name": "Scouting Report", "kind": "econ", "freeRerolls": 1, "desc": "One free reroll every round." },
-      { "id": "fundraiser", "name": "Fundraiser", "kind": "econ", "gold": 4, "goldPerRound": 1, "desc": "+4 gold now and +1 every round." },
-      { "id": "carpool", "name": "Carpool", "kind": "econ", "xp": 6, "goldPerRound": 1, "desc": "+6 XP now and +1 gold every round." },
-      { "id": "team-huddle", "name": "Team Huddle", "kind": "combat", "applies": "team", "effect": "attack", "value": 0.08, "desc": "Team attack +8%." },
-      { "id": "weight-room", "name": "Weight Room", "kind": "combat", "applies": "team", "effect": "hpPct", "value": 0.1, "desc": "Team HP +10%." },
-      { "id": "knee-pads", "name": "Knee Pads", "kind": "combat", "applies": "team", "effect": "armor", "value": 10, "desc": "Team armor +10." },
-      { "id": "quick-feet", "name": "Quick Feet", "kind": "combat", "applies": "team", "effect": "speed", "value": 0.08, "desc": "Team attack speed +8%." },
-      { "id": "pep-talk", "name": "Pep Talk", "kind": "combat", "applies": "team", "effect": "startMana", "value": 20, "desc": "Team starts with 20 mana." },
-      { "id": "water-break", "name": "Water Break", "kind": "combat", "applies": "team", "effect": "regen", "value": 0.01, "desc": "Team regains 1% max HP per action." },
-      { "id": "warm-up-lap", "name": "Warm-Up Lap", "kind": "combat", "applies": "team", "effect": "shield", "value": 0.08, "desc": "Team shield 8% HP at the start." },
-      { "id": "footwork-drills", "name": "Footwork Drills", "kind": "combat", "applies": "team", "effect": "dodge", "value": 0.06, "desc": "Team dodge +6%." },
-      { "id": "serve-practice", "name": "Serve Practice", "kind": "combat", "applies": "team", "effect": "abilityDamage", "value": 0.2, "desc": "Ability damage +20%." },
-      { "id": "lucky-socks", "name": "Lucky Socks", "kind": "combat", "applies": "team", "effect": "clutch", "value": 0.2, "desc": "Below 40% HP: +20% damage." },
-      { "id": "outside-camp", "name": "Outside Hitter Camp", "kind": "combat", "applies": "role:Outside", "effect": "attack", "value": 0.2, "desc": "Outsides attack +20%." },
-      { "id": "right-side-clinic", "name": "Right Side Clinic", "kind": "combat", "applies": "role:Opposite", "effect": "abilityDamage", "value": 0.4, "desc": "Opposites ability damage +40%." },
-      { "id": "block-party", "name": "Block Party", "kind": "combat", "applies": "role:Middle", "effect": "armor", "value": 25, "desc": "Middles armor +25." },
-      { "id": "setter-school", "name": "Setter School", "kind": "combat", "applies": "role:Setter", "effect": "manaPerAction", "value": 8, "desc": "Setters +8 mana per action." },
-      { "id": "libero-camp", "name": "Libero Camp", "kind": "combat", "applies": "role:Libero", "effect": "hpPct", "value": 0.25, "desc": "Liberos HP +25%." },
-      { "id": "jack-of-all-trades", "name": "Jack of All Trades", "kind": "combat", "applies": "role:Utility", "effect": "allStats", "value": 0.12, "desc": "Utility units +12% all stats." },
-      { "id": "net-presence", "name": "Net Presence", "kind": "combat", "applies": "front", "effect": "armor", "value": 15, "desc": "Front-row armor +15." },
-      { "id": "back-row-attack", "name": "Back Row Attack", "kind": "combat", "applies": "back", "effect": "attack", "value": 0.15, "desc": "Back two rows attack +15%." }
+      { "id": "booster-club", "name": "Booster Club", "kind": "econ", "gold": 10, "desc": "+10 gold now.", "name_es": "Club de apoyo", "desc_es": "+10 de oro ahora." },
+      { "id": "concession-stand", "name": "Concession Stand", "kind": "econ", "goldPerRound": 2, "desc": "+2 gold every round.", "name_es": "Puesto de comida", "desc_es": "+2 de oro cada ronda." },
+      { "id": "film-session", "name": "Film Session", "kind": "econ", "xp": 12, "desc": "+12 XP now.", "name_es": "Sesión de vídeo", "desc_es": "+12 de XP ahora." },
+      { "id": "scouting-report", "name": "Scouting Report", "kind": "econ", "freeRerolls": 1, "desc": "One free reroll every round.", "name_es": "Informe de rivales", "desc_es": "Una renovación gratis cada ronda." },
+      { "id": "fundraiser", "name": "Fundraiser", "kind": "econ", "gold": 4, "goldPerRound": 1, "desc": "+4 gold now and +1 every round.", "name_es": "Recaudación", "desc_es": "+4 de oro ahora y +1 cada ronda." },
+      { "id": "carpool", "name": "Carpool", "kind": "econ", "xp": 6, "goldPerRound": 1, "desc": "+6 XP now and +1 gold every round.", "name_es": "Coche compartido", "desc_es": "+6 de XP ahora y +1 de oro cada ronda." },
+      { "id": "team-huddle", "name": "Team Huddle", "kind": "combat", "applies": "team", "effect": "attack", "value": 0.08, "desc": "Team attack +8%.", "name_es": "Piña de equipo", "desc_es": "Ataque del equipo +8%." },
+      { "id": "weight-room", "name": "Weight Room", "kind": "combat", "applies": "team", "effect": "hpPct", "value": 0.1, "desc": "Team HP +10%.", "name_es": "Sala de pesas", "desc_es": "Vida del equipo +10%." },
+      { "id": "knee-pads", "name": "Knee Pads", "kind": "combat", "applies": "team", "effect": "armor", "value": 10, "desc": "Team armor +10.", "name_es": "Rodilleras", "desc_es": "Defensa del equipo +10." },
+      { "id": "quick-feet", "name": "Quick Feet", "kind": "combat", "applies": "team", "effect": "speed", "value": 0.08, "desc": "Team attack speed +8%.", "name_es": "Pies rápidos", "desc_es": "Velocidad de ataque del equipo +8%." },
+      { "id": "pep-talk", "name": "Pep Talk", "kind": "combat", "applies": "team", "effect": "startMana", "value": 20, "desc": "Team starts with 20 mana.", "name_es": "Charla motivadora", "desc_es": "El equipo empieza con 20 de maná." },
+      { "id": "water-break", "name": "Water Break", "kind": "combat", "applies": "team", "effect": "regen", "value": 0.01, "desc": "Team regains 1% max HP per action.", "name_es": "Pausa para beber", "desc_es": "El equipo recupera el 1% de su vida máx. por acción." },
+      { "id": "warm-up-lap", "name": "Warm-Up Lap", "kind": "combat", "applies": "team", "effect": "shield", "value": 0.08, "desc": "Team shield 8% HP at the start.", "name_es": "Vuelta de calentamiento", "desc_es": "Escudo del equipo del 8% de vida al empezar." },
+      { "id": "footwork-drills", "name": "Footwork Drills", "kind": "combat", "applies": "team", "effect": "dodge", "value": 0.06, "desc": "Team dodge +6%.", "name_es": "Ejercicios de pies", "desc_es": "Esquiva del equipo +6%." },
+      { "id": "serve-practice", "name": "Serve Practice", "kind": "combat", "applies": "team", "effect": "abilityDamage", "value": 0.2, "desc": "Ability damage +20%.", "name_es": "Práctica de saque", "desc_es": "Daño de habilidad +20%." },
+      { "id": "lucky-socks", "name": "Lucky Socks", "kind": "combat", "applies": "team", "effect": "clutch", "value": 0.2, "desc": "Below 40% HP: +20% damage.", "name_es": "Calcetines de la suerte", "desc_es": "Por debajo del 40% de vida: +20% de daño." },
+      { "id": "outside-camp", "name": "Outside Hitter Camp", "kind": "combat", "applies": "role:Outside", "effect": "attack", "value": 0.2, "desc": "Outsides attack +20%.", "name_es": "Campus de Outside", "desc_es": "Las Outside atacan +20%." },
+      { "id": "right-side-clinic", "name": "Right Side Clinic", "kind": "combat", "applies": "role:Opposite", "effect": "abilityDamage", "value": 0.4, "desc": "Opposites ability damage +40%.", "name_es": "Clínica de Opposite", "desc_es": "Las Opposite hacen +40% de daño de habilidad." },
+      { "id": "block-party", "name": "Block Party", "kind": "combat", "applies": "role:Middle", "effect": "armor", "value": 25, "desc": "Middles armor +25.", "name_es": "Fiesta de bloqueo", "desc_es": "Las Middle +25 de defensa." },
+      { "id": "setter-school", "name": "Setter School", "kind": "combat", "applies": "role:Setter", "effect": "manaPerAction", "value": 8, "desc": "Setters +8 mana per action.", "name_es": "Escuela de colocadoras", "desc_es": "Las Setter +8 de maná por acción." },
+      { "id": "libero-camp", "name": "Libero Camp", "kind": "combat", "applies": "role:Libero", "effect": "hpPct", "value": 0.25, "desc": "Liberos HP +25%.", "name_es": "Campus de Libero", "desc_es": "Las Libero +25% de vida." },
+      { "id": "jack-of-all-trades", "name": "Jack of All Trades", "kind": "combat", "applies": "role:Utility", "effect": "allStats", "value": 0.12, "desc": "Utility units +12% all stats.", "name_es": "Todoterreno", "desc_es": "Jugadoras Utility +12% a todas las estadísticas." },
+      { "id": "net-presence", "name": "Net Presence", "kind": "combat", "applies": "front", "effect": "armor", "value": 15, "desc": "Front-row armor +15.", "name_es": "Presencia en la red", "desc_es": "Defensa de la primera fila +15." },
+      { "id": "back-row-attack", "name": "Back Row Attack", "kind": "combat", "applies": "back", "effect": "attack", "value": 0.15, "desc": "Back two rows attack +15%.", "name_es": "Ataque de zaga", "desc_es": "Las dos filas de atrás atacan +15%." }
     ]
   },
   "bots": {
     "names": ["Team Spike", "Team Dig", "Team Block", "Team Set", "Team Serve", "Team Tip", "Team Pancake"],
     "difficulty": {
-      "easy": { "rerollMult": 0, "randomBuy": 0.35, "traitAware": false },
-      "normal": { "rerollMult": 1, "randomBuy": 0, "traitAware": false },
-      "hard": { "rerollMult": 2, "randomBuy": 0, "traitAware": true }
+      "easy": {
+        "rerollMult": 0,
+        "randomBuy": 0.35,
+        "traitAware": false
+      },
+      "normal": {
+        "rerollMult": 1,
+        "randomBuy": 0,
+        "traitAware": false
+      },
+      "hard": {
+        "rerollMult": 2,
+        "randomBuy": 0,
+        "traitAware": true
+      }
     },
     "paces": {
       "slow": {
@@ -353,23 +389,23 @@
     "timeoutRule": "higher total HP percent wins, equal is a draw"
   },
   "traits": {
-    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.07, 0.18], "desc": "Team attack +7% / +18%" },
-    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [7, 23], "desc": "Front-row armor +7 / +23" },
-    "Setter": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "manaPerAction", "values": [3, 8], "desc": "Team mana per action +3 / +8" },
-    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.13, 0.18], "desc": "Team dodge +13% / +18%" },
-    "Opposite": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "abilityDamage", "values": [0.75, 1.35], "desc": "Ability damage +75% / +135%" },
-    "No Specialization": { "family": "Role", "breakpoints": [2, 4, 6], "applies": "holders", "effect": "allStats", "values": [0.08, 0.11, 0.16], "doubleCastAt": 6, "desc": "Utility units +8% / +11% / +16% all stats; 6: every Utility casts twice" },
-    "Colorado": { "family": "Club level", "breakpoints": [3, 5], "applies": "holders", "effect": "speed", "values": [0.08, 0.16], "desc": "Attack speed +8% / +16%" },
-    "National": { "family": "Club level", "breakpoints": [2, 4], "applies": "holders", "effect": "abilityDamage", "values": [0.1, 0.2], "desc": "Ability damage +10% / +20%" },
-    "Regional": { "family": "Club level", "breakpoints": [2, 4], "applies": "team", "effect": "hpPct", "values": [0.12, 0.28], "desc": "Team HP +12% / +28%" },
-    "Hype Captain": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "speed", "values": [0.06, 0.12, 0.2], "desc": "Team attack speed +6% / +12% / +20%" },
-    "Snack Boss": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "regen", "values": [0.01, 0.02, 0.03], "desc": "Regen 1% / 2% / 3% max HP per action" },
-    "Early Bird": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "startMana", "values": [20, 40, 60], "desc": "Start with 20 / 40 / 60 mana" },
-    "Clutch Closer": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "clutch", "values": [0.15, 0.3, 0.5], "desc": "Below 40% HP: +15% / +30% / +50% damage", "below": 0.4 },
-    "Group Chat Queen": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "castShare", "values": [10, 20, 30], "desc": "When one casts, adjacent allies +10 / +20 / +30 mana" },
-    "Gym Rat": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "hpFlat", "values": [100, 250, 450], "desc": "+100 / +250 / +450 HP" },
-    "Sunshine": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "shield", "values": [0.08, 0.15, 0.25], "desc": "Team shield 8% / 15% / 25% HP at start" },
-    "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.1, 0.2, 0.3], "desc": "Abilities cost 10% / 20% / 30% less" }
+    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.07, 0.18], "desc": "Team attack +7% / +18%", "desc_es": "Ataque del equipo +7% / 18%" },
+    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [7, 23], "desc": "Front-row armor +7 / +23", "desc_es": "Defensa de la primera fila +7 / 23" },
+    "Setter": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "manaPerAction", "values": [3, 8], "desc": "Team mana per action +3 / +8", "desc_es": "Maná del equipo por acción +3 / 8" },
+    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.13, 0.18], "desc": "Team dodge +13% / +18%", "desc_es": "Esquiva del equipo +13% / 18%" },
+    "Opposite": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "abilityDamage", "values": [0.75, 1.35], "desc": "Ability damage +75% / +135%", "desc_es": "Daño de habilidad +75% / 135%" },
+    "No Specialization": { "family": "Role", "breakpoints": [2, 4, 6], "applies": "holders", "effect": "allStats", "values": [0.08, 0.11, 0.16], "doubleCastAt": 6, "desc": "Utility units +8% / +11% / +16% all stats; 6: every Utility casts twice", "desc_es": "Jugadoras Utility +8% / 11% / 16% a todas las estadísticas; con 6: cada Utility lanza dos veces" },
+    "Colorado": { "family": "Club level", "breakpoints": [3, 5], "applies": "holders", "effect": "speed", "values": [0.08, 0.16], "desc": "Attack speed +8% / +16%", "desc_es": "Velocidad de ataque +8% / 16%" },
+    "National": { "family": "Club level", "breakpoints": [2, 4], "applies": "holders", "effect": "abilityDamage", "values": [0.1, 0.2], "desc": "Ability damage +10% / +20%", "desc_es": "Daño de habilidad +10% / 20%" },
+    "Regional": { "family": "Club level", "breakpoints": [2, 4], "applies": "team", "effect": "hpPct", "values": [0.12, 0.28], "desc": "Team HP +12% / +28%", "desc_es": "Vida del equipo +12% / 28%" },
+    "Hype Captain": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "speed", "values": [0.06, 0.12, 0.2], "desc": "Team attack speed +6% / +12% / +20%", "desc_es": "Velocidad de ataque del equipo +6% / 12% / 20%" },
+    "Snack Boss": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "regen", "values": [0.01, 0.02, 0.03], "desc": "Regen 1% / 2% / 3% max HP per action", "desc_es": "Recupera 1% / 2% / 3% de su vida máx. por acción" },
+    "Early Bird": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "startMana", "values": [20, 40, 60], "desc": "Start with 20 / 40 / 60 mana", "desc_es": "Empieza con 20 / 40 / 60 de maná" },
+    "Clutch Closer": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "clutch", "values": [0.15, 0.3, 0.5], "desc": "Below 40% HP: +15% / +30% / +50% damage", "below": 0.4, "desc_es": "Por debajo del 40% de vida: +15% / 30% / 50% de daño" },
+    "Group Chat Queen": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "castShare", "values": [10, 20, 30], "desc": "When one casts, adjacent allies +10 / +20 / +30 mana", "desc_es": "Al lanzar, sus aliadas adyacentes +10 / 20 / 30 de maná" },
+    "Gym Rat": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "hpFlat", "values": [100, 250, 450], "desc": "+100 / +250 / +450 HP", "desc_es": "+100 / 250 / 450 de vida" },
+    "Sunshine": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "shield", "values": [0.08, 0.15, 0.25], "desc": "Team shield 8% / 15% / 25% HP at start", "desc_es": "Escudo del equipo del 8% / 15% / 25% de vida al empezar" },
+    "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.1, 0.2, 0.3], "desc": "Abilities cost 10% / 20% / 30% less", "desc_es": "Las habilidades cuestan un 10% / 20% / 30% menos" }
   },
   "archetypes": ["Hype Captain", "Snack Boss", "Early Bird", "Clutch Closer", "Group Chat Queen", "Gym Rat", "Sunshine", "Mastermind"],
   "jerseyByLevel": {
@@ -388,34 +424,41 @@
     "Spike": {
       "mult": 1.85,
       "splashAt3Star": 0.5,
-      "desc": "Big hit on the target; 3-star splashes half to neighbours."
+      "desc": "Big hit on the target; 3-star splashes half to neighbours.",
+      "desc_es": "Golpe fuerte al objetivo; con 3 estrellas salpica la mitad a las vecinas."
     },
     "Ace Serve": {
       "mult": 3.45,
-      "desc": "Hits the target and every enemy in the same column."
+      "desc": "Hits the target and every enemy in the same column.",
+      "desc_es": "Golpea al objetivo y a todas las rivales de la misma columna."
     },
     "Big Block": {
       "shield": 2,
-      "desc": "Shields self and adjacent allies."
+      "desc": "Shields self and adjacent allies.",
+      "desc_es": "Escuda a sí misma y a las aliadas adyacentes."
     },
     "Slide": {
       "mult": 1.7,
-      "desc": "Hits the target and one adjacent enemy."
+      "desc": "Hits the target and one adjacent enemy.",
+      "desc_es": "Golpea al objetivo y a una rival adyacente."
     },
     "Set": {
       "mana": 20,
       "attackBuff": 0.25,
       "buffActions": 3,
-      "desc": "Two strongest teammates gain mana and attack for their next actions."
+      "desc": "Two strongest teammates gain mana and attack for their next actions.",
+      "desc_es": "Las dos compañeras más fuertes ganan maná y ataque en sus próximas acciones."
     },
     "Dig": {
       "heal": 1.55,
-      "desc": "Heals the lowest-HP ally."
+      "desc": "Heals the lowest-HP ally.",
+      "desc_es": "Cura a la aliada con menos vida."
     },
     "Tip": {
       "mult": 0.56,
       "shred": 10,
-      "desc": "Casts the filled role's ability; otherwise a small splash that lowers armor."
+      "desc": "Casts the filled role's ability; otherwise a small splash that lowers armor.",
+      "desc_es": "Lanza la habilidad del rol que cubre; si no, una pequeña salpicadura que baja la defensa."
     }
   }
 }

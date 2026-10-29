@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v2.11.0 — 2026-10-29 · Milestone 31: Spanish
+
+- Settings → Language: English or Español, remembered on this device; the page's `lang` follows it.
+- `js/i18n.js`: interface text is looked up by its English wording (`t('Buy XP')`), so the code stays
+  readable; about 200 interface strings, page labels, screen-reader labels and the How to play list have
+  Spanish. Game descriptions carry their own Spanish next to the English: traits, keywords and abilities
+  (`desc_es` in config; trait and keyword ones written from the same numbers), all 24 augments (`name_es`,
+  `desc_es`), all 17 achievements and the 6 tips. Ranks are translated too.
+- Proper names stay as they are: players, teams, game roles, trait, keyword and ability names.
+- `tools/check.mjs` fails if any description, augment, achievement, tip, rank, marked page text or help item lacks
+  Spanish. When balance numbers change, update `desc` and `desc_es` together.
+
 ## v2.10.0 — 2026-10-29 · Milestone 30: watch other fights
 
 - The Fights section now also lists the latest round's other fights ("Team Block vs Team Pancake: Team Block

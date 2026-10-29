@@ -4,6 +4,7 @@
 import { COLS, ROWS, HALF, slotToHex } from './hex.js';
 import { spriteStyle } from './sprite.js';
 import { stageSVG } from './stage.js';
+import { t } from './i18n.js';
 
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
@@ -54,7 +55,7 @@ export class Arena {
         tile.dataset.col = c; tile.dataset.row = r - HALF;
         tile.tabIndex = (r === HALF && c === 0) ? 0 : -1;
         const u2 = inst && unitsById[inst.id];
-        tile.setAttribute('aria-label', inst ? `${u2.display}, ${inst.star} star, ${u2.style}, court row ${r - HALF + 1} column ${c + 1}${inst.uid === selectedUid ? ', selected' : ''}` : `Empty court row ${r - HALF + 1} column ${c + 1}`);
+        tile.setAttribute('aria-label', (inst ? t('{name}, {star} star, {style}, court row {r} column {c}', { name: u2.display, star: inst.star, style: u2.style, r: r - HALF + 1, c: c + 1 }) + (inst.uid === selectedUid ? t(', selected') : '') : t('Empty court row {r} column {c}', { r: r - HALF + 1, c: c + 1 })));
         if (inst) tile.setAttribute('aria-pressed', String(inst.uid === selectedUid));
         tile.addEventListener('click', () => this.onTap('court', k, inst));
       } else {

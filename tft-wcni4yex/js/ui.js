@@ -10,6 +10,7 @@ import * as history from './history.js';
 import * as ladder from './ladder.js';
 import * as achievements from './achievements.js';
 import * as guide from './guide.js';
+import { t, loc, ordinal, getLang, setLang, translatePage } from './i18n.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
@@ -22,7 +23,6 @@ function applyPrefs() {
   document.documentElement.dataset.motion = pref('motion');
   document.body.style.zoom = pref('textSize');
 }
-const ordinal = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th'); // places run 1-8 only
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
 export class UI {
@@ -34,6 +34,7 @@ export class UI {
     this.arena = new Arena($('court'), (where, k, inst) => this.tapSlot(inst, where, k));
     this.playback = new Playback($('court'));
     applyPrefs();
+    translatePage();
     this.playback.speed = Number(pref('speed'));
     $('speedPref').value = pref('speed'); $('motion').value = pref('motion'); $('textSize').value = pref('textSize');
     this.fighting = false;
@@ -47,7 +48,7 @@ export class UI {
   }
 
   // ---- planning timer: counts down only while planning, unpaused, with auto-advance on ----
-  resetTimer() { this.timeLeft = this.g.cfg.game.planningSeconds; $('timer').textContent = this.auto ? this.timeLeft : 'off'; }
+  resetTimer() { this.timeLeft = this.g.cfg.game.planningSeconds; $('timer').textContent = this.auto ? this.timeLeft : t('off'); }
   tick() {
     if (!this.auto || this.paused || this.fighting || this.g.over || $('over').open) return;
     if (['settings', 'history', 'help', 'unitcard'].some(d => $(d).open)) return; // reading a panel pauses the clock
@@ -65,7 +66,7 @@ export class UI {
     this.scout = null;
     const r = this.g.nextRound();
     this.lastFight = r.events ? r : null;
-    if (r.events) await this.playFight(r, `${r.label}: fight against ${r.opponent}${r.ghost ? ' (a copy)' : ''}.`);
+    if (r.events) await this.playFight(r, t('{label}: fight against {opp}.', { label: r.label, opp: r.opponent + (r.ghost ? t(' (a copy)') : '') }));
     this.render();
     this.afterRound(r);
     this.resetTimer();
@@ -76,7 +77,7 @@ export class UI {
     $('speed').textContent = this.playback.speed === 2 ? '1x' : '2x'; $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));
     const mineNear = r.side === 'near';
     this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
-    this.say(`${sentence} Escape skips.`);
+    this.say(`${sentence} ${t('Escape skips.')}`);
     await this.playback.play(r.events, r.maxHp, r.side);
     this.setFighting(false);
   }
@@ -85,15 +86,15 @@ export class UI {
     if (this.fighting) return;
     const r = this.g.replay(i);
     this.lastFight = r;
-    await this.playFight(r, `${r.label}: replay of your fight against ${r.opponent}.`);
+    await this.playFight(r, t('{label}: replay of your fight against {opp}.', { label: r.label, opp: r.opponent }));
     this.render();
-    this.say(`Replay of ${r.label} finished`);
+    this.say(t('Replay of {label} finished', { label: r.label }));
   }
 
   renderTip() {
     const state = guide.load(), tip = this.fighting ? null : guide.next(this.g, state);
     $('tip').hidden = !tip;
-    if (tip && $('tip').dataset.id !== tip.id) { $('tip').dataset.id = tip.id; $('tipText').textContent = tip.text; }
+    if (tip && $('tip').dataset.id !== tip.id) { $('tip').dataset.id = tip.id; $('tipText').textContent = loc(tip, 'text'); }
     $('tipsOn').checked = !state.off;
   }
 
@@ -101,9 +102,9 @@ export class UI {
     if (this.fighting) return;
     const r = this.g.replayLobby(i);
     this.lastFight = r;
-    await this.playFight(r, `${r.label}: ${r.teamA} against ${r.opponent}${r.ghost ? ' (a copy)' : ''}.`);
+    await this.playFight(r, t('{label}: {a} against {b}.', { label: r.label, a: r.teamA, b: r.opponent + (r.ghost ? t(' (a copy)') : '') }));
     this.render();
-    this.say(`${r.teamA} against ${r.opponent} finished`);
+    this.say(t('{a} against {b} finished', { a: r.teamA, b: r.opponent }));
   }
 
   renderFights() {
@@ -113,14 +114,14 @@ export class UI {
     $('lobbyWrap').hidden = !lobby.length;
     $('lobbyList').replaceChildren(...lobby.map((f, i) => {
       const winner = f.won === true ? f.teamA : f.won === false ? f.opponent : null;
-      const b = el('button', { type: 'button', textContent: `${f.teamA} vs ${f.opponent}${f.ghost ? ' (copy)' : ''}: ${winner ? `${winner} won` : 'draw'}` });
-      b.setAttribute('aria-label', `Watch ${b.textContent}`);
+      const b = el('button', { type: 'button', textContent: `${f.teamA} vs ${f.opponent}${f.ghost ? t(' (copy)') : ''}: ${winner ? t('{winner} won', { winner }) : t('draw')}` });
+      b.setAttribute('aria-label', t('Watch {what}', { what: b.textContent }));
       b.addEventListener('click', () => this.watch(i));
       return el('li', {}, b);
     }));
     $('fightList').replaceChildren(...fs.map((f, i) => {
-      const b = el('button', { type: 'button', textContent: `${f.label} vs ${f.opponent}: ${f.won === true ? 'won' : f.won === false ? `lost −${f.hpLoss}` : 'draw'}` });
-      b.setAttribute('aria-label', `Replay ${b.textContent}`);
+      const b = el('button', { type: 'button', textContent: `${f.label} vs ${f.opponent}: ${f.won === true ? t('won') : f.won === false ? t('lost −{n}', { n: f.hpLoss }) : t('draw')}` });
+      b.setAttribute('aria-label', t('Replay {what}', { what: b.textContent }));
       b.addEventListener('click', () => this.replay(i));
       return el('li', {}, b);
     }).reverse());
@@ -140,16 +141,16 @@ export class UI {
     const g = this.g, you = g.you, cfg = g.cfg, info = g.round;
     $('hp').textContent = Math.max(0, you.hp);
     $('gold').textContent = you.gold;
-    $('round').textContent = info.label + (info.practice ? ' practice' : '') + (history.dailyDate(g.seed) ? ' · daily' : '');
+    $('round').textContent = info.label + (info.practice ? t(' practice') : '') + (history.dailyDate(g.seed) ? t(' · daily') : '');
     const toNext = eco.xpToNext(you, cfg);
-    $('level').textContent = `Lv ${you.level}` + (toNext === null ? ' (max)' : ` · ${toNext} XP to next`);
+    $('level').textContent = t('Lv {level}', { level: you.level }) + (toNext === null ? t(' (max)') : t(' · {n} XP to next', { n: toNext }));
     $('courtCount').textContent = `${eco.onCourt(you).length} / ${eco.courtMax(you, cfg)}`;
 
     const scouted = this.scout !== null && g.players[this.scout]?.place === null ? g.players[this.scout] : null;
     if (!scouted) this.scout = null;
     $('court').dataset.stage = g.stage;
     this.arena.render(you, scouted, g.unitsById, cfg, this.selected);
-    $('courtHint').textContent = scouted ? `scouting ${scouted.name}: ${this.traitLine(scouted.court) || 'no traits'}` : 'arrow keys move between hexes';
+    $('courtHint').textContent = scouted ? t('scouting {name}: {traits}', { name: scouted.name, traits: this.traitLine(scouted.court) || t('no traits') }) : t('arrow keys move between hexes');
     this.renderTraits();
     this.renderPlayers();
     this.renderDamage();
@@ -158,14 +159,14 @@ export class UI {
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
-    const augs = you.augments.map(id => g.augById[id].name);
-    $('owned').textContent = augs.length ? `Augments: ${augs.join(', ')}` : '';
-    $('reroll').firstChild.textContent = you.freeRerolls > 0 ? `Reroll free (${you.freeRerolls}) ` : 'Reroll ';
+    const augs = you.augments.map(id => loc(g.augById[id], 'name'));
+    $('owned').textContent = augs.length ? t('Augments: {list}', { list: augs.join(', ') }) : '';
+    $('reroll').firstChild.textContent = you.freeRerolls > 0 ? t('Reroll free ({n}) ', { n: you.freeRerolls }) : t('Reroll ');
     if (g.carousel && !this.fighting && !$('carousel').open) this.showCarousel();
     else if (you.offer && !this.fighting && !$('augment').open && !$('carousel').open) this.showAugment();
 
     $('sell').disabled = this.selected === null;
-    $('sell').textContent = this.selected === null ? 'Sell' : `Sell for ${this.sellValue()}g`;
+    $('sell').textContent = this.selected === null ? t('Sell') : t('Sell for {g}g', { g: this.sellValue() });
     $('reroll').disabled = you.gold < cfg.shop.rerollCost && !you.freeRerolls;
     $('xp').disabled = you.gold < cfg.shop.xpCost || toNext === null;
   }
@@ -175,21 +176,21 @@ export class UI {
     const recs = history.load(), stats = history.unitStats(recs);
     const avg = recs.length ? (recs.reduce((a, r) => a + r.place, 0) / recs.length).toFixed(1) : '-';
     $('histSummary').textContent = recs.length
-      ? `${recs.length} game${recs.length === 1 ? '' : 's'} on this device. Average place ${avg}, ${recs.filter(r => r.place === 1).length} won.`
-      : 'No finished games yet. Finish a game and it appears here.';
+      ? t(recs.length === 1 ? '1 game on this device. Average place {avg}, {won} won.' : '{n} games on this device. Average place {avg}, {won} won.', { n: recs.length, avg, won: recs.filter(r => r.place === 1).length })
+      : t('No finished games yet. Finish a game and it appears here.');
     const lad = ladder.load(), rating = lad.rating ?? this.g.cfg.ladder.start;
-    $('histRank').textContent = `Rank: ${ladder.rankFor(rating, this.g.cfg)}, rating ${rating}${lad.peak ? ` (peak ${lad.peak})` : ''}, ${lad.games || 0} rated game${lad.games === 1 ? '' : 's'}. Clear history does not reset it.`;
+    $('histRank').textContent = t('Rank: {rank}, rating {rating}{peak}, {games} rated games. Clear history does not reset it.', { rank: t(ladder.rankFor(rating, this.g.cfg)), rating, peak: lad.peak ? t(' (peak {n})', { n: lad.peak }) : '', games: lad.games || 0 });
     const best = history.dailyBest(recs);
-    if (best) $('histSummary').textContent += ` Today's challenge best: ${ordinal(best)}.`;
+    if (best) $('histSummary').textContent += t(" Today's challenge best: {place}.", { place: ordinal(best) });
     $('histGames').replaceChildren(...recs.slice(-10).reverse().map(r => el('li', { textContent:
-      `${r.at.slice(0, 10)} · ${ordinal(r.place)} of ${r.players} · ${r.difficulty} bots · out at ${r.lastRound} · ${r.traits.slice(0, 3).join(', ') || 'no traits'}` })));
+      t('{date} · {place} of {n} · {diff} bots · out at {round} · {traits}', { date: r.at.slice(0, 10), place: ordinal(r.place), n: r.players, diff: t(r.difficulty[0].toUpperCase() + r.difficulty.slice(1)), round: r.lastRound, traits: r.traits.slice(0, 3).join(', ') || t('no traits') }) })));
     $('histUnits').replaceChildren(...stats.slice(0, 10).map(s => el('tr', {},
       el('th', { scope: 'row', textContent: s.name }), el('td', { textContent: s.games }), el('td', { textContent: s.avgPlace.toFixed(1) }), el('td', { textContent: s.wins }))));
     $('histUnitsWrap').hidden = !stats.length;
     const have = achievements.load();
-    $('achTitle').textContent = `Achievements ${Object.keys(have).length} / ${achievements.LIST.length}`;
+    $('achTitle').textContent = t('Achievements {n} / {total}', { n: Object.keys(have).length, total: achievements.LIST.length });
     $('achList').replaceChildren(...achievements.LIST.map(a => el('li', { className: have[a.id] ? 'got' : '' },
-      el('b', { textContent: a.name }), ` ${a.desc}`, el('span', { className: 'vh', textContent: have[a.id] ? ` Earned ${have[a.id]}.` : ' Not earned yet.' }))));
+      el('b', { textContent: loc(a, 'name') }), ` ${loc(a, 'desc')}`, el('span', { className: 'vh', textContent: have[a.id] ? t(' Earned {date}.', { date: have[a.id] }) : t(' Not earned yet.') }))));
     $('histDownload').disabled = $('histClear').disabled = !recs.length;
     $('history').showModal();
   }
@@ -202,15 +203,15 @@ export class UI {
         el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 72) }),
         el('span', { className: 'nm', textContent: u.display }),
         el('span', { className: 'tr', textContent: u.style }),
-        el('span', { className: 'tr', textContent: by !== null ? `Taken: ${g.players[by].name}` : `${u.tier}-cost` }));
+        el('span', { className: 'tr', textContent: by !== null ? t('Taken: {name}', { name: g.players[by].name }) : t('{tier}-cost', { tier: u.tier }) }));
       b.style.setProperty('--ring', g.cfg.tierRing[String(u.tier)]);
       b.dataset.id = id;
-      if (by === null) b.prepend(el('span', { className: 'vh', textContent: 'Take ' }));
+      if (by === null) b.prepend(el('span', { className: 'vh', textContent: t('Take ') }));
       b.addEventListener('click', () => {
         const r = g.chooseCarousel(k);
         if (r.ok) play('pick');
         $('carousel').close();
-        this.say(r.ok ? `Carousel: ${r.unit.display} joins your bench` : r.reason);
+        this.say(r.ok ? t('Carousel: {name} joins your bench', { name: r.unit.display }) : t(r.reason));
         this.render();
       });
       return b;
@@ -222,12 +223,12 @@ export class UI {
     const g = this.g;
     $('augChoices').replaceChildren(...g.you.offer.map((id, k) => {
       const a = g.augById[id];
-      const b = el('button', { type: 'button', className: 'augcard' }, el('b', { textContent: a.name }), el('span', { textContent: a.desc }));
+      const b = el('button', { type: 'button', className: 'augcard' }, el('b', { textContent: loc(a, 'name') }), el('span', { textContent: loc(a, 'desc') }));
       b.addEventListener('click', () => {
         const r = g.chooseAugment(g.you, k);
         if (r.ok) play('pick');
         $('augment').close();
-        this.say(r.ok ? `Augment: ${a.name}. ${a.desc}` : r.reason);
+        this.say(r.ok ? t('Augment: {name}. {desc}', { name: loc(a, 'name'), desc: loc(a, 'desc') }) : t(r.reason));
         this.render();
       });
       return b;
@@ -237,16 +238,16 @@ export class UI {
 
   renderTraits() {
     const { filled, traits } = computeTraits(this.g.you.court, this.g.unitsById, this.g.cfg);
-    $('traits').replaceChildren(...(traits.length ? traits.map(t => {
-      if (!t.level) return el('li', { textContent: `${t.name} ${t.count}/${t.next}`, ariaLabel: `${t.name}: ${t.count} of ${t.next} to start` });
-      const marks = t.breakpoints.map(b => t.count >= b ? `[${b}]` : b).join(' / ');
+    $('traits').replaceChildren(...(traits.length ? traits.map(tr => {
+      if (!tr.level) return el('li', { textContent: `${tr.name} ${tr.count}/${tr.next}`, ariaLabel: t('{name}: {count} of {next} to start', { name: tr.name, count: tr.count, next: tr.next }) });
+      const marks = tr.breakpoints.map(b => tr.count >= b ? `[${b}]` : b).join(' / ');
       return el('li', { className: 'on' },
-        el('b', { textContent: `${t.name} ${t.count}` }),
+        el('b', { textContent: `${tr.name} ${tr.count}` }),
         el('span', { className: 'bp', textContent: ` ${marks}` }),
-        el('span', { className: 'd', textContent: ` · ${t.desc}` }));
-    }) : [el('li', { textContent: 'Place units on the court to start traits.' })]));
-    const wild = this.g.you.court.filter(i => i && filled[i.uid]).map(i => `${this.g.unitsById[i.id].display} as ${filled[i.uid]}`);
-    $('wild').textContent = wild.length ? `wild cards: ${wild.join(', ')}` : '';
+        el('span', { className: 'd', textContent: ` · ${loc(this.g.cfg.traits[tr.name], 'desc')}` }));
+    }) : [el('li', { textContent: t('Place units on the court to start traits.') })]));
+    const wild = this.g.you.court.filter(i => i && filled[i.uid]).map(i => t('{name} as {role}', { name: this.g.unitsById[i.id].display, role: filled[i.uid] }));
+    $('wild').textContent = wild.length ? t('wild cards: {list}', { list: wild.join(', ') }) : '';
   }
 
   traitLine(court) {
@@ -257,16 +258,16 @@ export class UI {
   playerRows(scoutable = false) {
     const ps = this.g.players.slice().sort((a, b) => (a.place ?? 0) - (b.place ?? 0) || b.hp - a.hp || a.idx - b.idx);
     return ps.map(p => {
-      const text = [el('b', { textContent: p.name }), ` ${p.place ? ordinal(p.place) : `${p.hp} HP`}`];
+      const text = [el('b', { textContent: p.name }), ` ${p.place ? ordinal(p.place) : t('{hp} HP', { hp: p.hp })}`];
       const li = el('li', { className: (p === this.g.you ? 'you' : '') + (p.place ? ' out' : '') });
       if (!scoutable || p === this.g.you || p.place) { li.append(...text); return li; }
       const b = el('button', { type: 'button', className: 'scout' }, ...text);
       b.setAttribute('aria-pressed', String(this.scout === p.idx));
-      b.setAttribute('aria-label', `${p.name}, ${p.hp} HP. ${this.scout === p.idx ? 'Stop scouting' : 'Scout their board'}`);
+      b.setAttribute('aria-label', t(this.scout === p.idx ? '{name}, {hp} HP. Stop scouting' : '{name}, {hp} HP. Scout their board', { name: p.name, hp: p.hp }));
       b.addEventListener('click', () => {
         if (this.fighting) return;
         this.scout = this.scout === p.idx ? null : p.idx;
-        this.say(this.scout === null ? 'Stopped scouting' : `Scouting ${p.name}: their board is on the far side`);
+        this.say(this.scout === null ? t('Stopped scouting') : t('Scouting {name}: their board is on the far side', { name: p.name }));
         this.render();
       });
       li.append(b);
@@ -290,7 +291,7 @@ export class UI {
     const side = (court, who) => court.filter(Boolean).map(i => ({ who, name: this.g.unitsById[i.id].display, n: dealt[i.uid] || 0 }));
     const rows = [...side(mineNear ? r.near : r.far, 'you'), ...side(mineNear ? r.far : r.near, 'them')].sort((a, b) => b.n - a.n);
     const max = Math.max(1, ...rows.map(x => x.n));
-    $('damageTitle').textContent = r.teamA ? `Fight damage, ${r.label}: ${r.teamA} vs ${r.opponent}` : `Fight damage, ${r.label} vs ${r.opponent}`;
+    $('damageTitle').textContent = r.teamA ? t('Fight damage, {label}: {a} vs {b}', { label: r.label, a: r.teamA, b: r.opponent }) : t('Fight damage, {label} vs {opp}', { label: r.label, opp: r.opponent });
     $('damageList').replaceChildren(...rows.map(x => el('li', { className: x.who },
       el('span', { className: 'nm', textContent: `${x.name}${x.who === 'them' ? ` (${r.opponent})` : r.teamA ? ` (${r.teamA})` : ''}` }),
       el('span', { className: 'bar' }, el('i', { style: `width:${(100 * x.n / max).toFixed(1)}%` })),
@@ -300,23 +301,23 @@ export class UI {
   // After Next round: one line on your fight, and the game-over panel when it ends.
   afterRound(r) {
     const g = this.g;
-    if (r.practice) this.lastLine = `${r.label}: practice, no health lost`;
-    else if (!r.opponent) this.lastLine = `${r.label}: no fight`;
-    else this.lastLine = `${r.label} vs ${r.opponent}${r.ghost ? ' (copy)' : ''}: ` + (r.won === true ? 'won' : r.won === false ? `lost, −${r.hpLoss} HP` : 'draw');
+    if (r.practice) this.lastLine = t('{label}: practice, no health lost', { label: r.label });
+    else if (!r.opponent) this.lastLine = t('{label}: no fight', { label: r.label });
+    else this.lastLine = t('{label} vs {opp}: ', { label: r.label, opp: r.opponent + (r.ghost ? t(' (copy)') : '') }) + (r.won === true ? t('won') : r.won === false ? t('lost, −{n} HP', { n: r.hpLoss }) : t('draw'));
     if (g.over) {
-      $('overText').textContent = `You finished ${ordinal(g.you.place)} of ${g.players.length}.`;
+      $('overText').textContent = t('You finished {place} of {n}.', { place: ordinal(g.you.place), n: g.players.length });
       $('finalPlaces').replaceChildren(...this.playerRows());
       history.record(g);
       const lad = ladder.record(g.you.place, g.difficulty, g.cfg);
       const sign = lad.delta >= 0 ? '+' : '';
-      const moved = lad.rank === lad.prevRank ? '' : `, ${lad.delta >= 0 ? 'up' : 'down'} from ${lad.prevRank}`;
-      $('overText').textContent += ` Rating ${sign}${lad.delta} to ${lad.rating} (${lad.rank}${moved}).`;
+      const moved = lad.rank === lad.prevRank ? '' : t(lad.delta >= 0 ? ', up from {rank}' : ', down from {rank}', { rank: t(lad.prevRank) });
+      $('overText').textContent += t(' Rating {sign}{delta} to {rating} ({rank}{moved}).', { sign, delta: lad.delta, rating: lad.rating, rank: t(lad.rank), moved });
       const fresh = achievements.record({ g, records: history.load(), rating: lad.rating });
-      $('overAch').textContent = fresh.length ? `New achievement${fresh.length > 1 ? 's' : ''}: ${fresh.map(a => a.name).join(', ')}` : '';
+      $('overAch').textContent = fresh.length ? t(fresh.length > 1 ? 'New achievements: {list}' : 'New achievement: {list}', { list: fresh.map(a => loc(a, 'name')).join(', ') }) : '';
       $('over').showModal();
       play(g.you.place === 1 ? 'win' : 'lose');
-      this.say(`Game over. You finished ${ordinal(g.you.place)}.`);
-    } else this.say(`${this.lastLine}. Round ${g.round.label}, +${r.income} gold.`);
+      this.say(t('Game over. You finished {place}.', { place: ordinal(g.you.place) }));
+    } else this.say(t('{line}. Round {label}, +{gold} gold.', { line: this.lastLine, label: g.round.label, gold: r.income }));
   }
 
   sellValue() {
@@ -331,7 +332,7 @@ export class UI {
       const u = this.g.unitsById[inst.id];
       b.dataset.uid = inst.uid;
       b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
-      b.setAttribute('aria-label', `${u.display}, ${inst.star} star, ${u.style}, ${where} slot ${k + 1}${inst.uid === this.selected ? ', selected' : ''}`);
+      b.setAttribute('aria-label', t('{name}, {star} star, {style}, {where} slot {k}', { name: u.display, star: inst.star, style: u.style, where: t(where), k: k + 1 }) + (inst.uid === this.selected ? t(', selected') : ''));
       b.setAttribute('aria-pressed', String(inst.uid === this.selected));
       b.append(
         el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 72) }),
@@ -339,7 +340,7 @@ export class UI {
         el('span', { className: 'nm', textContent: u.display }),
       );
     } else {
-      b.setAttribute('aria-label', `Empty ${where} slot ${k + 1}`);
+      b.setAttribute('aria-label', t('Empty {where} slot {k}', { where: t(where), k: k + 1 }));
     }
     b.addEventListener('click', () => this.tapSlot(inst, where, k));
     return b;
@@ -347,14 +348,14 @@ export class UI {
 
   card(id, k) {
     const b = el('button', { type: 'button', className: 'shopcard' });
-    if (!id) { b.disabled = true; b.setAttribute('aria-label', 'Sold'); b.textContent = 'Sold'; return b; }
+    if (!id) { b.disabled = true; b.setAttribute('aria-label', t('Sold')); b.textContent = t('Sold'); return b; }
     const u = this.g.unitsById[id];
     b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
     b.style.setProperty('--jersey', this.g.cfg.jerseyByLevel[u.team.level]);
     b.dataset.id = id;
     if (this.g.you.gold < u.tier) b.setAttribute('aria-disabled', 'true'); // still focusable, so its card can be read
     b.append( // the visible text is the name; a hidden 'Buy' in front says what the button does
-      el('span', { className: 'vh', textContent: 'Buy ' }),
+      el('span', { className: 'vh', textContent: t('Buy ') }),
       el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 84) }),
       el('span', { className: 'nm', textContent: u.display }),
       el('span', { className: 'tr', textContent: u.style }),
@@ -366,7 +367,7 @@ export class UI {
       const stars = eco.owned(this.g.you).reduce((a, i) => a + i.star, 0);
       const r = this.g.buy(k);
       if (r.ok) play(eco.owned(this.g.you).reduce((a, i) => a + i.star, 0) <= stars ? 'merge' : 'buy');
-      this.say(r.ok ? `Bought ${r.unit.display}` : r.reason);
+      this.say(r.ok ? t('Bought {name}', { name: r.unit.display }) : t(r.reason));
       this.render();
     });
     return b;
@@ -387,11 +388,11 @@ export class UI {
     $('unitSprite').style.cssText = spriteStyle(u.look, 'idle', 0, 150);
     const ability = cfg.abilities[u.ability];
     const rows = [
-      ['Team', u.team.title], ['Cost', `${u.tier} gold`], ['Game role', `${u.role} (${u.style})`],
-      ...kws.map(([k, m]) => [m > 1 ? `Keyword x${m}` : 'Keyword', `${k}: ${cfg.keywords[k].desc}`]),
-      ['Ability', `${u.ability}: ${ability.desc}`],
-      ['Traits', `${u.role === 'Utility' ? 'No Specialization (wild card)' : u.style === 'Pin' ? 'Outside or Opposite (wild card)' : u.role}, ${u.team.level}, ${u.archetype}`],
-      ['Stats', `HP ${s.hp} · attack ${s.attack} · armor ${s.armor} · mana ${s.mana} · speed ${s.speed}${s.dodge ? ` · dodge ${Math.round(s.dodge * 100)}%` : ''}`],
+      [t('Team'), u.team.title], [t('Cost'), t('{n} gold', { n: u.tier })], [t('Game role'), `${u.role} (${u.style})`],
+      ...kws.map(([k, m]) => [m > 1 ? t('Keyword x{n}', { n: m }) : t('Keyword'), `${k}: ${loc(cfg.keywords[k], 'desc')}`]),
+      [t('Ability'), `${u.ability}: ${loc(ability, 'desc')}`],
+      [t('Traits'), `${u.role === 'Utility' ? t('No Specialization (wild card)') : u.style === 'Pin' ? t('Outside or Opposite (wild card)') : u.role}, ${u.team.level}, ${u.archetype}`],
+      [t('Stats'), t('HP {hp} · attack {atk} · armor {arm} · mana {mana} · speed {spd}', { hp: s.hp, atk: s.attack, arm: s.armor, mana: s.mana, spd: s.speed }) + (s.dodge ? t(' · dodge {n}%', { n: Math.round(s.dodge * 100) }) : '')],
     ];
     $('unitFacts').replaceChildren(...rows.flatMap(([k, v]) => [el('dt', { textContent: k }), el('dd', { textContent: v })]));
     $('unitcard').showModal();
@@ -411,13 +412,13 @@ export class UI {
     if (this.fighting) return;
     if (this.suppressClick) { this.suppressClick = false; return; }
     if (this.selected !== null) {
-      if (inst && inst.uid === this.selected) { this.selected = null; this.say('Put down'); }
+      if (inst && inst.uid === this.selected) { this.selected = null; this.say(t('Put down')); }
       else this.moveSelected(where, k);
     } else if (inst) {
       this.selected = inst.uid;
       const u = this.g.unitsById[inst.id];
       const kws = Object.entries(keywordsAt(u, inst.star, this.g.cfg)).map(([k, m]) => m > 1 ? `${k} x${m}` : k).join(' + ');
-      this.say(`${u.display} picked up: ${u.style}, ${kws}. Tap a hex or bench slot to move, or Sell.`);
+      this.say(t('{name} picked up: {style}, {kws}. Tap a hex or bench slot to move, or Sell.', { name: u.display, style: u.style, kws }));
     }
     this.render();
   }
@@ -425,7 +426,7 @@ export class UI {
   moveSelected(where, k) {
     const picked = eco.owned(this.g.you).find(i => i.uid === this.selected);
     const r = this.g.move(this.selected, where, k);
-    this.say(r.ok ? `${this.g.unitsById[picked.id].display} moved to ${where === 'court' ? 'court' : 'bench'}` : r.reason);
+    this.say(r.ok ? t(where === 'court' ? '{name} moved to court' : '{name} moved to bench', { name: this.g.unitsById[picked.id].display }) : t(r.reason));
     if (r.ok) this.selected = null;
   }
 
@@ -469,9 +470,9 @@ export class UI {
   }
 
   bind() {
-    $('sell').addEventListener('click', () => { if (this.selected === null) return; const r = this.g.sell(this.selected); if (r.ok) play('sell'); this.say(r.ok ? `Sold for ${r.gold} gold` : r.reason); this.selected = null; this.render(); });
-    $('reroll').addEventListener('click', () => { const r = this.g.reroll(); if (r.ok) play('reroll'); this.say(r.ok ? 'New shop' : r.reason); this.render(); });
-    $('xp').addEventListener('click', () => { const lv = this.g.you.level; const r = this.g.buyXp(); if (r.ok) play(this.g.you.level > lv ? 'level' : 'buy'); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
+    $('sell').addEventListener('click', () => { if (this.selected === null) return; const r = this.g.sell(this.selected); if (r.ok) play('sell'); this.say(r.ok ? t('Sold for {gold} gold', { gold: r.gold }) : t(r.reason)); this.selected = null; this.render(); });
+    $('reroll').addEventListener('click', () => { const r = this.g.reroll(); if (r.ok) play('reroll'); this.say(r.ok ? t('New shop') : t(r.reason)); this.render(); });
+    $('xp').addEventListener('click', () => { const lv = this.g.you.level; const r = this.g.buyXp(); if (r.ok) play(this.g.you.level > lv ? 'level' : 'buy'); this.say(r.ok ? t('Level {n}', { n: this.g.you.level }) : t(r.reason)); this.render(); });
     $('next').addEventListener('click', () => this.runRound());
     $('skip').addEventListener('click', () => this.playback.skip());
     document.addEventListener('pointerdown', e => this.holdForCard(e));
@@ -481,19 +482,21 @@ export class UI {
     $('historyBtn').addEventListener('click', () => this.showHistory());
     $('settingsBtn').addEventListener('click', () => $('settings').showModal());
     $('setClose').addEventListener('click', () => $('settings').close());
+    $('lang').value = getLang();
+    $('lang').addEventListener('change', () => { setLang($('lang').value); $('mute').textContent = t(isMuted() ? 'Sound off' : 'Sound on'); $('pause').textContent = t(this.paused ? 'Resume' : 'Pause'); $('tip').dataset.id = ''; this.resetTimer(); this.render(); this.say(t('Language: English')); });
     $('tipOk').addEventListener('click', () => { const s = guide.load(); s.done.push($('tip').dataset.id); guide.save(s); this.renderTip(); });
-    $('tipOff').addEventListener('click', () => { const s = guide.load(); s.off = true; guide.save(s); this.renderTip(); this.say('Tips hidden. Turn them back on in Settings.'); });
+    $('tipOff').addEventListener('click', () => { const s = guide.load(); s.off = true; guide.save(s); this.renderTip(); this.say(t('Tips hidden. Turn them back on in Settings.')); });
     $('tipsOn').addEventListener('change', () => { const s = guide.load(); s.off = !$('tipsOn').checked; if (!s.off) s.done = []; guide.save(s); this.renderTip(); });
-    $('speedPref').addEventListener('change', () => { setPref('speed', $('speedPref').value); this.playback.speed = Number($('speedPref').value); this.say(`Fights play at ${$('speedPref').value}x`); });
-    $('motion').addEventListener('change', () => { setPref('motion', $('motion').value); applyPrefs(); this.say($('motion').value === 'reduce' ? 'Motion reduced' : 'Motion follows this device'); });
-    $('textSize').addEventListener('change', () => { setPref('textSize', $('textSize').value); applyPrefs(); this.say('Text size changed'); this.render(); });
+    $('speedPref').addEventListener('change', () => { setPref('speed', $('speedPref').value); this.playback.speed = Number($('speedPref').value); this.say(t('Fights play at {n}x', { n: $('speedPref').value })); });
+    $('motion').addEventListener('change', () => { setPref('motion', $('motion').value); applyPrefs(); this.say(t($('motion').value === 'reduce' ? 'Motion reduced' : 'Motion follows this device')); });
+    $('textSize').addEventListener('change', () => { setPref('textSize', $('textSize').value); applyPrefs(); this.say(t('Text size changed')); this.render(); });
     $('histClose').addEventListener('click', () => $('history').close());
-    $('histDownload').addEventListener('click', () => { history.download(history.load()); this.say('Feedback file saved to your downloads'); });
-    $('histClear').addEventListener('click', () => { if (confirm('Delete the game history on this device?')) { history.clear(); this.showHistory(); this.say('History cleared'); } });
+    $('histDownload').addEventListener('click', () => { history.download(history.load()); this.say(t('Feedback file saved to your downloads')); });
+    $('histClear').addEventListener('click', () => { if (confirm(t('Delete the game history on this device?'))) { history.clear(); this.showHistory(); this.say(t('History cleared')); } });
     $('helpClose').addEventListener('click', () => $('help').close());
-    const showMute = () => { $('mute').setAttribute('aria-pressed', String(isMuted())); $('mute').textContent = isMuted() ? 'Sound off' : 'Sound on'; };
+    const showMute = () => { $('mute').setAttribute('aria-pressed', String(isMuted())); $('mute').textContent = t(isMuted() ? 'Sound off' : 'Sound on'); };
     showMute();
-    $('mute').addEventListener('click', () => { setMuted(!isMuted()); showMute(); play('pick'); this.say(isMuted() ? 'Sound off' : 'Sound on'); });
+    $('mute').addEventListener('click', () => { setMuted(!isMuted()); showMute(); play('pick'); this.say(t(isMuted() ? 'Sound off' : 'Sound on')); });
     for (const d of ['augment', 'carousel']) $(d).addEventListener('cancel', e => e.preventDefault()); // a pick is required; Escape does not dismiss
     $('speed').addEventListener('click', () => {
       this.playback.speed = this.playback.speed === 1 ? 2 : 1;
@@ -503,26 +506,26 @@ export class UI {
     $('pause').addEventListener('click', () => {
       this.paused = !this.paused;
       $('pause').setAttribute('aria-pressed', String(this.paused));
-      $('pause').textContent = this.paused ? 'Resume' : 'Pause';
-      this.say(this.paused ? 'Timer paused' : 'Timer running');
+      $('pause').textContent = t(this.paused ? 'Resume' : 'Pause');
+      this.say(t(this.paused ? 'Timer paused' : 'Timer running'));
     });
     $('auto').addEventListener('change', () => {
       this.auto = $('auto').checked;
       try { localStorage.setItem(AUTO_KEY, this.auto ? 'on' : 'off'); } catch { /* per-device preference only */ }
       this.resetTimer();
-      this.say(this.auto ? 'Auto-advance on' : 'Auto-advance off: press Next round when ready');
+      this.say(t(this.auto ? 'Auto-advance on' : 'Auto-advance off: press Next round when ready'));
     });
     $('difficulty').addEventListener('change', () => {
       try { localStorage.setItem(DIFF_KEY, $('difficulty').value); } catch { /* per-device preference only */ }
-      this.say(`Bots: ${$('difficulty').value}, from the next new game`);
+      this.say(t('Bots: {d}, from the next new game', { d: $('difficulty').selectedOptions[0].textContent }));
     });
     const fresh = (daily = false) => {
       if (daily) this.g.newGame(history.dailySeed(), history.DAILY_DIFFICULTY); else this.g.newGame(undefined, $('difficulty').value);
       this.selected = null; this.scout = null; this.lastFight = null; this.lastLine = '';
-      this.say(daily ? `Today's challenge, ${history.today()}: same players and bots for everyone today` : 'New game');
+      this.say(daily ? t("Today's challenge, {date}: same players and bots for everyone today", { date: history.today() }) : t('New game'));
       this.render(); this.resetTimer();
     };
-    const dailyLine = () => { const best = history.dailyBest(history.load()); return `Today's challenge (${history.today()}): same pool, shops and bots for everyone today, bots on Normal. ${best ? `Your best today: ${ordinal(best)}.` : 'Not played yet today.'}`; };
+    const dailyLine = () => { const best = history.dailyBest(history.load()); return t("Today's challenge ({date}): same pool, shops and bots for everyone today, bots on Normal. ", { date: history.today() }) + (best ? t('Your best today: {place}.', { place: ordinal(best) }) : t('Not played yet today.')); };
     $('newgame').addEventListener('click', () => { $('dailyNote').textContent = dailyLine(); $('newDlg').showModal(); });
     $('newClose').addEventListener('click', () => $('newDlg').close());
     $('newFree').addEventListener('click', () => { $('newDlg').close(); fresh(false); });
@@ -537,7 +540,7 @@ export class UI {
       if (e.key.toLowerCase() === 'i') { const t = document.activeElement?.closest('[data-uid], [data-id]'); if (t) { e.preventDefault(); this.showUnitFrom(t); } return; }
       const map = { s: 'sell', r: 'reroll', x: 'xp', n: 'next' };
       if (map[e.key.toLowerCase()]) { e.preventDefault(); $(map[e.key.toLowerCase()]).click(); }
-      if (e.key === 'Escape' && this.selected !== null) { this.selected = null; this.say('Put down'); this.render(); }
+      if (e.key === 'Escape' && this.selected !== null) { this.selected = null; this.say(t('Put down')); this.render(); }
     });
     addEventListener('resize', () => { if (!this.fighting) this.render(); });
   }

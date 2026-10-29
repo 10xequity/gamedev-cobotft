@@ -2,10 +2,10 @@
 // from that copy, so the game runs with no signal. Each release bumps VERSION (tools/check.mjs
 // checks it matches the pages), which stores a fresh copy and deletes the old one. Pages are
 // fetched network-first, so a phone with signal always gets the newest release.
-const VERSION = '2.10.0';
+const VERSION = '2.11.0';
 const CACHE = `tacticalboom-${VERSION}`;
 const V = `?v=${VERSION}`;
-const MODULES = ['achievements', 'arena', 'bots', 'combat', 'economy', 'gallery', 'game', 'guide', 'hex', 'history', 'ladder', 'main', 'playback', 'rng', 'sound', 'sprite', 'stage', 'traits', 'ui', 'units'];
+const MODULES = ['achievements', 'arena', 'bots', 'combat', 'economy', 'gallery', 'game', 'guide', 'hex', 'history', 'i18n', 'ladder', 'main', 'playback', 'rng', 'sound', 'sprite', 'stage', 'traits', 'ui', 'units'];
 const CORE = [
   './', 'index.html', 'gallery.html', `style.css${V}`, 'app.webmanifest',
   ...MODULES.map(m => `js/${m}.js${V}`),

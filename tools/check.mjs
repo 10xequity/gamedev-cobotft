@@ -413,6 +413,21 @@ assert.equal(guideMod.next(tg2, { done: ['place'], off: false })?.id, 'shop', 't
 assert.equal(guideMod.next(tg2, { done: [], off: true }), null, 'tips off shows nothing');
 assert.equal(guideMod.next(tg2, { done: guideMod.TIPS.map(t => t.id), off: false }), null, 'every tip shows once');
 
+// Spanish: every description has its Spanish twin; every marked page text and How-to-play item has a
+// translation; t() fills its blanks; achievements and tips carry Spanish.
+const i18n = await import(pathToFileURL(join(GAME, 'js', 'i18n.js')).href);
+for (const [name, x] of [...Object.entries(cfg.traits), ...Object.entries(cfg.keywords), ...Object.entries(cfg.abilities)]) assert.ok(x.desc_es, `${name}: no desc_es`);
+for (const a of cfg.augments.list) assert.ok(a.name_es && a.desc_es, `${a.id}: no Spanish`);
+for (const a of ach.LIST) assert.ok(a.name_es && a.desc_es, `achievement ${a.id}: no Spanish`);
+for (const tip of guideMod.TIPS) assert.ok(tip.text_es, `tip ${tip.id}: no Spanish`);
+const page = readFileSync(join(GAME, 'index.html'), 'utf8');
+for (const [, txt] of page.matchAll(/data-i18n>([^<]+)</g)) assert.ok(i18n.ES[txt], `no Spanish for page text "${txt}"`);
+for (const [, aria] of page.matchAll(/aria-label="([^"]+)"[^>]*data-i18n-aria/g)) assert.ok(i18n.ES[aria], `no Spanish for label "${aria}"`);
+for (const [, html] of page.matchAll(/<li data-i18n-html>([\s\S]*?)<\/li>/g)) assert.ok(i18n.ES_HTML[html.trim()], `no Spanish for help item "${html.slice(0, 40)}"`);
+for (const [rank] of cfg.ladder.ranks) assert.ok(i18n.ES[rank], `no Spanish for rank ${rank}`);
+assert.equal(i18n.t('Bought {name}', { name: 'Ana' }), 'Bought Ana', 'English fills its blanks');
+assert.equal(i18n.getLang(), 'en', 'English by default');
+
 // Stage art: every name the seed can pick has a drawn theme that builds a well-formed image;
 // club colours exist for every level.
 const { THEMES, stageSVG } = await import(pathToFileURL(join(GAME, 'js', 'stage.js')).href);

@@ -1,6 +1,7 @@
 import { Game } from './game.js';
 import { UI, DIFF_KEY, HELP_KEY } from './ui.js';
 import { setManifest, lookCount } from './sprite.js';
+import { t } from './i18n.js';
 
 // Data carries this build's version (from the page's import map) so a phone never mixes old data with new code.
 const v = new URL(import.meta.url).search;
@@ -14,7 +15,7 @@ try { difficulty = localStorage.getItem(DIFF_KEY) || 'normal'; } catch { /* no s
 if (!game.load() || game.over) game.newGame(undefined, difficulty);
 const ui = new UI(game);
 ui.render();
-ui.say(`Round ${game.round.label}. Buy from the shop, tap a unit then a slot to move it.`);
+ui.say(t('Round {label}. Buy from the shop, tap a unit then a slot to move it.', { label: game.round.label }));
 
 // First visit on this device: open How to play once.
 try { if (!localStorage.getItem(HELP_KEY)) { localStorage.setItem(HELP_KEY, '1'); document.getElementById('help').showModal(); } } catch { /* no storage: skip it */ }

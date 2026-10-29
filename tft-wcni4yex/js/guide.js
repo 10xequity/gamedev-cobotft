@@ -6,16 +6,22 @@ const KEY = 'tacticalboom.guide';
 
 export const TIPS = [
   { id: 'place', text: 'Tap your player on the bench, then tap a hex on your half of the court to put her in play.',
+    text_es: 'Toca a tu jugadora en la banca y luego un hexágono de tu mitad de la cancha para ponerla en juego.',
     when: g => eco.onCourt(g.you).length === 0 && g.you.bench.some(Boolean) },
   { id: 'shop', text: 'Buy players from the Shop with gold. Three copies of the same player merge into a stronger 2-star.',
+    text_es: 'Compra jugadoras en la Tienda con oro. Tres copias de la misma jugadora se unen en una de 2 estrellas, más fuerte.',
     when: g => eco.onCourt(g.you).length >= 1 },
   { id: 'level', text: 'Buy XP (4 gold) raises your level, and each level lets one more player onto the court.',
+    text_es: 'Comprar XP (4 de oro) sube tu nivel, y cada nivel deja entrar a una jugadora más en la cancha.',
     when: g => g.roundIdx >= 1 && g.you.gold >= 4 && g.you.level < 3 },
   { id: 'traits', text: 'Players who share a game role, club level or archetype switch on bonuses. See Traits under the court.',
+    text_es: 'Las jugadoras que comparten rol de juego, nivel de club o arquetipo activan bonificaciones. Mira Rasgos bajo la cancha.',
     when: g => eco.onCourt(g.you).length >= 2 },
   { id: 'fight', text: 'From 2-1 every Next round is a real fight. Lose it and you lose HP; at 0 you are out.',
+    text_es: 'Desde la 2-1 cada Siguiente ronda es un partido de verdad. Si lo pierdes, pierdes vida; con 0 quedas fuera.',
     when: g => g.round.label === '1-3' },
-  { id: 'replay', text: 'Tap a fight under Your fights to watch it again. Hold any player (or press I) to see her card.',
+  { id: 'replay', text: 'Tap a fight under Fights to watch it again. Hold any player (or press I) to see her card.',
+    text_es: 'Toca un partido en Partidos para volver a verlo. Mantén pulsada cualquier jugadora (o pulsa I) para ver su ficha.',
     when: g => (g.fights || []).length >= 1 },
 ];
 
