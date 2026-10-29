@@ -7,6 +7,7 @@ import { keywordsAt, statsAt } from './units.js';
 import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
 import * as history from './history.js';
+import * as ladder from './ladder.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
@@ -148,6 +149,8 @@ export class UI {
     $('histSummary').textContent = recs.length
       ? `${recs.length} game${recs.length === 1 ? '' : 's'} on this device. Average place ${avg}, ${recs.filter(r => r.place === 1).length} won.`
       : 'No finished games yet. Finish a game and it appears here.';
+    const lad = ladder.load(), rating = lad.rating ?? this.g.cfg.ladder.start;
+    $('histRank').textContent = `Rank: ${ladder.rankFor(rating, this.g.cfg)}, rating ${rating}${lad.peak ? ` (peak ${lad.peak})` : ''}, ${lad.games || 0} rated game${lad.games === 1 ? '' : 's'}. Clear history does not reset it.`;
     const best = history.dailyBest(recs);
     if (best) $('histSummary').textContent += ` Today's challenge best: ${ordinal(best)}.`;
     $('histGames').replaceChildren(...recs.slice(-10).reverse().map(r => el('li', { textContent:
@@ -272,6 +275,10 @@ export class UI {
       $('overText').textContent = `You finished ${ordinal(g.you.place)} of ${g.players.length}.`;
       $('finalPlaces').replaceChildren(...this.playerRows());
       history.record(g);
+      const lad = ladder.record(g.you.place, g.difficulty, g.cfg);
+      const sign = lad.delta >= 0 ? '+' : '';
+      const moved = lad.rank === lad.prevRank ? '' : `, ${lad.delta >= 0 ? 'up' : 'down'} from ${lad.prevRank}`;
+      $('overText').textContent += ` Rating ${sign}${lad.delta} to ${lad.rating} (${lad.rank}${moved}).`;
       $('over').showModal();
       play(g.you.place === 1 ? 'win' : 'lose');
       this.say(`Game over. You finished ${ordinal(g.you.place)}.`);

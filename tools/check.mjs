@@ -381,6 +381,17 @@ assert.deepEqual([d1.pool, d1.you.shop, d1.players.map(p => p.pers)], [d2.pool, 
 assert.equal(hist.dailyBest([{ daily: '2026-10-29', place: 4 }, { daily: '2026-10-29', place: 2 }, { daily: '2026-10-28', place: 1 }, { daily: null, place: 1 }], '2026-10-29'), 2, 'best place today only');
 assert.equal(hist.dailyBest([], '2026-10-29'), null);
 
+// Ladder: place and difficulty move the rating; ranks follow the thresholds; it never goes below 0.
+const lad = await import(pathToFileURL(join(GAME, 'js', 'ladder.js')).href);
+assert.equal(lad.ratingChange(1, 'normal', cfg), cfg.ladder.pointsByPlace[0]);
+assert.ok(lad.ratingChange(1, 'hard', cfg) > lad.ratingChange(1, 'normal', cfg) && lad.ratingChange(1, 'normal', cfg) > lad.ratingChange(1, 'easy', cfg), 'harder bots earn more');
+assert.ok(lad.ratingChange(8, 'hard', cfg) > lad.ratingChange(8, 'easy', cfg), 'harder bots cost less');
+assert.equal(lad.rankFor(cfg.ladder.start, cfg), 'Silver'); assert.equal(lad.rankFor(0, cfg), 'Bronze'); assert.equal(lad.rankFor(5000, cfg), 'Master');
+const s1 = lad.apply({}, 1, 'hard', cfg);
+assert.deepEqual([s1.rating, s1.games, s1.peak, s1.prevRank], [cfg.ladder.start + 60, 1, cfg.ladder.start + 60, 'Silver']);
+assert.equal(lad.apply({ rating: 10, games: 3, peak: 900 }, 8, 'easy', cfg).rating, 0, 'rating floors at 0');
+for (let i = 1; i < cfg.ladder.ranks.length; i++) assert.ok(cfg.ladder.ranks[i][1] > cfg.ladder.ranks[i - 1][1], 'rank thresholds rise');
+
 // Stage art: every name the seed can pick has a drawn theme that builds a well-formed image;
 // club colours exist for every level.
 const { THEMES, stageSVG } = await import(pathToFileURL(join(GAME, 'js', 'stage.js')).href);

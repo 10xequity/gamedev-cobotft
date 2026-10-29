@@ -277,6 +277,12 @@
     "multiplierFrom2Star": 2,
     "desc": "2-star doubles the keyword's number; 3-star keeps that and adds a second keyword drawn by seed at its 1-star number."
   },
+  "ladder": {
+    "start": 1000,
+    "pointsByPlace": [40, 30, 20, 10, -10, -20, -30, -40],
+    "difficultyFactor": { "easy": 0.5, "normal": 1, "hard": 1.5 },
+    "ranks": [["Bronze", 0], ["Silver", 1000], ["Gold", 1150], ["Platinum", 1300], ["Diamond", 1500], ["Master", 1750]]
+  },
   "carousel": {
     "rounds": ["3-1", "4-1", "5-1", "6-1", "7-1"],
     "tiersByStage": { "3": [1, 2, 3], "4": [2, 3, 4], "5": [3, 4], "6": [3, 4, 5], "7": [4, 5] }

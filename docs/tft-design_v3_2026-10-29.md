@@ -222,7 +222,7 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 23. Settings panel (sound, timer, bots, motion, text size). ✔ v2.3.0
 24. Replay any of your fights from the current game. ✔ v2.4.0
 25. Daily challenge: one shared seed per day, your best kept. ✔ v2.5.0
-26. Local ladder: a rating that moves with placements, with ranks.
+26. Local ladder: a rating that moves with placements, with ranks. ✔ v2.6.0
 27. Achievements (local), shown in History.
 28. Hit sparks, screen shake, knockout effects (reduced-motion safe).
 29. Guided first game: step-by-step tips.

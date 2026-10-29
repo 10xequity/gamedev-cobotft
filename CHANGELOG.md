@@ -2,6 +2,16 @@
 
 Player names never appear in this file.
 
+## v2.6.0 — 2026-10-29 · Milestone 26: local ladder
+
+- `js/ladder.js`: a rating on this device, starting at 1000, that moves with each finished game: 1st +40, 2nd
+  +30, 3rd +20, 4th +10, 5th -10 ... 8th -40. Hard bots earn x1.5 and cost /1.5; Easy earn x0.5 and cost /0.5.
+  Ranks: Bronze, Silver (1000), Gold (1150), Platinum (1300), Diamond (1500), Master (1750). Never below 0.
+  All numbers in `config.json` under `ladder`.
+- The game-over panel says the change, the new rating and any rank change; History shows rank, rating, peak and
+  rated games. The rating is kept apart from History, so "Clear history" does not reset it.
+- Tests: place and difficulty move the rating as set; ranks follow the thresholds; floor at 0.
+
 ## v2.5.0 — 2026-10-29 · Milestone 25: daily challenge
 
 - New game now asks: Free play (bots as set in Settings) or Today's challenge. The challenge seed is the local
