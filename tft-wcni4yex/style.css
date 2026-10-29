@@ -63,7 +63,7 @@ body.game { padding-bottom: 96px; }
 .arena.fighting .hex { pointer-events: none; }
 .hex.down .unit { opacity: .55; }
 .hex .unit .hpbar { width: 70%; height: 5px; margin-top: 2px; background: var(--black); border: 1px solid var(--black); border-radius: 3px; overflow: hidden; }
-.hex .unit .hpbar i { display: block; height: 100%; width: 100%; background: var(--gold); transition: width .25s; }
+.hex .unit .hpbar i { display: block; height: 100%; width: 100%; background: var(--gold); transform-origin: left; transition: transform .25s; }
 .hex.theirs .unit .hpbar i { background: var(--cream); }
 .float { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-family: var(--display); font-weight: 800; font-size: 13px; white-space: nowrap; padding: 0 4px; border-radius: 4px; background: var(--black); color: var(--cream); animation: rise .9s ease-out forwards; z-index: 40; }
 .float.dmg { color: var(--gold); }

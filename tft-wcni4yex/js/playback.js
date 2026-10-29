@@ -30,7 +30,7 @@ export class Playback {
 
   hp(uid, hp) {
     const bar = this.tile(uid)?.querySelector('.hpbar i');
-    if (bar) bar.style.width = `${Math.max(0, Math.min(100, 100 * hp / this.maxHp[uid]))}%`;
+    if (bar) bar.style.transform = `scaleX(${Math.max(0, Math.min(1, hp / this.maxHp[uid]))})`;
   }
 
   float(uid, text, kind) {
