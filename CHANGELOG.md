@@ -2,6 +2,31 @@
 
 Player names never appear in this file.
 
+## v1.0.0 — 2026-10-29 · Milestone 10: balance pass, staff build
+
+- Balance (tier 2, 1-star, 200 fights per pair): five lines in the 50-55% band — Hitters 53.0, Servers 54.8,
+  AllUtility 54.4, Diggers 54.8, Balanced 53.1. Outside it: Pins 75.3 (too strong), Wall 44.8, Engine 9.9.
+  The design's target is 4-5 lines at 52-53% with the rest below 50%; the five in-band lines sit at 53-55%,
+  and Pins breaks the "rest below 50%" half. Pins is the only line without a Libero, and its Pin wild cards
+  stack Outside 3 easily.
+- Game length (20 bot games): first player out at 4-2, last fight at 6-4 (was 3-3 and 5-2).
+- Three rule readings changed, each to the reading that made the numbers workable; all flagged for the owner:
+  - Block returns 25% of what it absorbed (was 25% of the whole hit, which made a Defensive Middle the top
+    damage dealer on any board).
+  - Set buffs the two strongest teammates (was the two nearest, which on a Setter-heavy board meant Setters).
+  - A Setter's basic action is a set: her strongest non-Setter teammate hits with +28%
+    (`combat.setterSetBonus`; 0 restores the old plain hit). Setters hitting for themselves wasted half a
+    support-heavy team's actions, because each side gets the same number of actions in a rally.
+- Number changes (all in `config.json`): HP loss per stage 0/1/2/3/4/5 for stages 2-7 (was 2-7), mana per
+  action 19 (was 12); Outside +8/+18% (was 10/25), Middle +7/+20 armor (was 20/45), Libero dodge +13/+20%,
+  Opposite ability damage +75/+135% (was 15/35, worthless while casts were rare), No Specialization
+  +8/+11/+16% (was 8/16/28); Spike 1.73x (2.2), Ace Serve 2.59x (1.8), Tip 0.75x (1.2), Dig heal 1.45x (1.0);
+  Block absorbs 28% (40%), Second Wind returns at 17% (30%), Follow Through splash 50% (40%); Target aggro 4.4
+  (6); Libero HP x1.19 and attack x1.12, Setter HP x1.14. Descriptions updated to match.
+- `tools/balance-sim.mjs`: the Engine line is now two Setters (three left it no hitters to ever compete);
+  `BAL` overrides for trial numbers; game-length report from 20 bot games.
+- Staff build: version 1.0.0; README lists the balance script and the version-bump rule.
+
 ## v0.9.0 — 2026-10-29 · Milestone 9: rally playback, phone polish, accessibility
 
 - Your fight now plays on the court after Next round (`js/playback.js`): both boards stand on their halves with

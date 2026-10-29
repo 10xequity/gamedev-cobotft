@@ -14,19 +14,15 @@
     "stages": {
       "practiceRounds": 3,
       "roundsPerStage": 4,
-      "practiceStageRound4": [
-        2,
-        4,
-        6
-      ]
+      "practiceStageRound4": [2, 4, 6]
     }
   },
   "tiers": {
+    "12": 4,
+    "13": 4,
     "14": 1,
     "15": 2,
     "16": 3,
-    "12": 4,
-    "13": 4,
     "17": 5
   },
   "pool": {
@@ -52,69 +48,15 @@
     "xpCost": 4,
     "xpPerBuy": 4,
     "oddsByLevel": {
-      "1": [
-        100,
-        0,
-        0,
-        0,
-        0
-      ],
-      "2": [
-        100,
-        0,
-        0,
-        0,
-        0
-      ],
-      "3": [
-        75,
-        25,
-        0,
-        0,
-        0
-      ],
-      "4": [
-        55,
-        30,
-        15,
-        0,
-        0
-      ],
-      "5": [
-        45,
-        33,
-        20,
-        2,
-        0
-      ],
-      "6": [
-        30,
-        40,
-        25,
-        5,
-        0
-      ],
-      "7": [
-        19,
-        30,
-        40,
-        10,
-        1
-      ],
-      "8": [
-        15,
-        20,
-        32,
-        30,
-        3
-      ],
-      "9": [
-        10,
-        17,
-        25,
-        33,
-        15
-      ]
+      "1": [100, 0, 0, 0, 0],
+      "2": [100, 0, 0, 0, 0],
+      "3": [75, 25, 0, 0, 0],
+      "4": [55, 30, 15, 0, 0],
+      "5": [45, 33, 20, 2, 0],
+      "6": [30, 40, 25, 5, 0],
+      "7": [19, 30, 40, 10, 1],
+      "8": [15, 20, 32, 30, 3],
+      "9": [10, 17, 25, 33, 15]
     }
   },
   "xp": {
@@ -139,11 +81,7 @@
     }
   },
   "income": {
-    "practiceRounds": [
-      3,
-      3,
-      4
-    ],
+    "practiceRounds": [3, 3, 4],
     "base": 5,
     "streakBonus": {
       "2": 1,
@@ -158,12 +96,12 @@
   },
   "damage": {
     "perStage": {
-      "2": 2,
-      "3": 3,
-      "4": 4,
-      "5": 5,
-      "6": 6,
-      "7": 7
+      "2": 0,
+      "3": 1,
+      "4": 2,
+      "5": 3,
+      "6": 4,
+      "7": 5
     },
     "perTwoSurvivors": 1
   },
@@ -200,13 +138,9 @@
         "mana": 80
       }
     },
-    "starMultiplier": [
-      1,
-      1.8,
-      3.24
-    ],
+    "starMultiplier": [1, 1.8, 3.24],
     "rollPercent": 6,
-    "manaPerAction": 12,
+    "manaPerAction": 19,
     "manaPerHitTaken": 5
   },
   "roles": {
@@ -215,59 +149,44 @@
       "hp": 0.9,
       "armor": 0,
       "speed": 1.1,
-      "styles": [
-        "Outside",
-        "Pin"
-      ]
+      "styles": ["Outside", "Pin"]
     },
     "Middle": {
       "attack": 0.9,
       "hp": 1.2,
       "armor": 15,
       "speed": 0.9,
-      "styles": [
-        "Defensive Middle",
-        "Offensive Middle"
-      ]
+      "styles": ["Defensive Middle", "Offensive Middle"]
     },
     "Setter": {
       "attack": 0.85,
-      "hp": 1.0,
+      "hp": 1.14,
       "armor": 0,
       "speed": 0.9,
       "manaGain": 1.5,
-      "styles": [
-        "Setter"
-      ]
+      "styles": ["Setter"]
     },
     "Libero": {
-      "attack": 1.0,
-      "hp": 0.95,
+      "attack": 1.12,
+      "hp": 1.19,
       "armor": 0,
-      "speed": 1.0,
+      "speed": 1,
       "dodge": 0.1,
-      "styles": [
-        "Libero"
-      ]
+      "styles": ["Libero"]
     },
     "Opposite": {
       "attack": 1.1,
-      "hp": 1.0,
+      "hp": 1,
       "armor": 0,
-      "speed": 1.0,
-      "styles": [
-        "Opposite",
-        "Pin"
-      ]
+      "speed": 1,
+      "styles": ["Opposite", "Pin"]
     },
     "Utility": {
       "attack": 0.95,
       "hp": 0.95,
       "armor": 0,
       "speed": 0.95,
-      "styles": [
-        "Utility"
-      ]
+      "styles": ["Utility"]
     }
   },
   "keywords": {
@@ -278,13 +197,13 @@
       "scales": "extra"
     },
     "Follow Through": {
-      "desc": "Attacks deal 40% of their damage to hexes next to the target. 2-star: 80%.",
-      "splash": 0.4,
+      "desc": "Attacks deal 50% of their damage to hexes next to the target. 2-star: 100%.",
+      "splash": 0.5,
       "scales": "splash"
     },
     "Block": {
-      "desc": "Absorbs 40% of each hit taken and returns 25% of it to the attacker. 2-star: returns 50%.",
-      "absorb": 0.4,
+      "desc": "Absorbs 28% of each hit taken and returns 25% of what it absorbed to the attacker. 2-star: returns 50%.",
+      "absorb": 0.28,
       "return": 0.25,
       "scales": "return"
     },
@@ -305,8 +224,8 @@
       "scales": "rows"
     },
     "Second Wind": {
-      "desc": "Returns once at 30% of max HP with keywords off. 2-star: 60%.",
-      "hp": 0.3,
+      "desc": "Returns once at 17% of max HP with keywords off. 2-star: 34%.",
+      "hp": 0.17,
       "scales": "hp"
     }
   },
@@ -314,59 +233,42 @@
     "Outside": {
       "keyword": "Rebound Attack",
       "ability": "Spike",
-      "countsAs": [
-        "Outside"
-      ]
+      "countsAs": ["Outside"]
     },
     "Pin": {
       "keyword": "Rebound Attack",
       "ability": "Spike",
-      "countsAs": [
-        "Outside",
-        "Opposite"
-      ]
+      "countsAs": ["Outside", "Opposite"]
     },
     "Opposite": {
       "keyword": "Follow Through",
       "ability": "Ace Serve",
-      "countsAs": [
-        "Opposite"
-      ]
+      "countsAs": ["Opposite"]
     },
     "Defensive Middle": {
       "keyword": "Block",
       "ability": "Big Block",
-      "countsAs": [
-        "Middle"
-      ]
+      "countsAs": ["Middle"]
     },
     "Offensive Middle": {
       "keyword": "First Touch",
       "ability": "Slide",
-      "countsAs": [
-        "Middle"
-      ]
+      "countsAs": ["Middle"]
     },
     "Setter": {
       "keyword": "Pregame",
       "ability": "Set",
-      "countsAs": [
-        "Setter"
-      ]
+      "countsAs": ["Setter"]
     },
     "Libero": {
       "keyword": "Target",
       "ability": "Dig",
-      "countsAs": [
-        "Libero"
-      ]
+      "countsAs": ["Libero"]
     },
     "Utility": {
       "keyword": "Second Wind",
       "ability": "Tip",
-      "countsAs": [
-        "Utility"
-      ]
+      "countsAs": ["Utility"]
     }
   },
   "starKeyword": {
@@ -376,13 +278,22 @@
   "bots": {
     "names": ["Team Spike", "Team Dig", "Team Block", "Team Set", "Team Serve", "Team Tip", "Team Pancake"],
     "paces": {
-      "slow": { "levelAhead": 1, "rerolls": 3 },
-      "steady": { "levelAhead": 2, "rerolls": 1 },
-      "fast": { "levelAhead": 3, "rerolls": 0 }
+      "slow": {
+        "levelAhead": 1,
+        "rerolls": 3
+      },
+      "steady": {
+        "levelAhead": 2,
+        "rerolls": 1
+      },
+      "fast": {
+        "levelAhead": 3,
+        "rerolls": 0
+      }
     }
   },
   "aggro": {
-    "Target": 6,
+    "Target": 4.4,
     "MiddleCentre": 4,
     "Hitter": 2,
     "FrontRowBonus": 1,
@@ -391,37 +302,29 @@
   },
   "combat": {
     "maxActions": 120,
+    "setterSetBonus": 0.28,
     "timeoutRule": "higher total HP percent wins, equal is a draw"
   },
   "traits": {
-    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.10, 0.25], "desc": "Team attack +10% / +25%" },
-    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [20, 45], "desc": "Front-row armor +20 / +45" },
+    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.08, 0.18], "desc": "Team attack +8% / +18%" },
+    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [7, 20], "desc": "Front-row armor +7 / +20" },
     "Setter": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "manaPerAction", "values": [3, 7], "desc": "Team mana per action +3 / +7" },
-    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.10, 0.20], "desc": "Team dodge +10% / +20%" },
-    "Opposite": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "abilityDamage", "values": [0.15, 0.35], "desc": "Ability damage +15% / +35%" },
-    "No Specialization": { "family": "Role", "breakpoints": [2, 4, 6], "applies": "holders", "effect": "allStats", "values": [0.08, 0.16, 0.28], "doubleCastAt": 6, "desc": "Utility units +8% / +16% / +28% all stats; 6: every Utility casts twice" },
+    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.13, 0.2], "desc": "Team dodge +13% / +20%" },
+    "Opposite": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "abilityDamage", "values": [0.75, 1.35], "desc": "Ability damage +75% / +135%" },
+    "No Specialization": { "family": "Role", "breakpoints": [2, 4, 6], "applies": "holders", "effect": "allStats", "values": [0.08, 0.11, 0.16], "doubleCastAt": 6, "desc": "Utility units +8% / +11% / +16% all stats; 6: every Utility casts twice" },
     "Colorado": { "family": "Club level", "breakpoints": [3, 5], "applies": "holders", "effect": "speed", "values": [0.08, 0.16], "desc": "Attack speed +8% / +16%" },
-    "National": { "family": "Club level", "breakpoints": [2, 4], "applies": "holders", "effect": "abilityDamage", "values": [0.10, 0.20], "desc": "Ability damage +10% / +20%" },
+    "National": { "family": "Club level", "breakpoints": [2, 4], "applies": "holders", "effect": "abilityDamage", "values": [0.1, 0.2], "desc": "Ability damage +10% / +20%" },
     "Regional": { "family": "Club level", "breakpoints": [2, 4], "applies": "team", "effect": "hpPct", "values": [0.12, 0.28], "desc": "Team HP +12% / +28%" },
-    "Hype Captain": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "speed", "values": [0.06, 0.12, 0.20], "desc": "Team attack speed +6% / +12% / +20%" },
+    "Hype Captain": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "speed", "values": [0.06, 0.12, 0.2], "desc": "Team attack speed +6% / +12% / +20%" },
     "Snack Boss": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "regen", "values": [0.01, 0.02, 0.03], "desc": "Regen 1% / 2% / 3% max HP per action" },
     "Early Bird": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "startMana", "values": [20, 40, 60], "desc": "Start with 20 / 40 / 60 mana" },
-    "Clutch Closer": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "clutch", "values": [0.15, 0.30, 0.50], "desc": "Below 40% HP: +15% / +30% / +50% damage", "below": 0.4 },
+    "Clutch Closer": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "clutch", "values": [0.15, 0.3, 0.5], "desc": "Below 40% HP: +15% / +30% / +50% damage", "below": 0.4 },
     "Group Chat Queen": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "castShare", "values": [10, 20, 30], "desc": "When one casts, adjacent allies +10 / +20 / +30 mana" },
     "Gym Rat": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "hpFlat", "values": [100, 250, 450], "desc": "+100 / +250 / +450 HP" },
     "Sunshine": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "team", "effect": "shield", "values": [0.08, 0.15, 0.25], "desc": "Team shield 8% / 15% / 25% HP at start" },
-    "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.10, 0.20, 0.30], "desc": "Abilities cost 10% / 20% / 30% less" }
+    "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.1, 0.2, 0.3], "desc": "Abilities cost 10% / 20% / 30% less" }
   },
-  "archetypes": [
-    "Hype Captain",
-    "Snack Boss",
-    "Early Bird",
-    "Clutch Closer",
-    "Group Chat Queen",
-    "Gym Rat",
-    "Sunshine",
-    "Mastermind"
-  ],
+  "archetypes": ["Hype Captain", "Snack Boss", "Early Bird", "Clutch Closer", "Group Chat Queen", "Gym Rat", "Sunshine", "Mastermind"],
   "jerseyByLevel": {
     "National": "#0E7C86",
     "Regional": "#E5B800",
@@ -436,16 +339,16 @@
   },
   "abilities": {
     "Spike": {
-      "mult": 2.2,
+      "mult": 1.73,
       "splashAt3Star": 0.5,
       "desc": "Big hit on the target; 3-star splashes half to neighbours."
     },
     "Ace Serve": {
-      "mult": 1.8,
+      "mult": 2.59,
       "desc": "Hits the target and every enemy in the same column."
     },
     "Big Block": {
-      "shield": 2.0,
+      "shield": 2,
       "desc": "Shields self and adjacent allies."
     },
     "Slide": {
@@ -456,14 +359,14 @@
       "mana": 20,
       "attackBuff": 0.25,
       "buffActions": 3,
-      "desc": "Two nearest allies gain mana and attack for their next actions."
+      "desc": "Two strongest teammates gain mana and attack for their next actions."
     },
     "Dig": {
-      "heal": 1.0,
+      "heal": 1.45,
       "desc": "Heals the lowest-HP ally."
     },
     "Tip": {
-      "mult": 1.2,
+      "mult": 0.75,
       "shred": 10,
       "desc": "Casts the filled role's ability; otherwise a small splash that lowers armor."
     }

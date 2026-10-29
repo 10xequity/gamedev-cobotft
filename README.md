@@ -9,4 +9,11 @@ shows: a player's first name, the first letters of the last name, and the team t
 ```
 node tools/build-roster.mjs   # refresh data/roster.json from the public teams page
 node tools/check.mjs          # self-checks, run before every push
+node tools/balance-sim.mjs    # win matrix of the 8 test lines + game length from 20 bot games
 ```
+
+To try balance numbers without editing the config, pass overrides as JSON:
+`BAL='{"abilities":{"Tip":{"mult":0.9}}}' node tools/balance-sim.mjs`.
+
+After any change to the game folder, bump the `?v=` version string in both pages (every
+occurrence, including the import map); `tools/check.mjs` fails if a page mixes versions.

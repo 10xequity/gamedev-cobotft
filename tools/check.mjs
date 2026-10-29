@@ -249,7 +249,7 @@ for (let i = 0; i < 100; i++) {
   const first = simulate({ seed: `tg${i}`, near: kwCourt(1), far: utilFar, unitsById: byId, cfg }).events.find(e => (e.t === 'dodge' || (e.t === 'hit' && e.kind === 'hit') || e.t === 'ignore') && e.to < 600);
   if (first?.to === 505) libFirst++;
 }
-assert.ok(libFirst > 25, `Target Libero should be attacked first well over 1 in 6 fights, got ${libFirst}/100`);
+assert.ok(libFirst > 20, `Target Libero should be attacked first well over 1 in 6 fights, got ${libFirst}/100`);
 // 2-star First Touch ignores two hits.
 const ft = simulate({ seed: 'ft', near: kwCourt(2), far: utilFar, unitsById: byId, cfg });
 assert.equal(ft.byUid[503].kw['First Touch'], 2);

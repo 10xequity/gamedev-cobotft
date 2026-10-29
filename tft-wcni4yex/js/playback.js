@@ -67,6 +67,7 @@ export class Playback {
     for (const e of events) {
       switch (e.t) {
         case 'action': await this.wait(BEAT_MS); aimed = false; break;
+        case 'set': this.pose(e.from, 'set'); break;
         case 'rebound': await this.wait(BEAT_MS / 2); aimed = false; this.float(e.uid, 'Rebound', 'kw'); break;
         case 'cast': this.pose(e.uid, CAST_POSE[e.ability] || 'spike'); this.float(e.uid, e.ability, 'kw'); aimed = true; break;
         case 'hit':

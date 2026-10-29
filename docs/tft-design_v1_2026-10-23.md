@@ -188,7 +188,7 @@ Game folder `tft-wcni4yex/`: `index.html`, `style.css`, `data/roster.json`,
 7. Keywords, styles and star upgrades. ✔ v0.7.0
 8. Bots, pairing, health, elimination, placement. First full game. ✔ v0.8.0
 9. Rally playback with poses and ball flight, phone polish, accessibility, save and resume. ✔ v0.9.0
-10. Balance tuning to the line targets, staff build, changelog.
+10. Balance tuning to the line targets, staff build, changelog. ✔ v1.0.0 (Pins still above the band; see CHANGELOG)
 
 ## Left to the builder
 
