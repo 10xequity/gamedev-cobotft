@@ -3,7 +3,7 @@
 import { rngFrom, shuffle } from './rng.js';
 import { deriveAll } from './units.js';
 import * as eco from './economy.js';
-import { personality, planBot } from './bots.js';
+import { personality, planBot, botAugmentPick } from './bots.js';
 import { simulate } from './combat.js';
 
 const SAVE_KEY = 'tacticalboom.save';
@@ -26,6 +26,7 @@ export class Game {
     this.players = Array.from({ length: cfg.game.players }, (_, i) => ({
       ...eco.newPlayer(cfg), idx: i, name: i === 0 ? 'You' : cfg.bots.names[i - 1],
       pers: i === 0 ? null : personality(seed, i, cfg, difficulty), rolls: 0, place: null, lastOpp: null,
+      augments: [], offer: null, freeRerolls: 0,
     }));
     const starter = this.pool.ids.filter(id => this.unitsById[id].tier === 1);
     for (const p of this.players) {
@@ -45,9 +46,32 @@ export class Game {
   roll(p) { return eco.rollShop(rngFrom(this.seed, 'shop', p.idx, p.rolls++), p.level, this.pool, this.unitsById, this.cfg); }
 
   startPlanning() {
-    for (const p of this.living) p.shop = this.roll(p);
+    const augRound = this.cfg.augments.rounds.includes(this.round.label);
+    for (const p of this.living) {
+      p.shop = this.roll(p);
+      p.freeRerolls = this.augSum(p, 'freeRerolls');
+      if (augRound) p.offer = this.offerFor(p);
+      if (augRound && p.pers) this.chooseAugment(p, botAugmentPick(p, this.cfg));
+    }
     for (const p of this.living) if (p.pers) planBot(p, this.pool, this.unitsById, this.cfg, this.round.stage, () => this.roll(p));
     this.save();
+  }
+
+  // ---- augments: three seeded choices at the augment rounds; economy ones pay out here ----
+  augSum(p, key) { return p.augments.reduce((a, id) => a + (this.augById[id][key] || 0), 0); }
+  get augById() { return this._augById ??= Object.fromEntries(this.cfg.augments.list.map(a => [a.id, a])); }
+  offerFor(p) {
+    const open = this.cfg.augments.list.filter(a => !p.augments.includes(a.id)).map(a => a.id);
+    return shuffle(rngFrom(this.seed, 'aug', p.idx, this.roundIdx), open).slice(0, this.cfg.augments.choices);
+  }
+  chooseAugment(p, k) {
+    if (!p.offer || !p.offer[k]) return { ok: false, reason: 'No augment to pick' };
+    const a = this.augById[p.offer[k]];
+    p.augments.push(a.id); p.offer = null;
+    p.gold += a.gold || 0;
+    if (a.xp) eco.addXp(p, a.xp, this.cfg);
+    p.freeRerolls += a.freeRerolls || 0;
+    return this.done({ ok: true, augment: a });
   }
 
   // ---- your actions: each returns { ok, reason? } and saves on success ----
@@ -56,8 +80,9 @@ export class Game {
   move(uid, where, k) { return this.done(eco.move(this.you, uid, where, k, this.cfg)); }
   buyXp() { return this.done(eco.buyXp(this.you, this.cfg)); }
   reroll() {
-    if (this.you.gold < this.cfg.shop.rerollCost) return { ok: false, reason: 'Not enough gold' };
-    this.you.gold -= this.cfg.shop.rerollCost;
+    if (this.you.freeRerolls > 0) this.you.freeRerolls -= 1;
+    else if (this.you.gold < this.cfg.shop.rerollCost) return { ok: false, reason: 'Not enough gold' };
+    else this.you.gold -= this.cfg.shop.rerollCost;
     this.you.shop = this.roll(this.you);
     return this.done({ ok: true });
   }
@@ -68,11 +93,12 @@ export class Game {
   // pays income and opens the next round. `this.last` keeps your fight for the screen.
   nextRound() {
     const cfg = this.cfg, info = this.round, living = this.living;
+    if (this.you.offer) this.chooseAugment(this.you, 0); // the planning time ran out: take the first
     this.last = { label: info.label, practice: info.practice, standings: null };
     if (!info.practice) {
       for (const [a, b, ghost] of this.pairUp(living)) {
         const near = a.court.slice(), far = b.court.map(i => i && { ...i, uid: i.uid + FAR_UID });
-        const r = simulate({ seed: `${this.seed}:${this.roundIdx}:${a.idx}:${b.idx}`, near, far, unitsById: this.unitsById, cfg });
+        const r = simulate({ seed: `${this.seed}:${this.roundIdx}:${a.idx}:${b.idx}`, near, far, unitsById: this.unitsById, cfg, augments: { near: a.augments, far: b.augments } });
         const lossA = r.winner === 'far' ? this.hpLoss(info, r.survivors.far) : 0;
         const lossB = r.winner === 'near' ? this.hpLoss(info, r.survivors.near) : 0;
         this.result(a, r.winner === 'near' ? 1 : r.winner === 'far' ? -1 : 0, lossA);
@@ -84,10 +110,11 @@ export class Game {
       }
     }
     this.eliminate(living);
-    for (const p of this.living) p.gold += eco.incomeFor(p, info, cfg);
+    const income = p => eco.incomeFor(p, info, cfg) + this.augSum(p, 'goldPerRound');
+    for (const p of this.living) p.gold += income(p);
     this.roundIdx += 1;
     for (const p of this.living) eco.addXp(p, eco.autoXpFor(this.round, cfg), cfg);
-    this.last.income = this.you.place === null ? eco.incomeFor(this.you, info, cfg) : 0;
+    this.last.income = this.you.place === null ? income(this.you) : 0;
     if (!this.over) this.startPlanning(); else this.save();
     return this.last;
   }
@@ -142,6 +169,7 @@ export class Game {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!s || s.v !== SAVE_VERSION) return false;
       Object.assign(this, { seed: s.seed, difficulty: s.difficulty || 'normal', roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
+      for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; } // saves from before augments
       return true;
     } catch { return false; }
   }

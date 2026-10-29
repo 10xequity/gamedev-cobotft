@@ -2,6 +2,20 @@
 
 Player names never appear in this file.
 
+## v1.3.0 — 2026-10-29 · Milestone 13: augments
+
+- At 2-1, 3-2 and 4-2 every player picks one of three augments (seeded, never one already owned). They last
+  the whole game. 24 in `config.json` under `augments`: 6 economy (gold now, gold every round, XP now, a free
+  reroll every round), 10 team combat boosts, and 8 aimed at one role or court row (front, back two rows).
+- Combat augments reuse the trait bonus system, so they stack with traits the same way; economy ones pay at
+  once or with income. Free rerolls show on the Reroll button and are spent before gold.
+- You pick in a panel that Escape cannot dismiss; if Next round comes (or the timer runs out) first, you get the
+  first one. Bots pick at once: an augment for their favourite role, else a team boost, else economy (economy
+  first at 2-1). Owned augments are listed under Traits.
+- Tests: every augment well formed and its effect known to combat; offers distinct and seeded; Booster Club pays
+  10 gold once; owned augments never re-offered; Team Huddle adds 8% attack in a fight; Next round auto-picks.
+- Older saves load with no augments.
+
 ## v1.2.0 — 2026-10-29 · Milestone 12: smarter bots, difficulty
 
 - Bots setting in the header: Easy, Normal or Hard, applied from the next new game and remembered on this

@@ -136,3 +136,9 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 .dragghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -90%); }
 .dragghost .spr { background-repeat: no-repeat; filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
 .slot.drop { outline: 4px solid var(--gold); outline-offset: -2px; }
+/* ---- augments ---- */
+.augs { display: grid; gap: 8px; margin-top: 8px; }
+.augcard { display: grid; gap: 2px; text-align: left; padding: 10px 12px; border-radius: 8px; border: 2px solid var(--black); background: var(--teal-light); color: var(--black); font: inherit; }
+.augcard b { font-family: var(--display); font-size: 15px; color: var(--teal-dark); }
+.augcard:hover, .augcard:focus-visible { background: var(--gold); }
+.owned { margin: 6px 0 0; font-size: 12px; font-weight: 600; }

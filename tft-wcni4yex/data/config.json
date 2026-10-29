@@ -276,6 +276,36 @@
     "multiplierFrom2Star": 2,
     "desc": "2-star doubles the keyword's number; 3-star keeps that and adds a second keyword drawn by seed at its 1-star number."
   },
+  "augments": {
+    "rounds": ["2-1", "3-2", "4-2"],
+    "choices": 3,
+    "list": [
+      { "id": "booster-club", "name": "Booster Club", "kind": "econ", "gold": 10, "desc": "+10 gold now." },
+      { "id": "concession-stand", "name": "Concession Stand", "kind": "econ", "goldPerRound": 2, "desc": "+2 gold every round." },
+      { "id": "film-session", "name": "Film Session", "kind": "econ", "xp": 12, "desc": "+12 XP now." },
+      { "id": "scouting-report", "name": "Scouting Report", "kind": "econ", "freeRerolls": 1, "desc": "One free reroll every round." },
+      { "id": "fundraiser", "name": "Fundraiser", "kind": "econ", "gold": 4, "goldPerRound": 1, "desc": "+4 gold now and +1 every round." },
+      { "id": "carpool", "name": "Carpool", "kind": "econ", "xp": 6, "goldPerRound": 1, "desc": "+6 XP now and +1 gold every round." },
+      { "id": "team-huddle", "name": "Team Huddle", "kind": "combat", "applies": "team", "effect": "attack", "value": 0.08, "desc": "Team attack +8%." },
+      { "id": "weight-room", "name": "Weight Room", "kind": "combat", "applies": "team", "effect": "hpPct", "value": 0.1, "desc": "Team HP +10%." },
+      { "id": "knee-pads", "name": "Knee Pads", "kind": "combat", "applies": "team", "effect": "armor", "value": 10, "desc": "Team armor +10." },
+      { "id": "quick-feet", "name": "Quick Feet", "kind": "combat", "applies": "team", "effect": "speed", "value": 0.08, "desc": "Team attack speed +8%." },
+      { "id": "pep-talk", "name": "Pep Talk", "kind": "combat", "applies": "team", "effect": "startMana", "value": 20, "desc": "Team starts with 20 mana." },
+      { "id": "water-break", "name": "Water Break", "kind": "combat", "applies": "team", "effect": "regen", "value": 0.01, "desc": "Team regains 1% max HP per action." },
+      { "id": "warm-up-lap", "name": "Warm-Up Lap", "kind": "combat", "applies": "team", "effect": "shield", "value": 0.08, "desc": "Team shield 8% HP at the start." },
+      { "id": "footwork-drills", "name": "Footwork Drills", "kind": "combat", "applies": "team", "effect": "dodge", "value": 0.06, "desc": "Team dodge +6%." },
+      { "id": "serve-practice", "name": "Serve Practice", "kind": "combat", "applies": "team", "effect": "abilityDamage", "value": 0.2, "desc": "Ability damage +20%." },
+      { "id": "lucky-socks", "name": "Lucky Socks", "kind": "combat", "applies": "team", "effect": "clutch", "value": 0.2, "desc": "Below 40% HP: +20% damage." },
+      { "id": "outside-camp", "name": "Outside Hitter Camp", "kind": "combat", "applies": "role:Outside", "effect": "attack", "value": 0.2, "desc": "Outsides attack +20%." },
+      { "id": "right-side-clinic", "name": "Right Side Clinic", "kind": "combat", "applies": "role:Opposite", "effect": "abilityDamage", "value": 0.4, "desc": "Opposites ability damage +40%." },
+      { "id": "block-party", "name": "Block Party", "kind": "combat", "applies": "role:Middle", "effect": "armor", "value": 25, "desc": "Middles armor +25." },
+      { "id": "setter-school", "name": "Setter School", "kind": "combat", "applies": "role:Setter", "effect": "manaPerAction", "value": 8, "desc": "Setters +8 mana per action." },
+      { "id": "libero-camp", "name": "Libero Camp", "kind": "combat", "applies": "role:Libero", "effect": "hpPct", "value": 0.25, "desc": "Liberos HP +25%." },
+      { "id": "jack-of-all-trades", "name": "Jack of All Trades", "kind": "combat", "applies": "role:Utility", "effect": "allStats", "value": 0.12, "desc": "Utility units +12% all stats." },
+      { "id": "net-presence", "name": "Net Presence", "kind": "combat", "applies": "front", "effect": "armor", "value": 15, "desc": "Front-row armor +15." },
+      { "id": "back-row-attack", "name": "Back Row Attack", "kind": "combat", "applies": "back", "effect": "attack", "value": 0.15, "desc": "Back two rows attack +15%." }
+    ]
+  },
   "bots": {
     "names": ["Team Spike", "Team Dig", "Team Block", "Team Set", "Team Serve", "Team Tip", "Team Pancake"],
     "difficulty": {

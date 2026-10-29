@@ -41,6 +41,7 @@ export class UI {
   async runRound() {
     if (this.g.over || this.fighting) return;
     this.selected = null;
+    if ($('augment').open) $('augment').close(); // nextRound takes the first offer
     const r = this.g.nextRound();
     if (r.events) {
       this.setFighting(true);
@@ -80,10 +81,31 @@ export class UI {
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
+    const augs = you.augments.map(id => g.augById[id].name);
+    $('owned').textContent = augs.length ? `Augments: ${augs.join(', ')}` : '';
+    $('reroll').firstChild.textContent = you.freeRerolls > 0 ? `Reroll free (${you.freeRerolls}) ` : 'Reroll ';
+    if (you.offer && !this.fighting && !$('augment').open) this.showAugment();
+
     $('sell').disabled = this.selected === null;
     $('sell').textContent = this.selected === null ? 'Sell' : `Sell for ${this.sellValue()}g`;
-    $('reroll').disabled = you.gold < cfg.shop.rerollCost;
+    $('reroll').disabled = you.gold < cfg.shop.rerollCost && !you.freeRerolls;
     $('xp').disabled = you.gold < cfg.shop.xpCost || toNext === null;
+  }
+
+  showAugment() {
+    const g = this.g;
+    $('augChoices').replaceChildren(...g.you.offer.map((id, k) => {
+      const a = g.augById[id];
+      const b = el('button', { type: 'button', className: 'augcard' }, el('b', { textContent: a.name }), el('span', { textContent: a.desc }));
+      b.addEventListener('click', () => {
+        const r = g.chooseAugment(g.you, k);
+        $('augment').close();
+        this.say(r.ok ? `Augment: ${a.name}. ${a.desc}` : r.reason);
+        this.render();
+      });
+      return b;
+    }));
+    $('augment').showModal();
   }
 
   renderTraits() {
@@ -240,6 +262,7 @@ export class UI {
     $('xp').addEventListener('click', () => { const r = this.g.buyXp(); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
     $('next').addEventListener('click', () => this.runRound());
     $('skip').addEventListener('click', () => this.playback.skip());
+    $('augment').addEventListener('cancel', e => e.preventDefault()); // a pick is required; Escape does not dismiss
     $('speed').addEventListener('click', () => {
       this.playback.speed = this.playback.speed === 1 ? 2 : 1;
       $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));

@@ -300,6 +300,38 @@ for (let i = 0; i < 10; i++) {
 }
 assert.ok(hardPlace / mixed < easyPlace / mixed, `hard bots should place higher: hard ${(hardPlace / mixed).toFixed(2)}, easy ${(easyPlace / mixed).toFixed(2)}`);
 
+// Augments: every entry is well formed; offers are seeded, distinct and never repeat an owned one;
+// economy pays out once; combat ones change stats in a fight; the timer picks for you.
+const { EFFECTS } = await import(pathToFileURL(join(GAME, 'js', 'combat.js')).href);
+const augIds = new Set();
+for (const aug of cfg.augments.list) {
+  assert.ok(!augIds.has(aug.id), `duplicate augment ${aug.id}`); augIds.add(aug.id);
+  assert.ok(aug.name && aug.desc, `${aug.id}: needs name and desc`);
+  if (aug.kind === 'combat') {
+    assert.ok(EFFECTS.includes(aug.effect), `${aug.id}: unknown effect ${aug.effect}`);
+    assert.ok(['team', 'front', 'back'].includes(aug.applies) || (aug.applies.startsWith('role:') && cfg.roles[aug.applies.slice(5)]), `${aug.id}: bad applies ${aug.applies}`);
+  } else assert.ok(aug.gold || aug.xp || aug.goldPerRound || aug.freeRerolls, `${aug.id}: economy augment does nothing`);
+}
+const ag = new Game(cfg, roster, manifest.looks.length); ag.newGame('aug');
+while (!cfg.augments.rounds.includes(ag.round.label)) ag.nextRound();
+assert.equal(ag.you.offer.length, cfg.augments.choices, 'you are offered three augments at 2-1');
+assert.equal(new Set(ag.you.offer).size, cfg.augments.choices, 'offers are distinct');
+assert.ok(ag.players.slice(1).every(p => p.augments.length === 1 && !p.offer), 'bots pick at once');
+const goldBefore = ag.you.gold;
+ag.you.offer[0] = 'booster-club';
+assert.ok(ag.chooseAugment(ag.you, 0).ok); assert.equal(ag.you.gold, goldBefore + 10, 'Booster Club pays 10 gold');
+assert.equal(ag.chooseAugment(ag.you, 0).ok, false, 'one pick per offer');
+ag.you.offer = null;
+ag.you.augments = ['booster-club'];
+assert.ok(!ag.offerFor(ag.you).includes('booster-club'), 'owned augments are not offered again');
+const huddle = simulate({ seed: 'aug-f', near: at([o1, o2]), far: one, unitsById: byId, cfg, augments: { near: ['team-huddle'] } }).byUid[500];
+const plain = simulate({ seed: 'aug-f', near: at([o1, o2]), far: one, unitsById: byId, cfg }).byUid[500];
+assert.ok(Math.abs(huddle.attack - plain.attack * (1 + cfg.traits.Outside.values[0] + 0.08) / (1 + cfg.traits.Outside.values[0])) < 1e-6, 'Team Huddle adds 8% attack');
+const tg = new Game(cfg, roster, manifest.looks.length); tg.newGame('aug-timer');
+while (!tg.you.offer) tg.nextRound();
+tg.nextRound();
+assert.equal(tg.you.augments.length, 1, 'Next round with an open offer takes the first augment');
+
 // Health loss: stage damage plus one per two surviving enemy units.
 const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');
 assert.equal(hg.hpLoss({ stage: 3 }, 5), cfg.damage.perStage['3'] + 2);

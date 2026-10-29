@@ -16,7 +16,9 @@ function weightedPick(rng, items, weightOf) {
 
 // Build the fighters from one court (28 slots), traits applied. `far` is the opponent.
 const NO_MODS = { attack: 0, armor: 0, manaPerAction: 0, dodge: 0, abilityDamage: 0, allStats: 0, speed: 0, hpPct: 0, regen: 0, startMana: 0, clutch: 0, castShare: 0, hpFlat: 0, shield: 0, manaCost: 0 };
-function fighters(court, side, unitsById, cfg) {
+export const EFFECTS = Object.keys(NO_MODS);
+const augmentHits = (applies, f) => applies === 'team' || (applies === 'front' && f.rowFromNet === 0) || (applies === 'back' && f.rowFromNet >= 2) || applies === `role:${f.unit.role}`;
+function fighters(court, side, unitsById, cfg, augments = []) {
   const { filled, traits } = computeTraits(court, unitsById, cfg);
   const out = [];
   court.forEach((inst, k) => {
@@ -41,6 +43,10 @@ function fighters(court, side, unitsById, cfg) {
       if (def.doubleCastAt && t.count >= def.doubleCastAt) f.doubleCast = true;
     }
   }
+  for (const id of augments) {
+    const a = cfg.augments.list.find(x => x.id === id);
+    if (a?.kind === 'combat') for (const f of out) if (augmentHits(a.applies, f)) f.mods[a.effect] += a.value;
+  }
   for (const f of out) {
     const s = f.base, m = f.mods;
     f.maxHp = f.hp = Math.round((s.hp * (1 + m.allStats) + m.hpFlat) * (1 + m.hpPct));
@@ -56,9 +62,9 @@ function fighters(court, side, unitsById, cfg) {
   return out;
 }
 
-export function simulate({ seed, near, far, unitsById, cfg }) {
+export function simulate({ seed, near, far, unitsById, cfg, augments = {} }) {
   const rng = rngFrom(seed, 'combat');
-  const all = [...fighters(near, 'near', unitsById, cfg), ...fighters(far, 'far', unitsById, cfg)];
+  const all = [...fighters(near, 'near', unitsById, cfg, augments.near), ...fighters(far, 'far', unitsById, cfg, augments.far)];
   const byUid = Object.fromEntries(all.map(f => [f.uid, f]));
   const at = new Map(all.map(f => [key(f.col, f.row), f]));
   const events = [];

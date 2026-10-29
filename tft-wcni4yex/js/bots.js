@@ -30,11 +30,22 @@ export function planBot(p, pool, unitsById, cfg, stage, roll) {
   const rerolls = Math.round(pace.rerolls * d.rerollMult);
   for (let r = 0; ; r++) {
     buyWanted(p, pool, unitsById, cfg, fav, d, rng);
-    if (r >= rerolls || p.gold < cfg.shop.rerollCost + 1) break;
-    p.gold -= cfg.shop.rerollCost;
+    if (p.freeRerolls > 0) p.freeRerolls -= 1;
+    else if (r >= rerolls || p.gold < cfg.shop.rerollCost + 1) break;
+    else p.gold -= cfg.shop.rerollCost;
     p.shop = roll();
   }
   arrange(p, unitsById, cfg, fav, d.traitAware);
+}
+
+// Which offered augment a bot takes: one for its favourite role, else a team boost, else economy
+// (economy first while it is still stage 2). Returns the index into p.offer.
+export function botAugmentPick(p, cfg) {
+  const list = Object.fromEntries(cfg.augments.list.map(a => [a.id, a]));
+  const value = a => a.applies === `role:${p.pers.favorite}` ? 3 : a.kind === 'combat' && !a.applies.startsWith('role:') ? 2 : a.kind === 'econ' ? 1 + (p.augments.length === 0 ? 1.5 : 0) : 0;
+  let best = 0;
+  p.offer.forEach((id, k) => { if (value(list[id]) > value(list[p.offer[best]])) best = k; });
+  return best;
 }
 
 function buyWanted(p, pool, unitsById, cfg, fav, d, rng) {
