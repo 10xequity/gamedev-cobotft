@@ -85,6 +85,7 @@ export class UI {
     const scouted = this.scout !== null && g.players[this.scout]?.place === null ? g.players[this.scout] : null;
     if (!scouted) this.scout = null;
     this.arena.render(you, scouted, g.unitsById, cfg, this.selected);
+    $('court').dataset.stage = g.stage;
     $('courtHint').textContent = scouted ? `scouting ${scouted.name}: ${this.traitLine(scouted.court) || 'no traits'}` : 'arrow keys move between hexes';
     this.renderTraits();
     this.renderPlayers();
@@ -253,6 +254,7 @@ export class UI {
     if (!id) { b.disabled = true; b.setAttribute('aria-label', 'Sold'); b.textContent = 'Sold'; return b; }
     const u = this.g.unitsById[id];
     b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
+    b.style.setProperty('--jersey', this.g.cfg.jerseyByLevel[u.team.level]);
     b.dataset.id = id;
     if (this.g.you.gold < u.tier) b.setAttribute('aria-disabled', 'true'); // still focusable, so its card can be read
     b.setAttribute('aria-label', `Buy ${u.display} for ${u.tier} gold, ${u.style}, ${u.team.level}, ${u.archetype}`);
@@ -260,7 +262,7 @@ export class UI {
       el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 84) }),
       el('span', { className: 'nm', textContent: u.display }),
       el('span', { className: 'tr', textContent: u.style }),
-      el('span', { className: 'tr', textContent: `${u.team.level} · ${u.archetype}` }),
+      el('span', { className: 'tr lv', textContent: `${u.team.level} · ${u.archetype}` }),
       el('span', { className: 'cost', textContent: `${u.tier}g` }),
     );
     b.addEventListener('click', () => {

@@ -1,6 +1,6 @@
 // One game's state: seed, round, eight players (you and seven bots), the shared pool.
 // Saves to the browser's local storage after every action so a reload resumes where you were.
-import { rngFrom, shuffle } from './rng.js';
+import { rngFrom, shuffle, hash32 } from './rng.js';
 import { deriveAll } from './units.js';
 import * as eco from './economy.js';
 import { personality, planBot, botAugmentPick, botCarouselPick } from './bots.js';
@@ -21,6 +21,7 @@ export class Game {
     const cfg = this.cfg;
     this.seed = seed;
     this.difficulty = difficulty;
+    this.stage = cfg.game.stageArt[hash32(seed) % cfg.game.stageArt.length]; // cosmetic only
     this.roundIdx = 0;
     this.pool = eco.createPool(seed, this.units, cfg);
     this.players = Array.from({ length: cfg.game.players }, (_, i) => ({
@@ -207,14 +208,14 @@ export class Game {
   // ---- persistence ----
   save() {
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, difficulty: this.difficulty, carousel: this.carousel, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, stage: this.stage, difficulty: this.difficulty, carousel: this.carousel, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
     } catch { /* private mode, full, or no storage: play on without saving */ }
   }
   load() {
     try {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!s || s.v !== SAVE_VERSION) return false;
-      Object.assign(this, { seed: s.seed, difficulty: s.difficulty || 'normal', carousel: s.carousel || null, roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
+      Object.assign(this, { seed: s.seed, stage: s.stage || this.cfg.game.stageArt[0], difficulty: s.difficulty || 'normal', carousel: s.carousel || null, roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
       for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; } // saves from before augments
       return true;
     } catch { return false; }

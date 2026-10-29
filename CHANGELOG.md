@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v1.8.0 — 2026-10-29 · Milestone 18: stage art, club colours
+
+- Each game's court background is picked from its seed among the four public stages (Fieldhouse, Championship
+  Arena, Beach Night, Retro Gym; `game.stageArt`). Cosmetic only; saved with the game.
+- Club colour: every player on the court stands on a floor disc in her club level's jersey colour (National
+  teal, Regional gold, Colorado dark teal, from `jerseyByLevel`), and shop cards mark the level with a dot of
+  the same colour.
+- Not done: recolouring the jerseys themselves. The current sprite sheets mix white and teal kits, so a colour
+  swap would also hit skin and hair; it needs the next sprite set with one key-colour jersey
+  (`docs/sprite-prompt_v1_2026-10-23.md`).
+- Test: every stage name has its image and style rule; every club level has a colour.
+
 ## v1.7.0 — 2026-10-29 · Milestone 17: unit card, how to play
 
 - Unit card: hold any player (court, bench, shop, carousel) for half a second, or focus her and press I. It

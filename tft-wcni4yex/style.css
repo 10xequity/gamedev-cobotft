@@ -161,3 +161,6 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 #unitcard .stage .spr { background-repeat: no-repeat; }
 .help { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; }
 .bar #helpBtn { min-width: 32px; font-weight: 800; }
+/* ---- club colour: a floor disc under each player, a dot on cards ---- */
+.hex.filled::after { content: ""; position: absolute; left: 22%; right: 22%; top: 28%; bottom: 22%; border-radius: 50%; background: var(--jersey, transparent); border: 2px solid var(--black); z-index: 0; pointer-events: none; }
+.shopcard .tr.lv::before { content: "● "; color: var(--jersey); -webkit-text-stroke: 1px var(--black); }

@@ -351,6 +351,14 @@ if (cg.you.place === null) {
   assert.ok(taken >= 1, 'carousel units come out of the pool');
 }
 
+// Stage art: every name the seed can pick has an image and a style rule; club colours exist for every level.
+const css = readFileSync(join(GAME, 'style.css'), 'utf8');
+for (const st of cfg.game.stageArt) {
+  assert.ok(existsSync(join(GAME, 'assets', 'stages', `${st}.webp`)), `missing stage art ${st}`);
+  assert.ok(css.includes(`[data-stage="${st}"]`), `no style rule for stage ${st}`);
+}
+for (const p of roster) assert.ok(cfg.jerseyByLevel[p.team.level], `no club colour for ${p.team.level}`);
+
 // Health loss: stage damage plus one per two surviving enemy units.
 const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');
 assert.equal(hg.hpLoss({ stage: 3 }, 5), cfg.damage.perStage['3'] + 2);

@@ -58,6 +58,7 @@ export class Arena {
       if (inst) {
         const u2 = unitsById[inst.id];
         tile.style.setProperty('--ring', cfg.tierRing[String(u2.tier)]);
+        tile.style.setProperty('--jersey', cfg.jerseyByLevel[u2.team.level]); // floor disc in club colour
         tile.dataset.uid = inst.uid;
         const spr = el('span', { className: 'unit' + (mine ? '' : ' flip') });
         const h = Math.round(this.box.clientWidth * 0.24 * p.s) || 80; // sprite height follows depth
