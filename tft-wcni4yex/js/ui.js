@@ -41,7 +41,7 @@ export class UI {
   async runRound() {
     if (this.g.over || this.fighting) return;
     this.selected = null;
-    if ($('augment').open) $('augment').close(); // nextRound takes the first offer
+    for (const d of ['augment', 'carousel']) if ($(d).open) $(d).close(); // nextRound takes the first offer
     const r = this.g.nextRound();
     if (r.events) {
       this.setFighting(true);
@@ -84,12 +84,35 @@ export class UI {
     const augs = you.augments.map(id => g.augById[id].name);
     $('owned').textContent = augs.length ? `Augments: ${augs.join(', ')}` : '';
     $('reroll').firstChild.textContent = you.freeRerolls > 0 ? `Reroll free (${you.freeRerolls}) ` : 'Reroll ';
-    if (you.offer && !this.fighting && !$('augment').open) this.showAugment();
+    if (g.carousel && !this.fighting && !$('carousel').open) this.showCarousel();
+    else if (you.offer && !this.fighting && !$('augment').open && !$('carousel').open) this.showAugment();
 
     $('sell').disabled = this.selected === null;
     $('sell').textContent = this.selected === null ? 'Sell' : `Sell for ${this.sellValue()}g`;
     $('reroll').disabled = you.gold < cfg.shop.rerollCost && !you.freeRerolls;
     $('xp').disabled = you.gold < cfg.shop.xpCost || toNext === null;
+  }
+
+  showCarousel() {
+    const g = this.g, c = g.carousel;
+    $('carChoices').replaceChildren(...c.options.map((id, k) => {
+      const u = g.unitsById[id], by = c.takenBy[k];
+      const b = el('button', { type: 'button', className: 'shopcard', disabled: by !== null },
+        el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 72) }),
+        el('span', { className: 'nm', textContent: u.display }),
+        el('span', { className: 'tr', textContent: u.style }),
+        el('span', { className: 'tr', textContent: by !== null ? `Taken: ${g.players[by].name}` : `${u.tier}-cost` }));
+      b.style.setProperty('--ring', g.cfg.tierRing[String(u.tier)]);
+      b.setAttribute('aria-label', by !== null ? `${u.display}, taken by ${g.players[by].name}` : `Take ${u.display}, ${u.tier}-cost ${u.style}`);
+      b.addEventListener('click', () => {
+        const r = g.chooseCarousel(k);
+        $('carousel').close();
+        this.say(r.ok ? `Carousel: ${r.unit.display} joins your bench` : r.reason);
+        this.render();
+      });
+      return b;
+    }));
+    $('carousel').showModal();
   }
 
   showAugment() {
@@ -262,7 +285,7 @@ export class UI {
     $('xp').addEventListener('click', () => { const r = this.g.buyXp(); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
     $('next').addEventListener('click', () => this.runRound());
     $('skip').addEventListener('click', () => this.playback.skip());
-    $('augment').addEventListener('cancel', e => e.preventDefault()); // a pick is required; Escape does not dismiss
+    for (const d of ['augment', 'carousel']) $(d).addEventListener('cancel', e => e.preventDefault()); // a pick is required; Escape does not dismiss
     $('speed').addEventListener('click', () => {
       this.playback.speed = this.playback.speed === 1 ? 2 : 1;
       $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));

@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v1.4.0 — 2026-10-29 · Milestone 14: carousel
+
+- At 3-1, 4-1, 5-1, 6-1 and 7-1 a carousel lays out one player per living team from the pool, at tiers that rise
+  with the stage (`carousel.tiersByStage`). Teams pick in HP order, lowest first. Each pick is free and lands on
+  the bench (merging as usual); with a full bench and no merge it is paid out as its cost in gold.
+- Bots ahead of you pick at once, then the carousel waits for you (it shows who took what), then the rest pick.
+  If Next round comes first you get the first open player. Bots take a copy of something they own, then their
+  favourite role, then the highest tier.
+- The carousel state is saved, so a reload mid-pick resumes it.
+- Tests: with the lowest HP you pick first and nobody picks before you; one pick each; the rest pick after you;
+  carousel units come out of the pool.
+
 ## v1.3.0 — 2026-10-29 · Milestone 13: augments
 
 - At 2-1, 3-2 and 4-2 every player picks one of three augments (seeded, never one already owned). They last

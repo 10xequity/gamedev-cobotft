@@ -200,7 +200,7 @@ Second ten, approved 2026-10-29. All offline: no accounts, no chat, no network a
 11. Balance pass 2: Pins down into the band, Engine and Wall up. ✔ v1.1.0 (fairer measurement; Engine still low)
 12. Smarter bots: trait-aware buying and placement; Easy / Normal / Hard setting. ✔ v1.2.0
 13. Augments: pick 1 of 3 at 2-1, 3-2 and 4-2 (about 24, all in config). ✔ v1.3.0
-14. Carousel: a shared draft at each stage start, lowest HP picks first.
+14. Carousel: a shared draft at each stage start, lowest HP picks first. ✔ v1.4.0 (stages 3-7; 2-1 has the augment)
 15. Scouting: view any player's board while planning; damage chart after each fight.
 16. Sound: synthesized effects (no audio files), mute switch.
 17. Unit card (hold, or press I) and a short how-to-play overlay.

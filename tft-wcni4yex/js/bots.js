@@ -48,6 +48,15 @@ export function botAugmentPick(p, cfg) {
   return best;
 }
 
+// Carousel: a copy of something owned first, then the favourite role, then the highest tier.
+// Returns the index of the chosen option among those still open.
+export function botCarouselPick(p, options, unitsById) {
+  const value = id => { const u = unitsById[id]; return 5 * eco.owned(p).filter(i => i.id === id && i.star < 3).length + (likes(u, p.pers.favorite) ? 3 : 0) + u.tier; };
+  let best = 0;
+  options.forEach((id, k) => { if (value(id) > value(options[best])) best = k; });
+  return best;
+}
+
 function buyWanted(p, pool, unitsById, cfg, fav, d, rng) {
   for (let k = 0; k < p.shop.length; k++) {
     const id = p.shop[k];

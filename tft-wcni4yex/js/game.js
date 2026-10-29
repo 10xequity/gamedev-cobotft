@@ -3,7 +3,7 @@
 import { rngFrom, shuffle } from './rng.js';
 import { deriveAll } from './units.js';
 import * as eco from './economy.js';
-import { personality, planBot, botAugmentPick } from './bots.js';
+import { personality, planBot, botAugmentPick, botCarouselPick } from './bots.js';
 import { simulate } from './combat.js';
 
 const SAVE_KEY = 'tacticalboom.save';
@@ -35,6 +35,7 @@ export class Game {
       this.pool.copies[id] -= 1;
     }
     this.last = null;
+    this.carousel = null;
     this.startPlanning();
   }
 
@@ -46,6 +47,7 @@ export class Game {
   roll(p) { return eco.rollShop(rngFrom(this.seed, 'shop', p.idx, p.rolls++), p.level, this.pool, this.unitsById, this.cfg); }
 
   startPlanning() {
+    if (this.cfg.carousel.rounds.includes(this.round.label)) this.startCarousel();
     const augRound = this.cfg.augments.rounds.includes(this.round.label);
     for (const p of this.living) {
       p.shop = this.roll(p);
@@ -55,6 +57,49 @@ export class Game {
     }
     for (const p of this.living) if (p.pers) planBot(p, this.pool, this.unitsById, this.cfg, this.round.stage, () => this.roll(p));
     this.save();
+  }
+
+  // ---- carousel: one unit per living player, picked in HP order, lowest first ----
+  startCarousel() {
+    const tiers = this.cfg.carousel.tiersByStage[String(this.round.stage)] || [1];
+    const cands = this.pool.ids.filter(id => tiers.includes(this.unitsById[id].tier) && this.pool.copies[id] > 0);
+    const living = this.living;
+    const options = shuffle(rngFrom(this.seed, 'carousel', this.roundIdx), cands).slice(0, living.length);
+    const order = living.slice().sort((a, b) => a.hp - b.hp || a.idx - b.idx).map(p => p.idx);
+    this.carousel = { options, takenBy: options.map(() => null), order, turn: 0 };
+    this.runCarousel();
+  }
+  get carouselOpen() { return this.carousel ? this.carousel.options.map((_, k) => k).filter(k => this.carousel.takenBy[k] === null) : []; }
+  // Bots pick in turn until it is your turn (then it waits) or everyone has picked.
+  runCarousel() {
+    const c = this.carousel;
+    while (c && c.turn < c.order.length) {
+      const p = this.players[c.order[c.turn]], open = this.carouselOpen;
+      if (!open.length) { c.turn = c.order.length; break; }
+      if (!p.pers) return;
+      this.takeCarousel(p, open[botCarouselPick(p, open.map(k => c.options[k]), this.unitsById)]);
+    }
+    this.carousel = null;
+  }
+  takeCarousel(p, k) { this.carousel.takenBy[k] = p.idx; this.grant(p, this.carousel.options[k]); this.carousel.turn += 1; }
+  chooseCarousel(k) {
+    const c = this.carousel;
+    if (!c || c.order[c.turn] !== this.you.idx) return { ok: false, reason: 'Not your pick' };
+    if (c.takenBy[k] !== null || c.options[k] === undefined) return { ok: false, reason: 'Already taken' };
+    const id = c.options[k];
+    this.takeCarousel(this.you, k);
+    this.runCarousel();
+    return this.done({ ok: true, unit: this.unitsById[id] });
+  }
+  // A free unit onto the bench; it merges as usual. No room and no merge: it is worth its cost in gold.
+  grant(p, id) {
+    this.pool.copies[id] -= 1;
+    const inst = { uid: p.nextUid++, id, star: 1 }, slot = p.bench.indexOf(null);
+    if (slot >= 0) p.bench[slot] = inst;
+    else if (eco.owned(p).filter(i => i.id === id && i.star === 1).length >= 2) p.bench.push(inst);
+    else { this.pool.copies[id] += 1; p.gold += this.unitsById[id].tier; return; }
+    eco.merge(p);
+    p.bench.length = this.cfg.game.benchSize;
   }
 
   // ---- augments: three seeded choices at the augment rounds; economy ones pay out here ----
@@ -94,6 +139,7 @@ export class Game {
   nextRound() {
     const cfg = this.cfg, info = this.round, living = this.living;
     if (this.you.offer) this.chooseAugment(this.you, 0); // the planning time ran out: take the first
+    if (this.carousel) this.chooseCarousel(this.carouselOpen[0]); // likewise for a waiting carousel pick
     this.last = { label: info.label, practice: info.practice, standings: null };
     if (!info.practice) {
       for (const [a, b, ghost] of this.pairUp(living)) {
@@ -161,14 +207,14 @@ export class Game {
   // ---- persistence ----
   save() {
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, difficulty: this.difficulty, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, difficulty: this.difficulty, carousel: this.carousel, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
     } catch { /* private mode, full, or no storage: play on without saving */ }
   }
   load() {
     try {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!s || s.v !== SAVE_VERSION) return false;
-      Object.assign(this, { seed: s.seed, difficulty: s.difficulty || 'normal', roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
+      Object.assign(this, { seed: s.seed, difficulty: s.difficulty || 'normal', carousel: s.carousel || null, roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
       for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; } // saves from before augments
       return true;
     } catch { return false; }

@@ -332,6 +332,25 @@ while (!tg.you.offer) tg.nextRound();
 tg.nextRound();
 assert.equal(tg.you.augments.length, 1, 'Next round with an open offer takes the first augment');
 
+// Carousel: at 3-1 everyone living gets one unit (or its gold), lowest HP picks first, you wait your turn.
+const cg = new Game(cfg, roster, manifest.looks.length); cg.newGame('carousel');
+while (cg.round.label !== '2-4') cg.nextRound();
+cg.you.hp = 1; // lowest HP: you pick first
+const copiesBefore = { ...cg.pool.copies };
+cg.nextRound();
+assert.equal(cg.round.label, '3-1');
+if (cg.you.place === null) {
+  assert.ok(cg.carousel && cg.carousel.order[cg.carousel.turn] === 0, 'carousel waits for you when you have the lowest HP');
+  assert.ok(cg.carousel.takenBy.every(t => t === null), 'nobody picks before the lowest HP player');
+  const pick = cg.carousel.options[1];
+  assert.ok(cg.chooseCarousel(1).ok, 'you can pick');
+  assert.equal(cg.carousel, null, 'the bots after you pick at once');
+  assert.ok(eco.owned(cg.you).some(i => i.id === pick) || cg.you.gold > 0, 'your pick lands on your bench');
+  assert.equal(cg.chooseCarousel(0).ok, false, 'one pick per carousel');
+  const taken = Object.keys(copiesBefore).reduce((a, id) => a + Math.max(0, copiesBefore[id] - cg.pool.copies[id]), 0);
+  assert.ok(taken >= 1, 'carousel units come out of the pool');
+}
+
 // Health loss: stage damage plus one per two surviving enemy units.
 const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');
 assert.equal(hg.hpLoss({ stage: 3 }, 5), cfg.damage.perStage['3'] + 2);
