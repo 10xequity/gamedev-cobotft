@@ -184,3 +184,9 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 html[data-motion="reduce"] .float { animation: none; }
 html[data-motion="reduce"] .hex .unit .hpbar i { transition: none; }
 html[data-motion="reduce"] .hop { animation: none !important; }
+/* ---- replays ---- */
+.fights summary { cursor: pointer; }
+.fights summary h2 { display: inline; }
+.fightlist { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.fightlist button { font: inherit; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; border: 2px solid var(--black); background: var(--teal-dark); color: var(--cream); }
+.fightlist button:disabled { border-style: dashed; }

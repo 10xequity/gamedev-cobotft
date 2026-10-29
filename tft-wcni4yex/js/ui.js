@@ -62,24 +62,46 @@ export class UI {
     this.scout = null;
     const r = this.g.nextRound();
     this.lastFight = r.events ? r : null;
-    if (r.events) {
-      this.setFighting(true);
-      $('speed').textContent = this.playback.speed === 2 ? '1x' : '2x'; $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));
-      const mineNear = r.side === 'near';
-      this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
-      this.say(`${r.label}: fight against ${r.opponent}${r.ghost ? ' (a copy)' : ''}. Escape skips.`);
-      await this.playback.play(r.events, r.maxHp, r.side);
-      this.setFighting(false);
-    }
+    if (r.events) await this.playFight(r, 'fight against');
     this.render();
     this.afterRound(r);
     this.resetTimer();
   }
 
+  async playFight(r, what) {
+    this.setFighting(true);
+    $('speed').textContent = this.playback.speed === 2 ? '1x' : '2x'; $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));
+    const mineNear = r.side === 'near';
+    this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
+    this.say(`${r.label}: ${what} ${r.opponent}${r.ghost ? ' (a copy)' : ''}. Escape skips.`);
+    await this.playback.play(r.events, r.maxHp, r.side);
+    this.setFighting(false);
+  }
+
+  async replay(i) {
+    if (this.fighting) return;
+    const r = this.g.replay(i);
+    this.lastFight = r;
+    await this.playFight(r, 'replay of your fight against');
+    this.render();
+    this.say(`Replay of ${r.label} finished`);
+  }
+
+  renderFights() {
+    const fs = this.g.fights || [];
+    $('fights').hidden = !fs.length;
+    $('fightList').replaceChildren(...fs.map((f, i) => {
+      const b = el('button', { type: 'button', textContent: `${f.label} vs ${f.opponent}: ${f.won === true ? 'won' : f.won === false ? `lost −${f.hpLoss}` : 'draw'}` });
+      b.setAttribute('aria-label', `Replay ${b.textContent}`);
+      b.addEventListener('click', () => this.replay(i));
+      return el('li', {}, b);
+    }).reverse());
+  }
+
   setFighting(on) {
     this.fighting = on;
     $('fightbar').hidden = !on; $('courtHint').hidden = on;
-    for (const b of document.querySelectorAll('.actions button, #shop button, #bench button')) b.disabled = on;
+    for (const b of document.querySelectorAll('.actions button, #shop button, #bench button, #fightList button')) b.disabled = on;
     if (on) $('skip').focus();
     else $('next').disabled = false;
   }
@@ -103,6 +125,7 @@ export class UI {
     this.renderTraits();
     this.renderPlayers();
     this.renderDamage();
+    this.renderFights();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 

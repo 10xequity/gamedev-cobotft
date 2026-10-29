@@ -2,6 +2,16 @@
 
 Player names never appear in this file.
 
+## v2.4.0 — 2026-10-29 · Milestone 24: replays
+
+- "Your fights" lists every fight you played this game (round, opponent, result). Tap one to watch it again on
+  the court, with its damage chart; replays change nothing in the game.
+- Only each fight's inputs are kept (seed, both boards, both teams' augments; well under 40 KB a game, saved
+  with the game). Combat is deterministic, so a replay re-runs the identical fight. Boards are now copied by
+  value when a fight starts, so a later merge can never change a past fight.
+- Test: every fight of a 12-round game replays to exactly the same events.
+- Pages declare the app icon as their tab icon (stops a missing-file error).
+
 ## v2.3.0 — 2026-10-29 · Milestone 23: settings panel
 
 - A Settings button opens one panel for everything that was crowding the header: sound, the auto-advance timer,

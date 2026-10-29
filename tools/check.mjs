@@ -383,6 +383,19 @@ for (const st of cfg.game.stageArt) {
 }
 for (const p of roster) assert.ok(cfg.jerseyByLevel[p.team.level], `no club colour for ${p.team.level}`);
 
+// Replays: every fight you played this game replays to exactly the same events, even after later merges.
+const rg = new Game(cfg, roster, manifest.looks.length); rg.newGame('replay');
+rg.you.pers = bots.personality(rg.seed, 0, cfg);
+const originals = [];
+for (let i = 0; i < 12 && !rg.over; i++) {
+  bots.planBot(rg.you, rg.pool, rg.unitsById, cfg, rg.round.stage, () => rg.roll(rg.you));
+  const r = rg.nextRound();
+  if (r.events) originals.push(JSON.stringify(r.events));
+}
+assert.ok(originals.length >= 3 && rg.fights.length === originals.length, 'every fight of yours is kept for replay');
+rg.fights.forEach((f, i) => assert.equal(JSON.stringify(rg.replay(i).events), originals[i], `replay ${f.label} matches the original fight`));
+assert.ok(JSON.stringify(rg.fights).length < 40000, 'replay inputs stay small enough to save');
+
 // Health loss: stage damage plus one per two surviving enemy units.
 const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');
 assert.equal(hg.hpLoss({ stage: 3 }, 5), cfg.damage.perStage['3'] + 2);
