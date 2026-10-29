@@ -143,3 +143,16 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 .augcard:hover, .augcard:focus-visible { background: var(--gold); }
 .owned { margin: 6px 0 0; font-size: 12px; font-weight: 600; }
 .carousel { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 8px; }
+/* ---- scouting and fight damage ---- */
+.players .scout { all: unset; display: block; width: 100%; cursor: pointer; }
+.players .scout:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+.players li:has(.scout[aria-pressed="true"]) { background: var(--cream); color: var(--black); }
+.damage summary { cursor: pointer; list-style: revert; color: var(--gold); }
+.damage summary h2 { display: inline; }
+.dmglist { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; font-size: 12px; }
+.dmglist li { display: grid; grid-template-columns: minmax(0, 9em) 1fr 4em; gap: 6px; align-items: center; }
+.dmglist .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.dmglist .bar { height: 10px; background: var(--teal-dark); border-radius: 3px; overflow: hidden; }
+.dmglist .bar i { display: block; height: 100%; background: var(--gold); }
+.dmglist li.them .bar i { background: var(--cream); }
+.dmglist .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }

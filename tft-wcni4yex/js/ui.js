@@ -16,6 +16,8 @@ export class UI {
   constructor(game) {
     this.g = game;
     this.selected = null; // uid of the unit picked up
+    this.scout = null; // index of the player whose board shows on the far half
+    this.lastFight = null;
     this.arena = new Arena($('court'), (where, k, inst) => this.tapSlot(inst, where, k));
     this.playback = new Playback($('court'));
     this.fighting = false;
@@ -42,7 +44,9 @@ export class UI {
     if (this.g.over || this.fighting) return;
     this.selected = null;
     for (const d of ['augment', 'carousel']) if ($(d).open) $(d).close(); // nextRound takes the first offer
+    this.scout = null;
     const r = this.g.nextRound();
+    this.lastFight = r.events ? r : null;
     if (r.events) {
       this.setFighting(true);
       const mineNear = r.side === 'near';
@@ -75,9 +79,13 @@ export class UI {
     $('level').textContent = `Lv ${you.level}` + (toNext === null ? ' (max)' : ` · ${toNext} XP to next`);
     $('courtCount').textContent = `${eco.onCourt(you).length} / ${eco.courtMax(you, cfg)}`;
 
-    this.arena.render(you, null, g.unitsById, cfg, this.selected);
+    const scouted = this.scout !== null && g.players[this.scout]?.place === null ? g.players[this.scout] : null;
+    if (!scouted) this.scout = null;
+    this.arena.render(you, scouted, g.unitsById, cfg, this.selected);
+    $('courtHint').textContent = scouted ? `scouting ${scouted.name}: ${this.traitLine(scouted.court) || 'no traits'}` : 'arrow keys move between hexes';
     this.renderTraits();
     this.renderPlayers();
+    this.renderDamage();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
@@ -145,16 +153,52 @@ export class UI {
     $('wild').textContent = wild.length ? `wild cards: ${wild.join(', ')}` : '';
   }
 
-  // Living players by HP, then the knocked-out by place.
-  playerRows() {
+  traitLine(court) {
+    return computeTraits(court, this.g.unitsById, this.g.cfg).traits.filter(t => t.level).map(t => `${t.name} ${t.count}`).join(', ');
+  }
+
+  // Living players by HP, then the knocked-out by place. `scoutable` makes living bots buttons.
+  playerRows(scoutable = false) {
     const ps = this.g.players.slice().sort((a, b) => (a.place ?? 0) - (b.place ?? 0) || b.hp - a.hp || a.idx - b.idx);
-    return ps.map(p => el('li', { className: (p === this.g.you ? 'you' : '') + (p.place ? ' out' : '') },
-      el('b', { textContent: p.name }), ` ${p.place ? ordinal(p.place) : `${p.hp} HP`}`));
+    return ps.map(p => {
+      const text = [el('b', { textContent: p.name }), ` ${p.place ? ordinal(p.place) : `${p.hp} HP`}`];
+      const li = el('li', { className: (p === this.g.you ? 'you' : '') + (p.place ? ' out' : '') });
+      if (!scoutable || p === this.g.you || p.place) { li.append(...text); return li; }
+      const b = el('button', { type: 'button', className: 'scout' }, ...text);
+      b.setAttribute('aria-pressed', String(this.scout === p.idx));
+      b.setAttribute('aria-label', `${p.name}, ${p.hp} HP. ${this.scout === p.idx ? 'Stop scouting' : 'Scout their board'}`);
+      b.addEventListener('click', () => {
+        if (this.fighting) return;
+        this.scout = this.scout === p.idx ? null : p.idx;
+        this.say(this.scout === null ? 'Stopped scouting' : `Scouting ${p.name}: their board is on the far side`);
+        this.render();
+      });
+      li.append(b);
+      return li;
+    });
   }
 
   renderPlayers() {
-    $('players').replaceChildren(...this.playerRows());
+    $('players').replaceChildren(...this.playerRows(true));
     $('lastFight').textContent = this.lastLine || '';
+  }
+
+  // Damage each unit dealt in your last fight, both sides, as bars with the number written out.
+  renderDamage() {
+    const r = this.lastFight;
+    $('damage').hidden = !r;
+    if (!r) return;
+    const dealt = {};
+    for (const e of r.events) if (e.t === 'hit') dealt[e.from] = (dealt[e.from] || 0) + e.amount;
+    const mineNear = r.side === 'near';
+    const side = (court, who) => court.filter(Boolean).map(i => ({ who, name: this.g.unitsById[i.id].display, n: dealt[i.uid] || 0 }));
+    const rows = [...side(mineNear ? r.near : r.far, 'you'), ...side(mineNear ? r.far : r.near, 'them')].sort((a, b) => b.n - a.n);
+    const max = Math.max(1, ...rows.map(x => x.n));
+    $('damageTitle').textContent = `Fight damage, ${r.label} vs ${r.opponent}`;
+    $('damageList').replaceChildren(...rows.map(x => el('li', { className: x.who },
+      el('span', { className: 'nm', textContent: `${x.name}${x.who === 'them' ? ` (${r.opponent})` : ''}` }),
+      el('span', { className: 'bar' }, el('i', { style: `width:${(100 * x.n / max).toFixed(1)}%` })),
+      el('span', { className: 'n', textContent: x.n.toLocaleString() }))));
   }
 
   // After Next round: one line on your fight, and the game-over panel when it ends.
@@ -307,7 +351,7 @@ export class UI {
       try { localStorage.setItem(DIFF_KEY, $('difficulty').value); } catch { /* per-device preference only */ }
       this.say(`Bots: ${$('difficulty').value}, from the next new game`);
     });
-    const fresh = () => { this.g.newGame(undefined, $('difficulty').value); this.selected = null; this.lastLine = ''; this.say('New game'); this.render(); this.resetTimer(); };
+    const fresh = () => { this.g.newGame(undefined, $('difficulty').value); this.selected = null; this.scout = null; this.lastFight = null; this.lastLine = ''; this.say('New game'); this.render(); this.resetTimer(); };
     $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) fresh(); });
     $('again').addEventListener('click', () => { $('over').close(); fresh(); });
     for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));

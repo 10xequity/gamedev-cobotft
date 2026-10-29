@@ -2,6 +2,14 @@
 
 Player names never appear in this file.
 
+## v1.5.0 — 2026-10-29 · Milestone 15: scouting and fight damage
+
+- Scouting: every living bot in the Players list is a button. Pick one and their board stands on the far half
+  of the court with their active traits written above it; pick again (or press Next round) to stop.
+- Fight damage: after your fight, a collapsible list ranks every unit on both sides by damage dealt, as bars
+  with the number written out; the opponent's units are labelled with the team name.
+- Both are read-only views; nothing about the game state changes.
+
 ## v1.4.0 — 2026-10-29 · Milestone 14: carousel
 
 - At 3-1, 4-1, 5-1, 6-1 and 7-1 a carousel lays out one player per living team from the pool, at tiers that rise
