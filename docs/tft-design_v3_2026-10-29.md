@@ -219,7 +219,7 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 21. ✔ v2.2.0 HD arenas drawn in code (sharp at any size), replacing the pixel-art stages; AI image prompts kept in
     `docs/arena-art-prompts_v1_2026-10-29.md` for an optional photo-like set later.
 22. Floor, court lines, net and backdrop drawn in the same perspective as the hex board. ✔ v2.2.0
-23. Settings panel (sound, timer, bots, motion, text size).
+23. Settings panel (sound, timer, bots, motion, text size). ✔ v2.3.0
 24. Replay any of your fights from the current game.
 25. Daily challenge: one shared seed per day, your best kept.
 26. Local ladder: a rating that moves with placements, with ranks.

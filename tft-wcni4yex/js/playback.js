@@ -7,7 +7,7 @@ import { play } from './sound.js';
 
 const BEAT_MS = 380; // about 28 s for a typical 74-action fight at 1x
 const CAST_POSE = { Spike: 'spike', 'Ace Serve': 'spike', Slide: 'spike', Tip: 'spike', Set: 'set', Dig: 'dig', 'Big Block': 'block' };
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reducedMotion = () => document.documentElement.dataset.motion === 'reduce' || matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export class Playback {
   constructor(box) { this.box = box; this.speed = 1; this.skipping = false; this.wake = null; }
@@ -47,9 +47,11 @@ export class Playback {
     if (this.skipping || reducedMotion()) return;
     const a = this.tile(fromUid)?.querySelector('.spr'), b = this.tile(toUid)?.querySelector('.spr');
     if (!a || !b) return;
+    // Screen rects are in screen pixels; the ball moves in the court's own pixels, which the text-size zoom scales.
+    const z = this.box.getBoundingClientRect().width / this.box.offsetWidth || 1;
     const box = this.box.getBoundingClientRect(), ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
-    const x0 = ra.left + ra.width / 2 - box.left, y0 = ra.top + ra.height * 0.2 - box.top;
-    const x1 = rb.left + rb.width / 2 - box.left, y1 = rb.top + rb.height * 0.3 - box.top;
+    const x0 = (ra.left + ra.width / 2 - box.left) / z, y0 = (ra.top + ra.height * 0.2 - box.top) / z;
+    const x1 = (rb.left + rb.width / 2 - box.left) / z, y1 = (rb.top + rb.height * 0.3 - box.top) / z;
     const ball = Object.assign(document.createElement('span'), { className: 'ball' });
     this.box.append(ball);
     const arc = Math.min(y0, y1) - box.height * 0.12;

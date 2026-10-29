@@ -12,6 +12,13 @@ const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
 export const DIFF_KEY = 'tacticalboom.difficulty';
 export const HELP_KEY = 'tacticalboom.seenHelp';
+const PREFS = { speed: ['tacticalboom.speed', '1'], motion: ['tacticalboom.motion', 'auto'], textSize: ['tacticalboom.textSize', '1'] };
+const pref = k => { try { return localStorage.getItem(PREFS[k][0]) ?? PREFS[k][1]; } catch { return PREFS[k][1]; } };
+const setPref = (k, v) => { try { localStorage.setItem(PREFS[k][0], v); } catch { /* this session only */ } };
+function applyPrefs() {
+  document.documentElement.dataset.motion = pref('motion');
+  document.body.style.zoom = pref('textSize');
+}
 const ordinal = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th'); // places run 1-8 only
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
@@ -23,6 +30,9 @@ export class UI {
     this.lastFight = null;
     this.arena = new Arena($('court'), (where, k, inst) => this.tapSlot(inst, where, k));
     this.playback = new Playback($('court'));
+    applyPrefs();
+    this.playback.speed = Number(pref('speed'));
+    $('speedPref').value = pref('speed'); $('motion').value = pref('motion'); $('textSize').value = pref('textSize');
     this.fighting = false;
     this.paused = false;
     try { this.auto = localStorage.getItem(AUTO_KEY) !== 'off'; } catch { this.auto = true; }
@@ -37,6 +47,7 @@ export class UI {
   resetTimer() { this.timeLeft = this.g.cfg.game.planningSeconds; $('timer').textContent = this.auto ? this.timeLeft : 'off'; }
   tick() {
     if (!this.auto || this.paused || this.fighting || this.g.over || $('over').open) return;
+    if (['settings', 'history', 'help', 'unitcard'].some(d => $(d).open)) return; // reading a panel pauses the clock
     this.timeLeft -= 1;
     $('timer').textContent = Math.max(0, this.timeLeft);
     if (this.timeLeft > 0 && this.timeLeft <= 5) play('tick');
@@ -53,6 +64,7 @@ export class UI {
     this.lastFight = r.events ? r : null;
     if (r.events) {
       this.setFighting(true);
+      $('speed').textContent = this.playback.speed === 2 ? '1x' : '2x'; $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));
       const mineNear = r.side === 'near';
       this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
       this.say(`${r.label}: fight against ${r.opponent}${r.ghost ? ' (a copy)' : ''}. Escape skips.`);
@@ -367,7 +379,8 @@ export class UI {
         ghost = el('div', { className: 'dragghost' }, el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 96) }));
         document.body.append(ghost);
       }
-      ghost.style.left = `${ev.clientX}px`; ghost.style.top = `${ev.clientY}px`;
+      const z = Number(document.body.style.zoom) || 1; // the text-size setting zooms the page
+      ghost.style.left = `${ev.clientX / z}px`; ghost.style.top = `${ev.clientY / z}px`;
       ghost.hidden = true;
       const t = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('[data-drop]');
       ghost.hidden = false;
@@ -400,6 +413,11 @@ export class UI {
     $('unitClose').addEventListener('click', () => $('unitcard').close());
     $('helpBtn').addEventListener('click', () => $('help').showModal());
     $('historyBtn').addEventListener('click', () => this.showHistory());
+    $('settingsBtn').addEventListener('click', () => $('settings').showModal());
+    $('setClose').addEventListener('click', () => $('settings').close());
+    $('speedPref').addEventListener('change', () => { setPref('speed', $('speedPref').value); this.playback.speed = Number($('speedPref').value); this.say(`Fights play at ${$('speedPref').value}x`); });
+    $('motion').addEventListener('change', () => { setPref('motion', $('motion').value); applyPrefs(); this.say($('motion').value === 'reduce' ? 'Motion reduced' : 'Motion follows this device'); });
+    $('textSize').addEventListener('change', () => { setPref('textSize', $('textSize').value); applyPrefs(); this.say('Text size changed'); this.render(); });
     $('histClose').addEventListener('click', () => $('history').close());
     $('histDownload').addEventListener('click', () => { history.download(history.load()); this.say('Feedback file saved to your downloads'); });
     $('histClear').addEventListener('click', () => { if (confirm('Delete the game history on this device?')) { history.clear(); this.showHistory(); this.say('History cleared'); } });

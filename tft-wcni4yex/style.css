@@ -175,3 +175,12 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 #traits:empty { min-height: 28px; }
 #bench:empty { min-height: 64px; }
 #shop:empty { min-height: 150px; }
+/* ---- settings ---- */
+.setgrid { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center; margin-top: 10px; font-weight: 600; }
+.setgrid select, .setgrid button { font: inherit; padding: 6px 8px; border-radius: 6px; border: 2px solid var(--black); background: var(--cream); color: var(--black); justify-self: start; }
+.setgrid button[aria-pressed="true"] { background: var(--teal-light); border-style: dashed; }
+.setgrid input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--teal); justify-self: start; }
+.setgrid small { font-weight: 400; }
+html[data-motion="reduce"] .float { animation: none; }
+html[data-motion="reduce"] .hex .unit .hpbar i { transition: none; }
+html[data-motion="reduce"] .hop { animation: none !important; }

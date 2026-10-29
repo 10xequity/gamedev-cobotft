@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v2.3.0 — 2026-10-29 · Milestone 23: settings panel
+
+- A Settings button opens one panel for everything that was crowding the header: sound, the auto-advance timer,
+  bot difficulty, plus three new settings, all remembered on this device:
+  - Fight speed: fights start at 1x or 2x (the in-fight button still switches).
+  - Motion: follow the device, or reduce (no ball flight, pose frames or floating numbers) whatever the
+    device says.
+  - Text size: Standard, Large (115%) or Larger (130%); the whole interface scales. The drag preview and the
+    ball's flight are corrected for the scaling (checked at 130%: drag preview exact, ball within 4 px).
+- The planning timer pauses while Settings, History, How to play or a unit card is open.
+- The header is two rows shorter on phones: status, Pause, Settings, History, ?, New game.
+
 ## v2.2.0 — 2026-10-29 · Milestones 21-22: HD arenas, board-matched floor
 
 - `js/stage.js` draws the court backdrop as one vector image (SVG), sharp at any screen size and a few KB:

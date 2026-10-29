@@ -10,27 +10,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <link rel="manifest" href="app.webmanifest">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=2.2.0">
+  <link rel="stylesheet" href="style.css?v=2.3.0">
   <script type="importmap">
   {
     "imports": {
-      "./js/arena.js": "./js/arena.js?v=2.2.0",
-      "./js/bots.js": "./js/bots.js?v=2.2.0",
-      "./js/combat.js": "./js/combat.js?v=2.2.0",
-      "./js/economy.js": "./js/economy.js?v=2.2.0",
-      "./js/gallery.js": "./js/gallery.js?v=2.2.0",
-      "./js/game.js": "./js/game.js?v=2.2.0",
-      "./js/hex.js": "./js/hex.js?v=2.2.0",
-      "./js/history.js": "./js/history.js?v=2.2.0",
-      "./js/main.js": "./js/main.js?v=2.2.0",
-      "./js/playback.js": "./js/playback.js?v=2.2.0",
-      "./js/rng.js": "./js/rng.js?v=2.2.0",
-      "./js/sound.js": "./js/sound.js?v=2.2.0",
-      "./js/sprite.js": "./js/sprite.js?v=2.2.0",
-      "./js/stage.js": "./js/stage.js?v=2.2.0",
-      "./js/traits.js": "./js/traits.js?v=2.2.0",
-      "./js/ui.js": "./js/ui.js?v=2.2.0",
-      "./js/units.js": "./js/units.js?v=2.2.0"
+      "./js/arena.js": "./js/arena.js?v=2.3.0",
+      "./js/bots.js": "./js/bots.js?v=2.3.0",
+      "./js/combat.js": "./js/combat.js?v=2.3.0",
+      "./js/economy.js": "./js/economy.js?v=2.3.0",
+      "./js/gallery.js": "./js/gallery.js?v=2.3.0",
+      "./js/game.js": "./js/game.js?v=2.3.0",
+      "./js/hex.js": "./js/hex.js?v=2.3.0",
+      "./js/history.js": "./js/history.js?v=2.3.0",
+      "./js/main.js": "./js/main.js?v=2.3.0",
+      "./js/playback.js": "./js/playback.js?v=2.3.0",
+      "./js/rng.js": "./js/rng.js?v=2.3.0",
+      "./js/sound.js": "./js/sound.js?v=2.3.0",
+      "./js/sprite.js": "./js/sprite.js?v=2.3.0",
+      "./js/stage.js": "./js/stage.js?v=2.3.0",
+      "./js/traits.js": "./js/traits.js?v=2.3.0",
+      "./js/ui.js": "./js/ui.js?v=2.3.0",
+      "./js/units.js": "./js/units.js?v=2.3.0"
     }
   }
   </script>
@@ -42,11 +42,8 @@
     <span class="stat"><span class="k">Round</span> <b id="round">1-1</b></span>
     <span class="stat" id="level">Lv 1 · 2 XP to next</span>
     <span class="stat"><span class="k">Time</span> <b id="timer" aria-live="off">30</b></span>
-    <button type="button" id="mute" class="ghost" aria-pressed="false">Sound on</button>
     <button type="button" id="pause" class="ghost" aria-pressed="false">Pause</button>
-    <label class="auto"><input type="checkbox" id="auto" checked> Auto-advance</label>
-    <label class="auto">Bots <select id="difficulty" aria-describedby="diffNote"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select></label>
-    <span class="vh" id="diffNote">Applies from the next new game</span>
+    <button type="button" id="settingsBtn" class="ghost">Settings</button>
     <button type="button" id="historyBtn" class="ghost">History</button>
     <button type="button" id="helpBtn" class="ghost" aria-label="How to play">?</button>
     <button type="button" id="newgame" class="ghost">New game</button>
@@ -101,6 +98,20 @@
     <div class="stage"><span class="spr" id="unitSprite"></span></div>
     <dl id="unitFacts"></dl>
   </dialog>
+  <dialog id="settings" aria-labelledby="setTitle">
+    <button type="button" class="close" id="setClose">Close</button>
+    <h2 id="setTitle">Settings</h2>
+    <p class="note">Kept on this device.</p>
+    <div class="setgrid">
+      <span>Sound</span><button type="button" id="mute" aria-pressed="false">Sound on</button>
+      <label for="auto">Auto-advance timer</label><input type="checkbox" id="auto" checked>
+      <label for="difficulty">Bots</label><select id="difficulty" aria-describedby="diffNote"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select>
+      <span></span><small id="diffNote">Applies from the next new game.</small>
+      <label for="speedPref">Fight speed</label><select id="speedPref"><option value="1">1x</option><option value="2">2x</option></select>
+      <label for="motion">Motion</label><select id="motion"><option value="auto">Follow this device</option><option value="reduce">Reduce</option></select>
+      <label for="textSize">Text size</label><select id="textSize"><option value="1">Standard</option><option value="1.15">Large</option><option value="1.3">Larger</option></select>
+    </div>
+  </dialog>
   <dialog id="history" aria-labelledby="histTitle">
     <button type="button" class="close" id="histClose">Close</button>
     <h2 id="histTitle">History</h2>
@@ -144,6 +155,6 @@
     <ol class="players" id="finalPlaces"></ol>
     <button type="button" id="again" class="primary">New game</button>
   </dialog>
-  <script type="module" src="js/main.js?v=2.2.0"></script>
+  <script type="module" src="js/main.js?v=2.3.0"></script>
 </body>
 </html>
