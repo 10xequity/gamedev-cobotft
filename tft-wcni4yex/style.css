@@ -45,7 +45,8 @@ body.game { padding-bottom: 96px; }
 .bar { position: sticky; top: 0; z-index: 5; background: var(--teal-dark); padding: 8px 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-weight: 600; }
 .bar .stat .k { color: var(--gold); font-family: var(--display); font-size: 12px; }
 .bar .stat b { font-size: 18px; }
-.bar .ghost { margin-left: auto; background: transparent; color: var(--cream); border: 2px solid var(--cream); border-radius: 6px; padding: 4px 10px; font-weight: 600; }
+.bar #pause { margin-left: auto; }
+.bar .ghost { background: transparent; color: var(--cream); border: 2px solid var(--cream); border-radius: 6px; padding: 4px 10px; font-weight: 600; }
 .zone { padding: 10px 12px 0; }
 .zone h2 { font-size: 15px; color: var(--gold); margin-bottom: 6px; }
 .zone h2 .sub { color: var(--cream); font-family: var(--body); font-weight: 600; font-size: 13px; margin-left: 8px; }
@@ -58,12 +59,32 @@ body.game { padding-bottom: 96px; }
 .slot .spr { background-repeat: no-repeat; max-width: 100%; }
 .slot .stars { color: var(--gold-dark); font-size: 11px; line-height: 1; }
 .slot .nm { font-size: 10px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* ---- fight playback ---- */
+.arena.fighting .hex { pointer-events: none; }
+.hex.down .unit { opacity: .55; }
+.hex .unit .hpbar { width: 70%; height: 5px; margin-top: 2px; background: var(--black); border: 1px solid var(--black); border-radius: 3px; overflow: hidden; }
+.hex .unit .hpbar i { display: block; height: 100%; width: 100%; background: var(--gold); transition: width .25s; }
+.hex.theirs .unit .hpbar i { background: var(--cream); }
+.float { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-family: var(--display); font-weight: 800; font-size: 13px; white-space: nowrap; padding: 0 4px; border-radius: 4px; background: var(--black); color: var(--cream); animation: rise .9s ease-out forwards; z-index: 40; }
+.float.dmg { color: var(--gold); }
+.float.heal { background: var(--teal); color: var(--cream); }
+.float.kw { background: var(--cream); color: var(--black); font-size: 11px; }
+@keyframes rise { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: 0 -28px; } }
+.ball { position: absolute; left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--cream), var(--gold) 60%, var(--gold-dark)); border: 1px solid var(--black); z-index: 60; pointer-events: none; }
+.fightbar[hidden], [hidden] { display: none !important; }
+.fightbar { display: inline-flex; gap: 6px; margin-left: 8px; vertical-align: middle; }
+.fightbar button { padding: 4px 10px; border-radius: 6px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; font-size: 12px; }
+.fightbar button small { color: var(--gold); font-size: 10px; }
+.bar .auto { display: inline-flex; gap: 4px; align-items: center; font-size: 12px; }
+.bar .auto input { width: 18px; height: 18px; accent-color: var(--gold); }
+.bar #pause[aria-pressed="true"] { background: var(--gold); color: var(--black); border-color: var(--gold); }
+@media (prefers-reduced-motion: reduce) { .float { animation: none; } .hex .unit .hpbar i { transition: none; } }
 .traits { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
 .traits li { padding: 4px 8px; border-radius: 6px; border: 2px dashed rgba(255, 249, 240, .6); }
 .traits li.on { background: var(--cream); color: var(--black); border: 2px solid var(--gold); }
 .traits li b { font-family: var(--display); }
 .traits li.on .bp { color: var(--teal-dark); font-weight: 700; }
-.players { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 12px; }
+.players { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 4px; font-size: 12px; }
 .players li { padding: 3px 6px; border-radius: 6px; background: var(--teal-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .players li.you { background: var(--gold); color: var(--black); }
 .players li.out { text-decoration: line-through; }
@@ -111,6 +132,6 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 .hex .unit .spr { background-repeat: no-repeat; }
 .hex .unit.flip .spr { transform: scaleX(-1); }
 .hex .unit .stars { color: var(--gold); font-size: 11px; line-height: 1; text-shadow: 0 1px 0 var(--black); margin-top: -2px; }
-.ghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -90%); }
-.ghost .spr { background-repeat: no-repeat; filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
+.dragghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -90%); }
+.dragghost .spr { background-repeat: no-repeat; filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
 .slot.drop { outline: 4px solid var(--gold); outline-offset: -2px; }

@@ -8,23 +8,24 @@
   <title>Tactical Boom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=0.8.0">
+  <link rel="stylesheet" href="style.css?v=0.9.0">
   <script type="importmap">
   {
     "imports": {
-      "./js/arena.js": "./js/arena.js?v=0.8.0",
-      "./js/bots.js": "./js/bots.js?v=0.8.0",
-      "./js/combat.js": "./js/combat.js?v=0.8.0",
-      "./js/economy.js": "./js/economy.js?v=0.8.0",
-      "./js/gallery.js": "./js/gallery.js?v=0.8.0",
-      "./js/game.js": "./js/game.js?v=0.8.0",
-      "./js/hex.js": "./js/hex.js?v=0.8.0",
-      "./js/main.js": "./js/main.js?v=0.8.0",
-      "./js/rng.js": "./js/rng.js?v=0.8.0",
-      "./js/sprite.js": "./js/sprite.js?v=0.8.0",
-      "./js/traits.js": "./js/traits.js?v=0.8.0",
-      "./js/ui.js": "./js/ui.js?v=0.8.0",
-      "./js/units.js": "./js/units.js?v=0.8.0"
+      "./js/arena.js": "./js/arena.js?v=0.9.0",
+      "./js/bots.js": "./js/bots.js?v=0.9.0",
+      "./js/combat.js": "./js/combat.js?v=0.9.0",
+      "./js/economy.js": "./js/economy.js?v=0.9.0",
+      "./js/gallery.js": "./js/gallery.js?v=0.9.0",
+      "./js/game.js": "./js/game.js?v=0.9.0",
+      "./js/hex.js": "./js/hex.js?v=0.9.0",
+      "./js/main.js": "./js/main.js?v=0.9.0",
+      "./js/playback.js": "./js/playback.js?v=0.9.0",
+      "./js/rng.js": "./js/rng.js?v=0.9.0",
+      "./js/sprite.js": "./js/sprite.js?v=0.9.0",
+      "./js/traits.js": "./js/traits.js?v=0.9.0",
+      "./js/ui.js": "./js/ui.js?v=0.9.0",
+      "./js/units.js": "./js/units.js?v=0.9.0"
     }
   }
   </script>
@@ -35,11 +36,15 @@
     <span class="stat"><span class="k">Gold</span> <b id="gold">0</b></span>
     <span class="stat"><span class="k">Round</span> <b id="round">1-1</b></span>
     <span class="stat" id="level">Lv 1</span>
+    <span class="stat"><span class="k">Time</span> <b id="timer" aria-live="off">30</b></span>
+    <button type="button" id="pause" class="ghost" aria-pressed="false">Pause</button>
+    <label class="auto"><input type="checkbox" id="auto" checked> Auto-advance</label>
     <button type="button" id="newgame" class="ghost">New game</button>
   </header>
 
   <section class="zone" aria-labelledby="hCourt">
-    <h2 id="hCourt">Court <span class="sub" id="courtCount">0 / 1</span> <span class="sub">arrow keys move between hexes</span></h2>
+    <h2 id="hCourt">Court <span class="sub" id="courtCount">0 / 1</span> <span class="sub" id="courtHint">arrow keys move between hexes</span>
+      <span class="fightbar" id="fightbar" hidden><button type="button" id="speed" aria-pressed="false">2x</button><button type="button" id="skip">Skip <small>Esc</small></button></span></h2>
     <div class="arena" id="court" role="group" aria-label="Court hexes, your half" data-stage="fieldhouse"></div>
   </section>
 
@@ -78,6 +83,6 @@
     <ol class="players" id="finalPlaces"></ol>
     <button type="button" id="again" class="primary">New game</button>
   </dialog>
-  <script type="module" src="js/main.js?v=0.8.0"></script>
+  <script type="module" src="js/main.js?v=0.9.0"></script>
 </body>
 </html>

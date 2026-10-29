@@ -187,7 +187,7 @@ Game folder `tft-wcni4yex/`: `index.html`, `style.css`, `data/roster.json`,
 6. Traits including Utility and Pin wild cards and No Specialization. ✔ v0.6.0
 7. Keywords, styles and star upgrades. ✔ v0.7.0
 8. Bots, pairing, health, elimination, placement. First full game. ✔ v0.8.0
-9. Rally playback with poses and ball flight, phone polish, accessibility, save and resume.
+9. Rally playback with poses and ball flight, phone polish, accessibility, save and resume. ✔ v0.9.0
 10. Balance tuning to the line targets, staff build, changelog.
 
 ## Left to the builder

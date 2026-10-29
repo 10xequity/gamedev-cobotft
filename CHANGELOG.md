@@ -2,6 +2,24 @@
 
 Player names never appear in this file.
 
+## v0.9.0 — 2026-10-29 · Milestone 9: rally playback, phone polish, accessibility
+
+- Your fight now plays on the court after Next round (`js/playback.js`): both boards stand on their halves with
+  HP bars; on each action the hitter takes the spike pose and a ball arcs over the net, the target digs, the
+  bar drops and the damage floats up. Casts show the ability name and pose (Set, Dig, Big Block, Spike...),
+  keywords show their name (Rebound, First Touch, Second Wind, Dodge), heals float in teal, knocked-out players
+  faint and dim, the winners dance. About 28 seconds a fight at 1x; a 2x button and Skip (or Escape) during
+  the fight. Every other fight in the lobby resolves instantly, as before.
+- Reduced motion (phone setting): no ball flight, no pose frames, no floating animation; HP bars jump.
+- Planning timer from the design: 30 seconds, counts down only while you plan; Pause / Resume; an Auto-advance
+  checkbox (on by default, remembered on this device) turns the countdown off so the round waits for Next.
+- During a fight the shop, bench, court and action buttons are locked; keyboard focus moves to Skip.
+- Fixes: the header's New game button was pinned half off-screen at the top left on every screen size (it
+  shared a style name with the drag preview since milestone 3); the players list now wraps to two columns on
+  phones instead of cutting names; a key press with no element target no longer throws.
+- Save and resume: the game already saved after every action; a reload during a fight resumes at the next
+  planning phase with the fight's result applied (the playback itself is not replayed).
+
 ## v0.8.0 — 2026-10-29 · Milestone 8: bots, pairing, health, placement — first full game
 
 - Eight players: you and seven bots (`js/bots.js`). Each bot has a seeded personality: a favourite game role it

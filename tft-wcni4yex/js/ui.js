@@ -4,8 +4,10 @@ import { Arena } from './arena.js';
 import * as eco from './economy.js';
 import { computeTraits } from './traits.js';
 import { keywordsAt } from './units.js';
+import { Playback } from './playback.js';
 
 const $ = id => document.getElementById(id);
+const AUTO_KEY = 'tacticalboom.auto';
 const ordinal = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th'); // places run 1-8 only
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
@@ -14,7 +16,49 @@ export class UI {
     this.g = game;
     this.selected = null; // uid of the unit picked up
     this.arena = new Arena($('court'), (where, k, inst) => this.tapSlot(inst, where, k));
+    this.playback = new Playback($('court'));
+    this.fighting = false;
+    this.paused = false;
+    try { this.auto = localStorage.getItem(AUTO_KEY) !== 'off'; } catch { this.auto = true; }
+    $('auto').checked = this.auto;
     this.bind();
+    this.resetTimer();
+    setInterval(() => this.tick(), 1000);
+  }
+
+  // ---- planning timer: counts down only while planning, unpaused, with auto-advance on ----
+  resetTimer() { this.timeLeft = this.g.cfg.game.planningSeconds; $('timer').textContent = this.auto ? this.timeLeft : 'off'; }
+  tick() {
+    if (!this.auto || this.paused || this.fighting || this.g.over || $('over').open) return;
+    this.timeLeft -= 1;
+    $('timer').textContent = Math.max(0, this.timeLeft);
+    if (this.timeLeft <= 0) this.runRound();
+  }
+
+  // Next round: resolve every fight, play yours on the court, then show the new planning phase.
+  async runRound() {
+    if (this.g.over || this.fighting) return;
+    this.selected = null;
+    const r = this.g.nextRound();
+    if (r.events) {
+      this.setFighting(true);
+      const mineNear = r.side === 'near';
+      this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
+      this.say(`${r.label}: fight against ${r.opponent}${r.ghost ? ' (a copy)' : ''}. Escape skips.`);
+      await this.playback.play(r.events, r.maxHp);
+      this.setFighting(false);
+    }
+    this.render();
+    this.afterRound(r);
+    this.resetTimer();
+  }
+
+  setFighting(on) {
+    this.fighting = on;
+    $('fightbar').hidden = !on; $('courtHint').hidden = on;
+    for (const b of document.querySelectorAll('.actions button, #shop button, #bench button')) b.disabled = on;
+    if (on) $('skip').focus();
+    else $('next').disabled = false;
   }
 
   say(msg) { $('live').textContent = msg; $('msg').textContent = msg; }
@@ -129,6 +173,7 @@ export class UI {
   }
 
   tapSlot(inst, where, k) {
+    if (this.fighting) return;
     if (this.suppressClick) { this.suppressClick = false; return; }
     if (this.selected !== null) {
       if (inst && inst.uid === this.selected) { this.selected = null; this.say('Put down'); }
@@ -152,7 +197,7 @@ export class UI {
   // Drag: press on a unit, move more than a few pixels, release over a hex or bench slot.
   drag(e) {
     const src = e.target.closest('[data-uid]');
-    if (!src || e.button > 0) return;
+    if (!src || e.button > 0 || this.fighting) return;
     const uid = Number(src.dataset.uid);
     const inst = eco.owned(this.g.you).find(i => i.uid === uid);
     if (!inst) return;
@@ -162,7 +207,7 @@ export class UI {
     const onMove = ev => {
       if (!ghost) {
         if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
-        ghost = el('div', { className: 'ghost' }, el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 96) }));
+        ghost = el('div', { className: 'dragghost' }, el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 96) }));
         document.body.append(ghost);
       }
       ghost.style.left = `${ev.clientX}px`; ghost.style.top = `${ev.clientY}px`;
@@ -191,18 +236,37 @@ export class UI {
     $('sell').addEventListener('click', () => { if (this.selected === null) return; const r = this.g.sell(this.selected); this.say(r.ok ? `Sold for ${r.gold} gold` : r.reason); this.selected = null; this.render(); });
     $('reroll').addEventListener('click', () => { const r = this.g.reroll(); this.say(r.ok ? 'New shop' : r.reason); this.render(); });
     $('xp').addEventListener('click', () => { const r = this.g.buyXp(); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
-    $('next').addEventListener('click', () => { if (this.g.over) return; this.selected = null; const r = this.g.nextRound(); this.render(); this.afterRound(r); });
-    const fresh = () => { this.g.newGame(); this.selected = null; this.lastLine = ''; this.say('New game'); this.render(); };
+    $('next').addEventListener('click', () => this.runRound());
+    $('skip').addEventListener('click', () => this.playback.skip());
+    $('speed').addEventListener('click', () => {
+      this.playback.speed = this.playback.speed === 1 ? 2 : 1;
+      $('speed').setAttribute('aria-pressed', String(this.playback.speed === 2));
+      $('speed').textContent = this.playback.speed === 2 ? '1x' : '2x';
+    });
+    $('pause').addEventListener('click', () => {
+      this.paused = !this.paused;
+      $('pause').setAttribute('aria-pressed', String(this.paused));
+      $('pause').textContent = this.paused ? 'Resume' : 'Pause';
+      this.say(this.paused ? 'Timer paused' : 'Timer running');
+    });
+    $('auto').addEventListener('change', () => {
+      this.auto = $('auto').checked;
+      try { localStorage.setItem(AUTO_KEY, this.auto ? 'on' : 'off'); } catch { /* per-device preference only */ }
+      this.resetTimer();
+      this.say(this.auto ? 'Auto-advance on' : 'Auto-advance off: press Next round when ready');
+    });
+    const fresh = () => { this.g.newGame(); this.selected = null; this.lastLine = ''; this.say('New game'); this.render(); this.resetTimer(); };
     $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) fresh(); });
     $('again').addEventListener('click', () => { $('over').close(); fresh(); });
     for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));
     $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {
-      if (e.target.matches('input, select, textarea')) return;
+      if (e.target.matches?.('input, select, textarea')) return;
+      if (this.fighting) { if (e.key === 'Escape') { e.preventDefault(); this.playback.skip(); } return; }
       const map = { s: 'sell', r: 'reroll', x: 'xp', n: 'next' };
       if (map[e.key.toLowerCase()]) { e.preventDefault(); $(map[e.key.toLowerCase()]).click(); }
       if (e.key === 'Escape' && this.selected !== null) { this.selected = null; this.say('Put down'); this.render(); }
     });
-    addEventListener('resize', () => this.render());
+    addEventListener('resize', () => { if (!this.fighting) this.render(); });
   }
 }

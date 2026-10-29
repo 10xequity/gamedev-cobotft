@@ -8,7 +8,7 @@ import { simulate } from './combat.js';
 
 const SAVE_KEY = 'tacticalboom.save';
 const SAVE_VERSION = 3; // 3: eight players
-const FAR_UID = 100000; // opponent uids are offset so both sides stay unique in a fight
+export const FAR_UID = 100000; // opponent uids are offset so both sides stay unique in a fight
 
 export class Game {
   constructor(cfg, roster, lookCount) {
@@ -78,7 +78,7 @@ export class Game {
         if (!ghost) this.result(b, r.winner === 'far' ? 1 : r.winner === 'near' ? -1 : 0, lossB);
         for (const [me, them, side, loss] of [[a, b, 'near', lossA], [b, a, 'far', lossB]]) {
           if (me !== this.you || (ghost && me === b)) continue;
-          this.last = { ...this.last, opponent: them.name, ghost, side, won: r.winner === side ? true : r.winner ? false : null, hpLoss: loss, events: r.events, near, far };
+          this.last = { ...this.last, opponent: them.name, ghost, side, won: r.winner === side ? true : r.winner ? false : null, hpLoss: loss, events: r.events, near, far, maxHp: Object.fromEntries(Object.values(r.byUid).map(f => [f.uid, f.maxHp])) };
         }
       }
     }

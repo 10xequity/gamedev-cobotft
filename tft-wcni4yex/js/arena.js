@@ -31,7 +31,9 @@ export class Arena {
     this.box.style.setProperty('--netY', net.y); this.box.style.setProperty('--netS', net.s);
   }
 
-  render(you, enemy, unitsById, cfg, selectedUid) {
+  // `maxHp` (uid → max HP) switches to fight mode: HP bars on, your tiles not tappable.
+  render(you, enemy, unitsById, cfg, selectedUid, maxHp = null) {
+    this.box.classList.toggle('fighting', !!maxHp);
     const kids = [el('div', { className: 'floor', ariaHidden: 'true' }), el('div', { className: 'net', ariaHidden: 'true' })];
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const mine = r >= HALF;
@@ -59,7 +61,10 @@ export class Arena {
         tile.dataset.uid = inst.uid;
         const spr = el('span', { className: 'unit' + (mine ? '' : ' flip') });
         const h = Math.round(this.box.clientWidth * 0.24 * p.s) || 80; // sprite height follows depth
-        spr.append(el('span', { className: 'spr', style: spriteStyle(u2.look, 'idle', 0, h) }), el('span', { className: 'stars', textContent: '★'.repeat(inst.star) }));
+        const sprite = el('span', { className: 'spr', style: spriteStyle(u2.look, 'idle', 0, h) });
+        Object.assign(sprite.dataset, { look: u2.look, h });
+        spr.append(sprite, el('span', { className: 'stars', textContent: '★'.repeat(inst.star) }));
+        if (maxHp) spr.append(el('span', { className: 'hpbar' }, el('i')));
         spr.style.zIndex = r * 3 + 1;
         tile.append(spr);
       }
