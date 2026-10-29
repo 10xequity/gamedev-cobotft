@@ -6,6 +6,7 @@ import { computeTraits } from './traits.js';
 import { keywordsAt } from './units.js';
 
 const $ = id => document.getElementById(id);
+const ordinal = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th'); // places run 1-8 only
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
 export class UI {
@@ -20,7 +21,7 @@ export class UI {
 
   render() {
     const g = this.g, you = g.you, cfg = g.cfg, info = g.round;
-    $('hp').textContent = you.hp;
+    $('hp').textContent = Math.max(0, you.hp);
     $('gold').textContent = you.gold;
     $('round').textContent = info.label + (info.practice ? ' practice' : '');
     const toNext = eco.xpToNext(you, cfg);
@@ -29,6 +30,7 @@ export class UI {
 
     this.arena.render(you, null, g.unitsById, cfg, this.selected);
     this.renderTraits();
+    this.renderPlayers();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
 
@@ -50,6 +52,32 @@ export class UI {
     }) : [el('li', { textContent: 'Place units on the court to start traits.' })]));
     const wild = this.g.you.court.filter(i => i && filled[i.uid]).map(i => `${this.g.unitsById[i.id].display} as ${filled[i.uid]}`);
     $('wild').textContent = wild.length ? `wild cards: ${wild.join(', ')}` : '';
+  }
+
+  // Living players by HP, then the knocked-out by place.
+  playerRows() {
+    const ps = this.g.players.slice().sort((a, b) => (a.place ?? 0) - (b.place ?? 0) || b.hp - a.hp || a.idx - b.idx);
+    return ps.map(p => el('li', { className: (p === this.g.you ? 'you' : '') + (p.place ? ' out' : '') },
+      el('b', { textContent: p.name }), ` ${p.place ? ordinal(p.place) : `${p.hp} HP`}`));
+  }
+
+  renderPlayers() {
+    $('players').replaceChildren(...this.playerRows());
+    $('lastFight').textContent = this.lastLine || '';
+  }
+
+  // After Next round: one line on your fight, and the game-over panel when it ends.
+  afterRound(r) {
+    const g = this.g;
+    if (r.practice) this.lastLine = `${r.label}: practice, no health lost`;
+    else if (!r.opponent) this.lastLine = `${r.label}: no fight`;
+    else this.lastLine = `${r.label} vs ${r.opponent}${r.ghost ? ' (copy)' : ''}: ` + (r.won === true ? 'won' : r.won === false ? `lost, −${r.hpLoss} HP` : 'draw');
+    if (g.over) {
+      $('overText').textContent = `You finished ${ordinal(g.you.place)} of ${g.players.length}.`;
+      $('finalPlaces').replaceChildren(...this.playerRows());
+      $('over').showModal();
+      this.say(`Game over. You finished ${ordinal(g.you.place)}.`);
+    } else this.say(`${this.lastLine}. Round ${g.round.label}, +${r.income} gold.`);
   }
 
   sellValue() {
@@ -163,8 +191,10 @@ export class UI {
     $('sell').addEventListener('click', () => { if (this.selected === null) return; const r = this.g.sell(this.selected); this.say(r.ok ? `Sold for ${r.gold} gold` : r.reason); this.selected = null; this.render(); });
     $('reroll').addEventListener('click', () => { const r = this.g.reroll(); this.say(r.ok ? 'New shop' : r.reason); this.render(); });
     $('xp').addEventListener('click', () => { const r = this.g.buyXp(); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
-    $('next').addEventListener('click', () => { const r = this.g.nextRound(); this.say(`Round ${this.g.round.label}. +${r.income} gold.`); this.render(); });
-    $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) { this.g.newGame(); this.selected = null; this.say('New game'); this.render(); } });
+    $('next').addEventListener('click', () => { if (this.g.over) return; this.selected = null; const r = this.g.nextRound(); this.render(); this.afterRound(r); });
+    const fresh = () => { this.g.newGame(); this.selected = null; this.lastLine = ''; this.say('New game'); this.render(); };
+    $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) fresh(); });
+    $('again').addEventListener('click', () => { $('over').close(); fresh(); });
     for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));
     $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {

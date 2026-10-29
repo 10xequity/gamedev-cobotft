@@ -8,7 +8,26 @@
   <title>Tactical Boom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=0.7.0">
+  <link rel="stylesheet" href="style.css?v=0.8.0">
+  <script type="importmap">
+  {
+    "imports": {
+      "./js/arena.js": "./js/arena.js?v=0.8.0",
+      "./js/bots.js": "./js/bots.js?v=0.8.0",
+      "./js/combat.js": "./js/combat.js?v=0.8.0",
+      "./js/economy.js": "./js/economy.js?v=0.8.0",
+      "./js/gallery.js": "./js/gallery.js?v=0.8.0",
+      "./js/game.js": "./js/game.js?v=0.8.0",
+      "./js/hex.js": "./js/hex.js?v=0.8.0",
+      "./js/main.js": "./js/main.js?v=0.8.0",
+      "./js/rng.js": "./js/rng.js?v=0.8.0",
+      "./js/sprite.js": "./js/sprite.js?v=0.8.0",
+      "./js/traits.js": "./js/traits.js?v=0.8.0",
+      "./js/ui.js": "./js/ui.js?v=0.8.0",
+      "./js/units.js": "./js/units.js?v=0.8.0"
+    }
+  }
+  </script>
 </head>
 <body class="game">
   <header class="bar" aria-label="Status">
@@ -22,6 +41,11 @@
   <section class="zone" aria-labelledby="hCourt">
     <h2 id="hCourt">Court <span class="sub" id="courtCount">0 / 1</span> <span class="sub">arrow keys move between hexes</span></h2>
     <div class="arena" id="court" role="group" aria-label="Court hexes, your half" data-stage="fieldhouse"></div>
+  </section>
+
+  <section class="zone" aria-labelledby="hPlayers">
+    <h2 id="hPlayers">Players <span class="sub" id="lastFight"></span></h2>
+    <ol class="players" id="players"></ol>
   </section>
 
   <section class="zone" aria-labelledby="hTraits">
@@ -48,6 +72,12 @@
     <button type="button" id="xp">Buy XP <small>4g · X</small></button>
     <button type="button" id="next" class="primary">Next round <small>N</small></button>
   </nav>
-  <script type="module" src="js/main.js?v=0.7.0"></script>
+  <dialog id="over" aria-labelledby="overTitle">
+    <h2 id="overTitle">Game over</h2>
+    <p id="overText"></p>
+    <ol class="players" id="finalPlaces"></ol>
+    <button type="button" id="again" class="primary">New game</button>
+  </dialog>
+  <script type="module" src="js/main.js?v=0.8.0"></script>
 </body>
 </html>

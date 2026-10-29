@@ -256,4 +256,55 @@ assert.equal(ft.byUid[503].kw['First Touch'], 2);
 assert.ok(ft.events.filter(e => e.t === 'ignore' && e.to === 503).length <= 2, '2-star First Touch ignores at most two hits');
 assert.ok(ft.byUid[503].untouched === 0 || ft.events.filter(e => e.t === 'hit' && e.to === 503).length === 0, 'hits only land after the ignores run out');
 
+// Full game: you are played by the bot logic too. Ends, places 1-8 once each, deterministic,
+// the pool never goes negative and nobody holds more units than bench + court allow.
+const { Game } = await import(pathToFileURL(join(GAME, 'js', 'game.js')).href);
+const bots = await import(pathToFileURL(join(GAME, 'js', 'bots.js')).href);
+function playGame(seed) {
+  const g = new Game(cfg, roster, manifest.looks.length); g.newGame(seed);
+  g.you.pers = bots.personality(seed, 0, cfg);
+  const planYou = () => bots.planBot(g.you, g.pool, g.unitsById, cfg, g.round.stage, () => g.roll(g.you));
+  planYou();
+  let rounds = 0;
+  while (!g.over && rounds < 100) {
+    const r = g.nextRound(); rounds++;
+    if (!r.practice && g.you.place === null) assert.ok(r.opponent, 'you fight someone every combat round');
+    for (const id of g.pool.ids) assert.ok(g.pool.copies[id] >= 0, 'pool copies never negative');
+    for (const p of g.living) {
+      assert.ok(eco.onCourt(p).length <= eco.courtMax(p, cfg), `${p.name} over the court cap`);
+      assert.equal(p.bench.length, cfg.game.benchSize, `${p.name} bench size`);
+    }
+    if (!g.over) planYou();
+  }
+  return { g, rounds };
+}
+for (const seed of ['game-a', 'game-b', 'game-c']) {
+  const { g, rounds } = playGame(seed);
+  assert.ok(g.over && rounds < 100, `${seed}: game must end`);
+  if (g.living.length === 1) assert.deepEqual(g.players.map(p => p.place).sort((x, y) => x - y), [1, 2, 3, 4, 5, 6, 7, 8], `${seed}: places 1-8 once each`);
+  else assert.ok(g.you.place !== null, `${seed}: game ends early only when you are out`);
+}
+assert.deepEqual(playGame('game-a').g.players.map(p => [p.place, p.hp]), playGame('game-a').g.players.map(p => [p.place, p.hp]), 'a whole game replays the same');
+// Health loss: stage damage plus one per two surviving enemy units.
+const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');
+assert.equal(hg.hpLoss({ stage: 3 }, 5), cfg.damage.perStage['3'] + 2);
+// Pairing never repeats last round's opponent when there are more than two players.
+const pg = new Game(cfg, roster, manifest.looks.length); pg.newGame('pair');
+for (let rd = 0; rd < 10; rd++) {
+  const before = Object.fromEntries(pg.players.map(p => [p.idx, p.lastOpp]));
+  pg.roundIdx = rd;
+  for (const [x, y, ghost] of pg.pairUp(pg.players)) if (!ghost) assert.ok(before[x.idx] !== y.idx, 'no rematch two rounds running');
+}
+
+// Cache busting: both pages carry one version string, and their import maps list every module,
+// so a phone after a deploy never runs new code against an old cached module.
+const { readdirSync } = await import('node:fs');
+const modules = readdirSync(join(GAME, 'js')).filter(f => f.endsWith('.js'));
+for (const page of ['index.html', 'gallery.html']) {
+  const html = readFileSync(join(GAME, page), 'utf8');
+  const versions = new Set([...html.matchAll(/\?v=([\d.]+)/g)].map(m => m[1]));
+  assert.equal(versions.size, 1, `${page}: one version string, found ${[...versions]}`);
+  for (const m of modules) assert.ok(html.includes(`"./js/${m}": "./js/${m}?v=`), `${page}: import map misses js/${m}`);
+}
+
 console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok, combat ok (mirror ${(share * 100).toFixed(0)}% near, ${r1.actions} actions)`);

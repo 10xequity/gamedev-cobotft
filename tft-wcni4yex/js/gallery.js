@@ -3,7 +3,7 @@ import { deriveAll, statsAt } from './units.js';
 import { setManifest, lookCount, spriteStyle, frameCount } from './sprite.js';
 
 const [cfg, roster, manifest] = await Promise.all(
-  ['data/config.json', 'data/roster.json', 'assets/sprites/manifest.json'].map(u => fetch(u).then(r => r.json()))
+  ['data/config.json', 'data/roster.json', 'assets/sprites/manifest.json'].map(u => fetch(u + new URL(import.meta.url).search).then(r => r.json()))
 );
 setManifest(manifest);
 const units = deriveAll(roster, cfg, lookCount()).sort((a, b) => a.display.localeCompare(b.display));

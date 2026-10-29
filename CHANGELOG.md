@@ -2,6 +2,30 @@
 
 Player names never appear in this file.
 
+## v0.8.0 — 2026-10-29 · Milestone 8: bots, pairing, health, placement — first full game
+
+- Eight players: you and seven bots (`js/bots.js`). Each bot has a seeded personality: a favourite game role it
+  collects and a pace (slow: levels one ahead of the stage and rerolls up to 3 times; steady: two ahead, 1
+  reroll; fast: three ahead, no rerolls; numbers in `config.json` under `bots`). Bots buy copies they own,
+  their favourite role, or anything while their roster is short; sell the weakest lone bench unit when full; and
+  place Middles and Liberos at the net, hitters behind, Setters and Utility at the back.
+- Rounds: practice rounds fight no one. Combat rounds pair the living players by seeded shuffle, avoiding last
+  round's opponent; an odd player out fights a copy of a random board. Loser loses stage damage plus 1 per two
+  surviving enemy units; win and loss streaks feed the income bonus; a draw costs nothing and resets the streak.
+- Elimination at 0 HP; players knocked out in the same round are placed by remaining HP. Their units return
+  to the pool. The game ends when you are out or one player is left; a game-over panel shows every place.
+- Screen: a Players list (HP or place, you highlighted) and a line on your last fight. Your fight's full event
+  list and both boards are kept for the playback in milestone 9.
+- Cache fix: each page has an import map that versions every code file, and data files are fetched with the same
+  version, so a phone after a deploy can no longer run new code against an old cached file (the likely cause of
+  "I cannot see it in my view" after milestone 4). `tools/check.mjs` fails if a page misses a module or mixes
+  versions.
+- Save format v3 (eight players); older saves, and a finished game, start a new game on load.
+- Tests: three whole games end with places 1-8 once each, replay identically, keep pool copies non-negative and
+  boards within the cap; health-loss formula; no rematch two rounds running.
+- Known for milestone 10: games are short. In headless games the first players are out in stage 3 and games end
+  around stage 4 (20 HP against 2 + up to 3 per loss at stage 2).
+
 ## v0.7.0 — 2026-10-29 · Milestone 7: keywords and star upgrades
 
 - All seven keywords now work in combat: Rebound Attack (every third action, one extra hit), Follow Through

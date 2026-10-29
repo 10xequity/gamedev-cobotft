@@ -63,6 +63,14 @@ body.game { padding-bottom: 96px; }
 .traits li.on { background: var(--cream); color: var(--black); border: 2px solid var(--gold); }
 .traits li b { font-family: var(--display); }
 .traits li.on .bp { color: var(--teal-dark); font-weight: 700; }
+.players { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 12px; }
+.players li { padding: 3px 6px; border-radius: 6px; background: var(--teal-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.players li.you { background: var(--gold); color: var(--black); }
+.players li.out { text-decoration: line-through; }
+dialog .players { grid-template-columns: repeat(2, 1fr); }
+dialog .players li { color: var(--cream); }
+dialog .players li.you { color: var(--black); }
+dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border: 2px solid var(--black); background: var(--gold); color: var(--black); font-weight: 800; }
 .msg { margin: 8px 12px; min-height: 1.4em; font-weight: 600; }
 .shop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .shopcard { border-radius: 10px; border: 3px solid var(--ring); background: var(--cream); color: var(--black); padding: 6px 4px; display: grid; justify-items: center; gap: 2px; min-height: 150px; }

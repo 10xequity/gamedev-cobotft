@@ -373,6 +373,14 @@
     "multiplierFrom2Star": 2,
     "desc": "2-star doubles the keyword's number; 3-star keeps that and adds a second keyword drawn by seed at its 1-star number."
   },
+  "bots": {
+    "names": ["Team Spike", "Team Dig", "Team Block", "Team Set", "Team Serve", "Team Tip", "Team Pancake"],
+    "paces": {
+      "slow": { "levelAhead": 1, "rerolls": 3 },
+      "steady": { "levelAhead": 2, "rerolls": 1 },
+      "fast": { "levelAhead": 3, "rerolls": 0 }
+    }
+  },
   "aggro": {
     "Target": 6,
     "MiddleCentre": 4,
