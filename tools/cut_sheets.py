@@ -88,6 +88,22 @@ def cut(path: Path) -> Image.Image:
     return sheet
 
 
+def boxes(looks: list[str]) -> dict:
+    """Per pose, the [x, y, w, h] box inside a cell that holds every look's figure, so the
+    game can show just the figure instead of the whole cell."""
+    out = {}
+    sheets = [Image.open(OUT / f"{n}.webp").getchannel("A") for n in looks]
+    for pose, cells in POSES.items():
+        x0, y0, x1, y1 = CELL_W, CELL_H, 0, 0
+        for r, c in (cells if isinstance(cells[0], list) else [cells]):
+            for a in sheets:
+                bb = a.crop((c * CELL_W, r * CELL_H, c * CELL_W + CELL_W, r * CELL_H + CELL_H)).getbbox()
+                if bb:
+                    x0, y0, x1, y1 = min(x0, bb[0]), min(y0, bb[1]), max(x1, bb[2]), max(y1, bb[3])
+        out[pose] = [x0, y0, x1 - x0, y1 - y0]
+    return out
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     looks = []
@@ -97,7 +113,7 @@ def main() -> None:
         sheet.save(OUT / f"{name}.webp", "WEBP", quality=82, method=4)
         looks.append(name)
         print("cut", name)
-    manifest = {"cell": [CELL_W, CELL_H], "cols": 6, "rows": 6, "poses": POSES, "looks": looks}
+    manifest = {"cell": [CELL_W, CELL_H], "cols": 6, "rows": 6, "poses": POSES, "looks": looks, "box": boxes(looks)}
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=1) + "\n")
     print(f"{len(looks)} looks -> {OUT}")
 

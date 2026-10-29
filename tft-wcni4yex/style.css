@@ -50,7 +50,7 @@ body.game { padding-bottom: 96px; }
 .zone { padding: 10px 12px 0; }
 .zone h2 { font-size: 15px; color: var(--cream); margin-bottom: 6px; }
 .zone h2 .sub { color: var(--cream); font-family: var(--body); font-weight: 600; font-size: 13px; margin-left: 8px; }
-.slots { display: grid; gap: 6px; }
+.slots { display: grid; gap: 6px; touch-action: none; }
 .slots.court { grid-template-columns: repeat(6, 1fr); }
 .slots.bench { grid-template-columns: repeat(9, 1fr); }
 .slot { position: relative; aspect-ratio: 3 / 4; border-radius: 8px; border: 2px dashed rgba(255, 249, 240, .6); background: rgba(6, 90, 98, .5); padding: 2px; display: grid; grid-template-rows: 1fr auto auto; justify-items: center; align-items: end; color: var(--cream); overflow: hidden; }
@@ -59,6 +59,9 @@ body.game { padding-bottom: 96px; }
 .slot .spr { background-repeat: no-repeat; max-width: 100%; }
 .slot .stars { color: var(--black); font-size: 11px; line-height: 1; }
 .slot .nm { font-size: 10px; font-weight: 700; line-height: 1.1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The name strip wears the role's kit colour (white, black or teal) so roles read at a glance. */
+.slot.filled .nm, .shopcard .nm { box-sizing: border-box; width: 100%; padding: 1px 4px; border-radius: 4px; background: var(--kit-bg, transparent); color: var(--kit-fg, inherit); box-shadow: inset 0 0 0 1px var(--black); }
+.spr.flip { transform: scaleX(-1); }
 /* ---- fight playback ---- */
 .arena.fighting .hex { pointer-events: none; }
 .hex.down .unit { opacity: .55; }
@@ -128,7 +131,7 @@ dialog .players li.you { color: var(--black); }
 .hex .unit .spr { background-repeat: no-repeat; }
 .hex .unit.flip .spr { transform: scaleX(-1); }
 .hex .unit .stars { color: var(--gold); font-size: 11px; line-height: 1; text-shadow: 0 1px 0 var(--black); margin-top: -2px; }
-.dragghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -90%); }
+.dragghost { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; will-change: transform; }
 .dragghost .spr { background-repeat: no-repeat; filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
 .slot.drop { outline: 4px solid var(--gold); outline-offset: -2px; }
 /* ---- augments ---- */

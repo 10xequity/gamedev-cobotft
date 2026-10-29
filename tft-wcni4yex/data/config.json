@@ -415,6 +415,19 @@
     "Regional": "#E5B800",
     "Colorado": "#065A62"
   },
+  "roleArt": {
+    "Outside": { "pose": "spike", "kit": "teal" },
+    "Opposite": { "pose": "spike", "flip": true, "kit": "teal" },
+    "Middle": { "pose": "block", "kit": "black" },
+    "Setter": { "pose": "set", "kit": "black" },
+    "Libero": { "pose": "dig", "kit": "white" },
+    "Utility": { "pose": "threeq_white", "kit": "white" }
+  },
+  "kits": {
+    "white": { "bg": "#FFF9F0", "fg": "#111111" },
+    "black": { "bg": "#111111", "fg": "#FFF9F0" },
+    "teal": { "bg": "#0E7C86", "fg": "#FFF9F0" }
+  },
   "tierRing": {
     "1": "#E4F2F3",
     "2": "#0E7C86",

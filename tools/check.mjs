@@ -51,6 +51,7 @@ for (const [role, r] of Object.entries(cfg.roles)) for (const s of r.styles) ass
 const manifest = JSON.parse(readFileSync(join(GAME, 'assets', 'sprites', 'manifest.json'), 'utf8'));
 for (const look of manifest.looks) assert.ok(existsSync(join(GAME, 'assets', 'sprites', `${look}.webp`)), `missing sheet ${look}`);
 for (const [pose, cells] of Object.entries(manifest.poses)) {
+  assert.ok(Array.isArray(manifest.box?.[pose]) && manifest.box[pose].length === 4, `pose ${pose} has no figure box (rerun tools/cut_sheets.py)`);
   for (const [r, c] of Array.isArray(cells[0]) ? cells : [cells]) assert.ok(r < manifest.rows && c < manifest.cols, `pose ${pose} outside grid`);
 }
 

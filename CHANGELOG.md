@@ -2,6 +2,19 @@
 
 Player names never appear in this file.
 
+## v2.13.0 — 2026-10-29 · Milestone 33: role poses, kit colours, figure cut-outs, smoother drag
+
+- Shop, bench and carousel cards show each role in its own pose: Outsides and Pins spike, Opposites spike
+  facing the other way, Middles block, Liberos dig, Setters set, Utility stands in the white kit
+  (`config roleArt`).
+- Each card's name strip wears the role's kit colour: teal for hitters, black for Middles and Setters, white
+  for Liberos and Utility (`config kits`).
+- Sprites are now cut to the figure's outline instead of the whole square cell (`manifest.box`, written by
+  `tools/cut_sheets.py`; `check.mjs` requires it).
+- Drag and drop: the ghost moves by transform once per frame, no longer hides and re-shows itself on every
+  pointer event; slots block touch scrolling while dragging.
+- Removed the four unused pixel-art stage images.
+
 ## v2.12.0 — 2026-10-29 · Milestone 32: balance pass 3 (with augments and carousel)
 
 - `tools/balance-sim.mjs` now also reports full 8-bot games (`LOBBY=300`), where augments, carousels, shops

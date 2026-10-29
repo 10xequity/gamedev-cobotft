@@ -200,11 +200,11 @@ export class UI {
     $('carChoices').replaceChildren(...c.options.map((id, k) => {
       const u = g.unitsById[id], by = c.takenBy[k];
       const b = el('button', { type: 'button', className: 'shopcard', disabled: by !== null },
-        el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 72) }),
+        this.spr(u, 80),
         el('span', { className: 'nm', textContent: u.display }),
         el('span', { className: 'tr', textContent: u.style }),
         el('span', { className: 'tr', textContent: by !== null ? t('Taken: {name}', { name: g.players[by].name }) : t('{tier}-cost', { tier: u.tier }) }));
-      b.style.setProperty('--ring', g.cfg.tierRing[String(u.tier)]);
+      this.kit(b, u);
       b.dataset.id = id;
       if (by === null) b.prepend(el('span', { className: 'vh', textContent: t('Take ') }));
       b.addEventListener('click', () => {
@@ -331,11 +331,11 @@ export class UI {
     if (inst) {
       const u = this.g.unitsById[inst.id];
       b.dataset.uid = inst.uid;
-      b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
+      this.kit(b, u);
       b.setAttribute('aria-label', t('{name}, {star} star, {style}, {where} slot {k}', { name: u.display, star: inst.star, style: u.style, where: t(where), k: k + 1 }) + (inst.uid === this.selected ? t(', selected') : ''));
       b.setAttribute('aria-pressed', String(inst.uid === this.selected));
       b.append(
-        el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 72) }),
+        this.spr(u, 80),
         el('span', { className: 'stars', textContent: '★'.repeat(inst.star) }),
         el('span', { className: 'nm', textContent: u.display }),
       );
@@ -350,13 +350,13 @@ export class UI {
     const b = el('button', { type: 'button', className: 'shopcard' });
     if (!id) { b.disabled = true; b.setAttribute('aria-label', t('Sold')); b.textContent = t('Sold'); return b; }
     const u = this.g.unitsById[id];
-    b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
+    this.kit(b, u);
     b.style.setProperty('--jersey', this.g.cfg.jerseyByLevel[u.team.level]);
     b.dataset.id = id;
     if (this.g.you.gold < u.tier) b.setAttribute('aria-disabled', 'true'); // still focusable, so its card can be read
     b.append( // the visible text is the name; a hidden 'Buy' in front says what the button does
       el('span', { className: 'vh', textContent: t('Buy ') }),
-      el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 84) }),
+      this.spr(u, 104),
       el('span', { className: 'nm', textContent: u.display }),
       el('span', { className: 'tr', textContent: u.style }),
       el('span', { className: 'tr lv', textContent: `${u.team.level} · ${u.archetype}` }),
@@ -373,6 +373,18 @@ export class UI {
     return b;
   }
 
+  // Cards show each role in its own pose (hitters spike, Middles block, Liberos dig, Setters
+  // set) and carry the role's kit colour (config roleArt / kits) so roles read at a glance.
+  spr(u, h) {
+    const a = this.g.cfg.roleArt[u.role];
+    return el('span', { className: 'spr' + (a.flip ? ' flip' : ''), style: spriteStyle(u.look, a.pose, 0, h) });
+  }
+  kit(b, u) {
+    const k = this.g.cfg.kits[this.g.cfg.roleArt[u.role].kit];
+    b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
+    b.style.setProperty('--kit-bg', k.bg); b.style.setProperty('--kit-fg', k.fg);
+  }
+
   // ---- unit card: hold a unit for half a second, or focus it and press I ----
   showUnitFrom(t) {
     if (t.dataset.id) return this.showUnit(t.dataset.id, 1);
@@ -385,7 +397,8 @@ export class UI {
     const g = this.g, cfg = g.cfg, u = g.unitsById[id], s = statsAt(u, star, cfg);
     const kws = Object.entries(keywordsAt(u, star, cfg));
     $('unitName').textContent = `${u.display} ${'★'.repeat(star)}`;
-    $('unitSprite').style.cssText = spriteStyle(u.look, 'idle', 0, 150);
+    $('unitSprite').style.cssText = spriteStyle(u.look, cfg.roleArt[u.role].pose, 0, 150);
+    $('unitSprite').classList.toggle('flip', !!cfg.roleArt[u.role].flip);
     const ability = cfg.abilities[u.ability];
     const rows = [
       [t('Team'), u.team.title], [t('Cost'), t('{n} gold', { n: u.tier })], [t('Game role'), `${u.role} (${u.style})`],
@@ -439,21 +452,28 @@ export class UI {
     if (!inst) return;
     const u = this.g.unitsById[inst.id];
     const start = [e.clientX, e.clientY];
-    let ghost = null, over = null;
-    const onMove = ev => {
-      if (!ghost) {
-        if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
-        ghost = el('div', { className: 'dragghost' }, el('span', { className: 'spr', style: spriteStyle(u.look, 'idle', 0, 96) }));
-        document.body.append(ghost);
-      }
+    let ghost = null, over = null, last = null, raf = 0;
+    // Pointer events arrive faster than frames; the ghost follows on the next frame only.
+    // It has pointer-events: none, so elementFromPoint sees through it.
+    const place = () => {
+      raf = 0;
+      if (!ghost) return;
       const z = Number(document.body.style.zoom) || 1; // the text-size setting zooms the page
-      ghost.style.left = `${ev.clientX / z}px`; ghost.style.top = `${ev.clientY / z}px`;
-      ghost.hidden = true;
-      const t = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('[data-drop]');
-      ghost.hidden = false;
+      ghost.style.transform = `translate(${last.clientX / z}px, ${last.clientY / z}px) translate(-50%, -90%)`;
+      const t = document.elementFromPoint(last.clientX, last.clientY)?.closest('[data-drop]');
       if (t !== over) { over?.classList.remove('drop'); over = t; over?.classList.add('drop'); }
     };
+    const onMove = ev => {
+      last = ev;
+      if (!ghost) {
+        if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
+        ghost = el('div', { className: 'dragghost' }, this.spr(u, 96));
+        document.body.append(ghost);
+      }
+      if (!raf) raf = requestAnimationFrame(place);
+    };
     const onUp = () => {
+      cancelAnimationFrame(raf);
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
       document.removeEventListener('pointercancel', onUp);

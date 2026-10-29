@@ -11,13 +11,16 @@ export function poseCell(pose, frame = 0) {
 }
 export const frameCount = pose => (Array.isArray(manifest.poses[pose][0]) ? manifest.poses[pose].length : 1);
 
-// Inline style for an element showing one cell at the given height (px).
+// Inline style for an element showing one cell scaled so the full cell would be `height` px
+// tall, trimmed to the pose's figure box (manifest.box) so no empty cell space is shown.
+// The scale stays the same across poses, so a unit keeps its size when its pose changes.
 export function spriteStyle(look, pose, frame = 0, height = 120) {
   const [cw, ch] = manifest.cell;
   const k = height / ch;
   const [r, c] = poseCell(pose, frame);
-  return `width:${Math.round(cw * k)}px;height:${height}px;` +
+  const [bx, by, bw, bh] = manifest.box[pose];
+  return `width:${Math.round(bw * k)}px;height:${Math.round(bh * k)}px;` +
     `background-image:url(assets/sprites/${lookName(look)}.webp);` +
     `background-size:${Math.round(cw * manifest.cols * k)}px ${Math.round(ch * manifest.rows * k)}px;` +
-    `background-position:${-Math.round(c * cw * k)}px ${-Math.round(r * ch * k)}px;`;
+    `background-position:${-Math.round((c * cw + bx) * k)}px ${-Math.round((r * ch + by) * k)}px;`;
 }
