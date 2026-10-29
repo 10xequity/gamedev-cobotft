@@ -358,7 +358,6 @@ assert.equal(sw.match(/const VERSION = '([\d.]+)'/)?.[1], pageVersion, 'sw.js VE
 const swModules = JSON.parse(sw.match(/const MODULES = (\[[^\]]*\])/)[1].replace(/'/g, '"'));
 const jsFiles = (await import('node:fs')).readdirSync(join(GAME, 'js')).filter(f => f.endsWith('.js'));
 assert.deepEqual(swModules.sort(), jsFiles.map(m => m.replace('.js', '')).sort(), 'sw.js MODULES must list every js file');
-assert.deepEqual(JSON.parse(sw.match(/const STAGES = (\[[^\]]*\])/)[1].replace(/'/g, '"')).sort(), [...cfg.game.stageArt].sort(), 'sw.js STAGES must match stageArt');
 const appManifest = JSON.parse(readFileSync(join(GAME, 'app.webmanifest'), 'utf8'));
 for (const ic of appManifest.icons) { assert.ok(existsSync(join(GAME, ic.src)), `missing icon ${ic.src}`); assert.ok(sw.includes(ic.src), `sw.js does not store ${ic.src}`); }
 
@@ -372,11 +371,15 @@ const fake = [{ place: 1, board: [{ id: 'a', name: 'A', star: 1 }, { id: 'b', na
 const st = hist.unitStats(fake);
 assert.deepEqual(st.map(s => [s.id, s.games, s.avgPlace, s.wins]), [['a', 2, 3, 1], ['b', 1, 1, 1]], 'per-player totals');
 
-// Stage art: every name the seed can pick has an image and a style rule; club colours exist for every level.
-const css = readFileSync(join(GAME, 'style.css'), 'utf8');
+// Stage art: every name the seed can pick has a drawn theme that builds a well-formed image;
+// club colours exist for every level.
+const { THEMES, stageSVG } = await import(pathToFileURL(join(GAME, 'js', 'stage.js')).href);
+const flat = (u, v) => ({ x: u, y: v, s: 1 }); // stand-in projection; the real one lives in arena.js (needs a browser)
 for (const st of cfg.game.stageArt) {
-  assert.ok(existsSync(join(GAME, 'assets', 'stages', `${st}.webp`)), `missing stage art ${st}`);
-  assert.ok(css.includes(`[data-stage="${st}"]`), `no style rule for stage ${st}`);
+  assert.ok(THEMES[st], `no drawn theme for stage ${st}`);
+  const svg = stageSVG(st, flat, 'check');
+  assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>') && !svg.includes('NaN'), `stage ${st} builds a clean image`);
+  assert.equal(svg, stageSVG(st, flat, 'check'), `stage ${st} is the same every time`);
 }
 for (const p of roster) assert.ok(cfg.jerseyByLevel[p.team.level], `no club colour for ${p.team.level}`);
 

@@ -1,6 +1,6 @@
 # Tactical Boom — Design
 
-**Version** 2.0 · **Date** 2026-10-29 · **Status** Approved by owner (chat, 2026-10-23; milestones 11-20 and combat rulings 2026-10-29) · **Supersedes** v1.0 (2026-10-23, in git history)
+**Version** 3.0 · **Date** 2026-10-29 · **Status** Approved by owner (chat, 2026-10-23; milestones 11-32 and combat rulings 2026-10-29) · **Supersedes** v2.0 and v1.0 (in git history)
 **Codename** TFT (internal). "Tactical Boom" is a placeholder title.
 
 ## Intent
@@ -142,10 +142,11 @@ Targeting weights and the action cap were tuned in milestone 10 and live in conf
 
 ## Look
 
-HD-2D: a 3D court in perspective (CSS 3D transforms, no library), net across the
-middle, hexes on the floor, characters as upright sprites facing the camera. Stages:
-the four public pixel-art backgrounds from coloradoboom.com (Fieldhouse, Championship
-Arena, Beach Night, Retro Gym), one per game by seed, cosmetic in v1. Palette teal
+HD-2D: a court in perspective (2D projection, no library), net across the middle, hexes
+on the floor, characters as upright sprites facing the camera. Stages (from v2.2.0):
+four arenas drawn in code as vector art in the same perspective as the board
+(Fieldhouse, Championship Arena, Beach Night, Retro Gym), one per game by seed,
+cosmetic only; they replaced the four pixel-art backgrounds. Palette teal
 #0E7C86, dark teal #065A62, light teal #E4F2F3, gold #E5B800, dark gold #C49A00, cream
 #FFF9F0, black #111111. Montserrat + Open Sans. No grey text. Jersey by club level:
 National teal, Regional gold, Colorado dark teal.
@@ -212,3 +213,19 @@ Second ten, approved 2026-10-29. All offline: no accounts, no chat, no network a
 
 Exact ability numbers, bot personalities, hex pathing details, animation timings,
 save format versioning. All numbers live in `data/config.json`.
+
+Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no network after load.
+
+21. ✔ v2.2.0 HD arenas drawn in code (sharp at any size), replacing the pixel-art stages; AI image prompts kept in
+    `docs/arena-art-prompts_v1_2026-10-29.md` for an optional photo-like set later.
+22. Floor, court lines, net and backdrop drawn in the same perspective as the hex board. ✔ v2.2.0
+23. Settings panel (sound, timer, bots, motion, text size).
+24. Replay any of your fights from the current game.
+25. Daily challenge: one shared seed per day, your best kept.
+26. Local ladder: a rating that moves with placements, with ranks.
+27. Achievements (local), shown in History.
+28. Hit sparks, screen shake, knockout effects (reduced-motion safe).
+29. Guided first game: step-by-step tips.
+30. Watch the other fights of each round.
+31. Spanish language switch.
+32. Balance pass 3, now counting augments and carousel.

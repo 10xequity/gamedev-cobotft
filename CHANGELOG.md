@@ -2,6 +2,22 @@
 
 Player names never appear in this file.
 
+## v2.2.0 — 2026-10-29 · Milestones 21-22: HD arenas, board-matched floor
+
+- `js/stage.js` draws the court backdrop as one vector image (SVG), sharp at any screen size and a few KB:
+  walls, tiered stands with a soft-focus crowd, spotlight beams, a glowing LED ribbon board, an apron, a
+  glossy floor, and a vignette. Four themes, one per game by seed: Fieldhouse (warm maple, red apron),
+  Championship Arena (navy stands, teal apron, cool spotlights), Beach Night (sand, teal tape, starry sky and
+  string lights), Retro Gym (maroon walls, gold apron, black lines). They replace the pixel-art stages.
+- The floor now matches the board: plank lines, court boundary, centre line and attack lines are drawn with the
+  same perspective as the hex grid (lines thicken toward you), and the net posts stand just outside the side
+  lines instead of at the box edges.
+- `docs/arena-art-prompts_v1_2026-10-29.md`: prompts and camera rules for an optional photo-like set from an
+  image generator (not generated; each image would spend credits).
+- The four old stage images in `assets/stages/` are no longer used or stored for offline play; they are still
+  in the repo until you decide to delete them.
+- Design doc is now v3 (`docs/tft-design_v3_2026-10-29.md`) with milestones 21-32.
+
 ## v2.0.0 — 2026-10-29 · Milestone 20: offline, installable, audits
 
 - Works offline: `sw.js` (a service worker) stores every file the game needs on the first visit (code, data,

@@ -3,6 +3,7 @@
 // which keeps every tile a real button and works on any phone.
 import { COLS, ROWS, HALF, slotToHex } from './hex.js';
 import { spriteStyle } from './sprite.js';
+import { stageSVG } from './stage.js';
 
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
@@ -29,12 +30,16 @@ export class Arena {
     this.box.style.setProperty('--farY', Q.farY); this.box.style.setProperty('--nearY', Q.nearY);
     const net = project(0.5, 0.5);
     this.box.style.setProperty('--netY', net.y); this.box.style.setProperty('--netS', net.s);
+    // Net posts stand just outside the side lines at the net, in the same perspective as the board.
+    this.box.style.setProperty('--netL', project(-0.03, 0.5).x); this.box.style.setProperty('--netR', project(1.03, 0.5).x);
   }
 
   // `maxHp` (uid → max HP) switches to fight mode: HP bars on, your tiles not tappable.
   render(you, enemy, unitsById, cfg, selectedUid, maxHp = null) {
     this.box.classList.toggle('fighting', !!maxHp);
-    const kids = [el('div', { className: 'floor', ariaHidden: 'true' }), el('div', { className: 'net', ariaHidden: 'true' })];
+    const stage = this.box.dataset.stage;
+    if (stage !== this.stageName) { this.stageName = stage; this.backdrop = el('div', { className: 'backdrop-wrap', innerHTML: stageSVG(stage, project, stage) }); }
+    const kids = [this.backdrop, el('div', { className: 'net', ariaHidden: 'true' })];
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const mine = r >= HALF;
       const k = mine ? (r - HALF) * COLS + c : (HALF - 1 - r) * COLS + (COLS - 1 - c);

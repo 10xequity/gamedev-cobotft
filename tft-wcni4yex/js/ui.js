@@ -85,8 +85,8 @@ export class UI {
 
     const scouted = this.scout !== null && g.players[this.scout]?.place === null ? g.players[this.scout] : null;
     if (!scouted) this.scout = null;
-    this.arena.render(you, scouted, g.unitsById, cfg, this.selected);
     $('court').dataset.stage = g.stage;
+    this.arena.render(you, scouted, g.unitsById, cfg, this.selected);
     $('courtHint').textContent = scouted ? `scouting ${scouted.name}: ${this.traitLine(scouted.court) || 'no traits'}` : 'arrow keys move between hexes';
     this.renderTraits();
     this.renderPlayers();

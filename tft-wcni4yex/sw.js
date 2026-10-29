@@ -2,16 +2,14 @@
 // from that copy, so the game runs with no signal. Each release bumps VERSION (tools/check.mjs
 // checks it matches the pages), which stores a fresh copy and deletes the old one. Pages are
 // fetched network-first, so a phone with signal always gets the newest release.
-const VERSION = '2.0.0';
+const VERSION = '2.2.0';
 const CACHE = `tacticalboom-${VERSION}`;
 const V = `?v=${VERSION}`;
-const MODULES = ['arena', 'bots', 'combat', 'economy', 'gallery', 'game', 'hex', 'history', 'main', 'playback', 'rng', 'sound', 'sprite', 'traits', 'ui', 'units'];
-const STAGES = ['fieldhouse', 'arena', 'beach', 'retro'];
+const MODULES = ['arena', 'bots', 'combat', 'economy', 'gallery', 'game', 'hex', 'history', 'main', 'playback', 'rng', 'sound', 'sprite', 'stage', 'traits', 'ui', 'units'];
 const CORE = [
   './', 'index.html', 'gallery.html', `style.css${V}`, 'app.webmanifest',
   ...MODULES.map(m => `js/${m}.js${V}`),
   `data/config.json${V}`, `data/roster.json${V}`, `assets/sprites/manifest.json${V}`,
-  ...STAGES.map(s => `assets/stages/${s}.webp`),
   'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/icon-maskable-512.png', 'assets/icons/apple-touch-icon.png',
 ];
 
