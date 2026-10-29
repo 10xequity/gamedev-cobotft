@@ -1,11 +1,14 @@
 // Bot players. Each bot has a seeded personality: a favourite role it collects and a pace
-// (how far ahead of the stage it levels, how often it rerolls). Same seed, same choices.
+// (how far ahead of the stage it levels, how often it rerolls), plus the game's difficulty
+// (config bots.difficulty): easy bots buy at random and never reroll; hard bots also chase
+// trait breakpoints when they buy and when they choose who plays. Same state, same choices.
 import * as eco from './economy.js';
 import { rngFrom, pick } from './rng.js';
+import { computeTraits } from './traits.js';
 
-export function personality(seed, idx, cfg) {
+export function personality(seed, idx, cfg, difficulty = 'normal') {
   const rng = rngFrom(seed, 'bot', idx);
-  return { favorite: pick(rng, Object.keys(cfg.roles)), pace: pick(rng, Object.keys(cfg.bots.paces)) };
+  return { favorite: pick(rng, Object.keys(cfg.roles)), pace: pick(rng, Object.keys(cfg.bots.paces)), difficulty };
 }
 
 // Court rows by role (0 = at the net) and the column order to fill, centre out.
@@ -14,33 +17,43 @@ const COL_ORDER = [3, 2, 4, 1, 5, 0, 6];
 
 const likes = (u, fav) => u.role === fav || u.countsAs.includes(fav);
 const score = (inst, unitsById, fav) => { const u = unitsById[inst.id]; return u.tier * 3 ** (inst.star - 1) + (likes(u, fav) ? 2 : 0); };
+const traitLevels = (insts, unitsById, cfg) => computeTraits(insts, unitsById, cfg).traits.reduce((a, t) => a + t.level, 0);
 
 // One planning phase: level, buy (rerolling up to the pace's limit), sell overflow, place.
 // `roll()` returns a fresh shop for this player and keeps the game's roll count in step.
 export function planBot(p, pool, unitsById, cfg, stage, roll) {
-  const fav = p.pers.favorite, pace = cfg.bots.paces[p.pers.pace];
+  const fav = p.pers.favorite, pace = cfg.bots.paces[p.pers.pace], d = cfg.bots.difficulty[p.pers.difficulty || 'normal'];
+  const rng = rngFrom('botplan', p.idx, p.rolls, p.xp, p.gold);
   const wantLevel = Math.min(9, stage + pace.levelAhead);
   while (p.level < wantLevel && eco.xpToNext(p, cfg) !== null && p.gold >= cfg.shop.xpCost) eco.buyXp(p, cfg);
 
+  const rerolls = Math.round(pace.rerolls * d.rerollMult);
   for (let r = 0; ; r++) {
-    buyWanted(p, pool, unitsById, cfg, fav);
-    if (r >= pace.rerolls || p.gold < cfg.shop.rerollCost + 1) break;
+    buyWanted(p, pool, unitsById, cfg, fav, d, rng);
+    if (r >= rerolls || p.gold < cfg.shop.rerollCost + 1) break;
     p.gold -= cfg.shop.rerollCost;
     p.shop = roll();
   }
-  arrange(p, unitsById, cfg, fav);
+  arrange(p, unitsById, cfg, fav, d.traitAware);
 }
 
-function buyWanted(p, pool, unitsById, cfg, fav) {
+function buyWanted(p, pool, unitsById, cfg, fav, d, rng) {
   for (let k = 0; k < p.shop.length; k++) {
     const id = p.shop[k];
     if (!id) continue;
     const u = unitsById[id];
+    if (p.gold < u.tier) continue;
     const pairs = eco.owned(p).filter(i => i.id === id && i.star < 3).length;
-    const room = eco.owned(p).length < eco.courtMax(p, cfg) + 2;
-    if (!(pairs || likes(u, fav) || room) || p.gold < u.tier) continue;
-    if (!p.bench.includes(null) && pairs < 2) sellWeakest(p, pool, unitsById, fav);
-    eco.buy(p, pool, k, unitsById, cfg);
+    let want;
+    if (d.randomBuy) want = rng() < d.randomBuy && (p.bench.includes(null) || pairs >= 2);
+    else {
+      const room = eco.owned(p).length < eco.courtMax(p, cfg) + 2;
+      const opensTrait = d.traitAware && !eco.onCourt(p).some(i => i.id === id) &&
+        traitLevels([...p.court, { uid: -1, id, star: 1 }], unitsById, cfg) > traitLevels(p.court, unitsById, cfg);
+      want = pairs || likes(u, fav) || room || opensTrait;
+      if (want && !p.bench.includes(null) && pairs < 2) sellWeakest(p, pool, unitsById, fav);
+    }
+    if (want) eco.buy(p, pool, k, unitsById, cfg);
   }
 }
 
@@ -52,11 +65,20 @@ function sellWeakest(p, pool, unitsById, fav) {
 }
 
 // Best units go on court, front row for Middles and Liberos, back for Setters and Utility.
-export function arrange(p, unitsById, cfg, fav) {
+// Trait-aware bots pick one at a time, each time taking the unit that adds the most
+// value counting trait levels; the others take the highest scores.
+export function arrange(p, unitsById, cfg, fav, traitAware = false) {
   const all = eco.owned(p).sort((a, b) => score(b, unitsById, fav) - score(a, unitsById, fav) || a.uid - b.uid);
-  const picks = [], seen = new Set();
-  for (const i of all) if (picks.length < eco.courtMax(p, cfg) && !seen.has(i.id)) { picks.push(i); seen.add(i.id); }
-  for (const i of all) if (picks.length < eco.courtMax(p, cfg) && !picks.includes(i)) picks.push(i); // duplicates only if short, so the bench never overflows
+  const max = eco.courtMax(p, cfg), picks = [];
+  // ponytail: greedy pick, O(units² x traits) per phase; fine for 15 owned units.
+  while (picks.length < max && picks.length < all.length) {
+    const seen = new Set(picks.map(i => i.id));
+    const cands = all.filter(i => !picks.includes(i));
+    const fresh = cands.filter(i => !seen.has(i.id));
+    const pool = fresh.length ? fresh : cands; // duplicates only if short, so the bench never overflows
+    const value = i => score(i, unitsById, fav) + (traitAware ? 3 * traitLevels([...picks, i], unitsById, cfg) : 0);
+    picks.push(pool.reduce((best, i) => (value(i) > value(best) ? i : best)));
+  }
   const rest = all.filter(i => !picks.includes(i));
   const court = Array(p.court.length).fill(null);
   for (const inst of picks) {

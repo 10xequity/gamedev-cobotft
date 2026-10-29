@@ -76,6 +76,7 @@ body.game { padding-bottom: 96px; }
 .fightbar button { padding: 4px 10px; border-radius: 6px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; font-size: 12px; }
 .fightbar button small { color: var(--gold); font-size: 10px; }
 .bar .auto { display: inline-flex; gap: 4px; align-items: center; font-size: 12px; }
+.bar select { font: inherit; font-size: 12px; padding: 2px 4px; border-radius: 6px; border: 2px solid var(--cream); background: var(--teal-dark); color: var(--cream); }
 .bar .auto input { width: 18px; height: 18px; accent-color: var(--gold); }
 .bar #pause[aria-pressed="true"] { background: var(--gold); color: var(--black); border-color: var(--gold); }
 @media (prefers-reduced-motion: reduce) { .float { animation: none; } .hex .unit .hpbar i { transition: none; } }

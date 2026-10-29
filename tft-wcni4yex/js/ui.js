@@ -8,6 +8,7 @@ import { Playback } from './playback.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
+export const DIFF_KEY = 'tacticalboom.difficulty';
 const ordinal = n => n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n] || 'th'); // places run 1-8 only
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
 
@@ -21,6 +22,7 @@ export class UI {
     this.paused = false;
     try { this.auto = localStorage.getItem(AUTO_KEY) !== 'off'; } catch { this.auto = true; }
     $('auto').checked = this.auto;
+    $('difficulty').value = game.difficulty || 'normal';
     this.bind();
     this.resetTimer();
     setInterval(() => this.tick(), 1000);
@@ -255,7 +257,11 @@ export class UI {
       this.resetTimer();
       this.say(this.auto ? 'Auto-advance on' : 'Auto-advance off: press Next round when ready');
     });
-    const fresh = () => { this.g.newGame(); this.selected = null; this.lastLine = ''; this.say('New game'); this.render(); this.resetTimer(); };
+    $('difficulty').addEventListener('change', () => {
+      try { localStorage.setItem(DIFF_KEY, $('difficulty').value); } catch { /* per-device preference only */ }
+      this.say(`Bots: ${$('difficulty').value}, from the next new game`);
+    });
+    const fresh = () => { this.g.newGame(undefined, $('difficulty').value); this.selected = null; this.lastLine = ''; this.say('New game'); this.render(); this.resetTimer(); };
     $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) fresh(); });
     $('again').addEventListener('click', () => { $('over').close(); fresh(); });
     for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));

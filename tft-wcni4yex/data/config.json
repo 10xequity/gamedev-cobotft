@@ -278,6 +278,11 @@
   },
   "bots": {
     "names": ["Team Spike", "Team Dig", "Team Block", "Team Set", "Team Serve", "Team Tip", "Team Pancake"],
+    "difficulty": {
+      "easy": { "rerollMult": 0, "randomBuy": 0.35, "traitAware": false },
+      "normal": { "rerollMult": 1, "randomBuy": 0, "traitAware": false },
+      "hard": { "rerollMult": 2, "randomBuy": 0, "traitAware": true }
+    },
     "paces": {
       "slow": {
         "levelAhead": 1,

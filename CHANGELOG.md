@@ -2,6 +2,17 @@
 
 Player names never appear in this file.
 
+## v1.2.0 — 2026-10-29 · Milestone 12: smarter bots, difficulty
+
+- Bots setting in the header: Easy, Normal or Hard, applied from the next new game and remembered on this
+  device. Numbers in `config.json` under `bots.difficulty`.
+  - Easy: buys about a third of the affordable cards at random, never rerolls, places by score only.
+  - Normal: unchanged from v1.0 (favourite role, copies, filling the roster).
+  - Hard: rerolls twice as often as its pace allows, also buys any card that opens or raises a trait, and
+    chooses who plays one unit at a time to get the most trait levels.
+- Test: in 10 mixed lobbies (3 hard bots, 4 easy bots) hard bots average 2.6th place and easy bots 6.3th.
+- Save keeps the difficulty; saves from v1.1 load as Normal.
+
 ## v1.1.0 — 2026-10-29 · Milestone 11: balance pass 2
 
 - The balance script now draws seeded random players of each role for every fight (same tier when it can),

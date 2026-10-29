@@ -1,5 +1,5 @@
 import { Game } from './game.js';
-import { UI } from './ui.js';
+import { UI, DIFF_KEY } from './ui.js';
 import { setManifest, lookCount } from './sprite.js';
 
 // Data carries this build's version (from the page's import map) so a phone never mixes old data with new code.
@@ -9,7 +9,9 @@ const [cfg, roster, manifest] = await Promise.all(
 );
 setManifest(manifest);
 const game = new Game(cfg, roster, lookCount());
-if (!game.load() || game.over) game.newGame();
+let difficulty = 'normal';
+try { difficulty = localStorage.getItem(DIFF_KEY) || 'normal'; } catch { /* no storage: normal bots */ }
+if (!game.load() || game.over) game.newGame(undefined, difficulty);
 const ui = new UI(game);
 ui.render();
 ui.say(`Round ${game.round.label}. Buy from the shop, tap a unit then a slot to move it.`);

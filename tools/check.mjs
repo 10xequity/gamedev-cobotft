@@ -285,6 +285,21 @@ for (const seed of ['game-a', 'game-b', 'game-c']) {
   else assert.ok(g.you.place !== null, `${seed}: game ends early only when you are out`);
 }
 assert.deepEqual(playGame('game-a').g.players.map(p => [p.place, p.hp]), playGame('game-a').g.players.map(p => [p.place, p.hp]), 'a whole game replays the same');
+// Difficulty: in mixed lobbies (3 hard bots, 4 easy bots, you as normal) hard bots finish higher.
+let hardPlace = 0, easyPlace = 0, mixed = 0;
+for (let i = 0; i < 10; i++) {
+  const g = new Game(cfg, roster, manifest.looks.length); g.newGame(`mix-${i}`);
+  g.players.forEach(p => { if (p.pers) p.pers.difficulty = p.idx <= 3 ? 'hard' : 'easy'; });
+  g.you.pers = bots.personality(g.seed, 0, cfg);
+  g.startPlanning();
+  const plan = () => bots.planBot(g.you, g.pool, g.unitsById, cfg, g.round.stage, () => g.roll(g.you));
+  plan();
+  while (g.living.length > 1 && g.roundIdx < 80) { g.nextRound(); if (g.living.length > 1 && g.over) g.startPlanning(); if (g.you.place === null) plan(); }
+  for (const p of g.players) { if (!p.pers || p === g.you || p.place === null) continue; if (p.pers.difficulty === 'hard') hardPlace += p.place / 3; else easyPlace += p.place / 4; }
+  mixed++;
+}
+assert.ok(hardPlace / mixed < easyPlace / mixed, `hard bots should place higher: hard ${(hardPlace / mixed).toFixed(2)}, easy ${(easyPlace / mixed).toFixed(2)}`);
+
 // Health loss: stage damage plus one per two surviving enemy units.
 const hg = new Game(cfg, roster, manifest.looks.length); hg.newGame('hp');
 assert.equal(hg.hpLoss({ stage: 3 }, 5), cfg.damage.perStage['3'] + 2);
@@ -307,4 +322,4 @@ for (const page of ['index.html', 'gallery.html']) {
   for (const m of modules) assert.ok(html.includes(`"./js/${m}": "./js/${m}?v=`), `${page}: import map misses js/${m}`);
 }
 
-console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok, combat ok (mirror ${(share * 100).toFixed(0)}% near, ${r1.actions} actions)`);
+console.log(`check ok: bots hard ${(hardPlace / mixed).toFixed(2)} vs easy ${(easyPlace / mixed).toFixed(2)} avg place, ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok, combat ok (mirror ${(share * 100).toFixed(0)}% near, ${r1.actions} actions)`);

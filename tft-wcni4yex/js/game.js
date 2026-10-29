@@ -17,14 +17,15 @@ export class Game {
     this.unitsById = Object.fromEntries(this.units.map(u => [u.id, u]));
   }
 
-  newGame(seed = String(Date.now())) {
+  newGame(seed = String(Date.now()), difficulty = 'normal') {
     const cfg = this.cfg;
     this.seed = seed;
+    this.difficulty = difficulty;
     this.roundIdx = 0;
     this.pool = eco.createPool(seed, this.units, cfg);
     this.players = Array.from({ length: cfg.game.players }, (_, i) => ({
       ...eco.newPlayer(cfg), idx: i, name: i === 0 ? 'You' : cfg.bots.names[i - 1],
-      pers: i === 0 ? null : personality(seed, i, cfg), rolls: 0, place: null, lastOpp: null,
+      pers: i === 0 ? null : personality(seed, i, cfg, difficulty), rolls: 0, place: null, lastOpp: null,
     }));
     const starter = this.pool.ids.filter(id => this.unitsById[id].tier === 1);
     for (const p of this.players) {
@@ -133,14 +134,14 @@ export class Game {
   // ---- persistence ----
   save() {
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, difficulty: this.difficulty, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
     } catch { /* private mode, full, or no storage: play on without saving */ }
   }
   load() {
     try {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!s || s.v !== SAVE_VERSION) return false;
-      Object.assign(this, { seed: s.seed, roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
+      Object.assign(this, { seed: s.seed, difficulty: s.difficulty || 'normal', roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
       return true;
     } catch { return false; }
   }
