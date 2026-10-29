@@ -8,25 +8,26 @@
   <title>Tactical Boom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1.8.0">
+  <link rel="stylesheet" href="style.css?v=1.9.0">
   <script type="importmap">
   {
     "imports": {
-      "./js/arena.js": "./js/arena.js?v=1.8.0",
-      "./js/bots.js": "./js/bots.js?v=1.8.0",
-      "./js/combat.js": "./js/combat.js?v=1.8.0",
-      "./js/economy.js": "./js/economy.js?v=1.8.0",
-      "./js/gallery.js": "./js/gallery.js?v=1.8.0",
-      "./js/game.js": "./js/game.js?v=1.8.0",
-      "./js/hex.js": "./js/hex.js?v=1.8.0",
-      "./js/main.js": "./js/main.js?v=1.8.0",
-      "./js/playback.js": "./js/playback.js?v=1.8.0",
-      "./js/rng.js": "./js/rng.js?v=1.8.0",
-      "./js/sound.js": "./js/sound.js?v=1.8.0",
-      "./js/sprite.js": "./js/sprite.js?v=1.8.0",
-      "./js/traits.js": "./js/traits.js?v=1.8.0",
-      "./js/ui.js": "./js/ui.js?v=1.8.0",
-      "./js/units.js": "./js/units.js?v=1.8.0"
+      "./js/arena.js": "./js/arena.js?v=1.9.0",
+      "./js/bots.js": "./js/bots.js?v=1.9.0",
+      "./js/combat.js": "./js/combat.js?v=1.9.0",
+      "./js/economy.js": "./js/economy.js?v=1.9.0",
+      "./js/gallery.js": "./js/gallery.js?v=1.9.0",
+      "./js/game.js": "./js/game.js?v=1.9.0",
+      "./js/hex.js": "./js/hex.js?v=1.9.0",
+      "./js/history.js": "./js/history.js?v=1.9.0",
+      "./js/main.js": "./js/main.js?v=1.9.0",
+      "./js/playback.js": "./js/playback.js?v=1.9.0",
+      "./js/rng.js": "./js/rng.js?v=1.9.0",
+      "./js/sound.js": "./js/sound.js?v=1.9.0",
+      "./js/sprite.js": "./js/sprite.js?v=1.9.0",
+      "./js/traits.js": "./js/traits.js?v=1.9.0",
+      "./js/ui.js": "./js/ui.js?v=1.9.0",
+      "./js/units.js": "./js/units.js?v=1.9.0"
     }
   }
   </script>
@@ -43,6 +44,7 @@
     <label class="auto"><input type="checkbox" id="auto" checked> Auto-advance</label>
     <label class="auto">Bots <select id="difficulty" aria-describedby="diffNote"><option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option></select></label>
     <span class="vh" id="diffNote">Applies from the next new game</span>
+    <button type="button" id="historyBtn" class="ghost">History</button>
     <button type="button" id="helpBtn" class="ghost" aria-label="How to play">?</button>
     <button type="button" id="newgame" class="ghost">New game</button>
   </header>
@@ -94,6 +96,18 @@
     <div class="stage"><span class="spr" id="unitSprite"></span></div>
     <dl id="unitFacts"></dl>
   </dialog>
+  <dialog id="history" aria-labelledby="histTitle">
+    <button type="button" class="close" id="histClose">Close</button>
+    <h2 id="histTitle">History</h2>
+    <p id="histSummary"></p>
+    <ol class="histgames" id="histGames"></ol>
+    <div id="histUnitsWrap">
+      <h3>Players on your final boards</h3>
+      <table class="histunits"><thead><tr><th scope="col">Player</th><th scope="col">Games</th><th scope="col">Avg place</th><th scope="col">Wins</th></tr></thead><tbody id="histUnits"></tbody></table>
+    </div>
+    <p class="note">Kept on this device only. The feedback file holds these game facts and nothing else.</p>
+    <div class="histbtns"><button type="button" id="histDownload">Download feedback file</button><button type="button" id="histClear">Clear history</button></div>
+  </dialog>
   <dialog id="help" aria-labelledby="helpTitle">
     <button type="button" class="close" id="helpClose">Close</button>
     <h2 id="helpTitle">How to play</h2>
@@ -125,6 +139,6 @@
     <ol class="players" id="finalPlaces"></ol>
     <button type="button" id="again" class="primary">New game</button>
   </dialog>
-  <script type="module" src="js/main.js?v=1.8.0"></script>
+  <script type="module" src="js/main.js?v=1.9.0"></script>
 </body>
 </html>

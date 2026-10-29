@@ -205,7 +205,7 @@ Second ten, approved 2026-10-29. All offline: no accounts, no chat, no network a
 16. Sound: synthesized effects (no audio files), mute switch. ✔ v1.6.0
 17. Unit card (hold, or press I) and a short how-to-play overlay. ✔ v1.7.0
 18. Stage art picked by seed; jersey colour by club level. ✔ v1.8.0 (club colour as a floor disc; true jersey recolour needs key-colour sprites)
-19. Local game history and per-unit stats; download a feedback file.
+19. Local game history and per-unit stats; download a feedback file. ✔ v1.9.0
 20. Works offline and installs on phones; accessibility and speed audit.
 
 ## Left to the builder

@@ -2,6 +2,17 @@
 
 Player names never appear in this file.
 
+## v1.9.0 — 2026-10-29 · Milestone 19: history, player stats, feedback file
+
+- `js/history.js`: when a game ends, a summary is kept on this device (last 50 games): date, version, seed,
+  difficulty, your place, the round you went out, level, augments, final board and active traits.
+- History button in the header: your record (games, average place, wins), the last 10 games, and the players
+  most often on your final boards with your average place and wins with them.
+- "Download feedback file" saves `tactical-boom-feedback-<date>.json` (all kept games plus the player totals)
+  through the browser for you to pass on. Nothing is sent anywhere, and there is no free-text box, keeping the
+  design's no-free-text rule. "Clear history" deletes it from the device after a confirmation.
+- Tests: a summary holds only those game facts; per-player totals add up.
+
 ## v1.8.0 — 2026-10-29 · Milestone 18: stage art, club colours
 
 - Each game's court background is picked from its seed among the four public stages (Fieldhouse, Championship

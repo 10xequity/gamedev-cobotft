@@ -6,6 +6,7 @@ import { computeTraits } from './traits.js';
 import { keywordsAt, statsAt } from './units.js';
 import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
+import * as history from './history.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
@@ -103,6 +104,22 @@ export class UI {
     $('sell').textContent = this.selected === null ? 'Sell' : `Sell for ${this.sellValue()}g`;
     $('reroll').disabled = you.gold < cfg.shop.rerollCost && !you.freeRerolls;
     $('xp').disabled = you.gold < cfg.shop.xpCost || toNext === null;
+  }
+
+  // ---- history: finished games on this device, per-player totals, the feedback file ----
+  showHistory() {
+    const recs = history.load(), stats = history.unitStats(recs);
+    const avg = recs.length ? (recs.reduce((a, r) => a + r.place, 0) / recs.length).toFixed(1) : '-';
+    $('histSummary').textContent = recs.length
+      ? `${recs.length} game${recs.length === 1 ? '' : 's'} on this device. Average place ${avg}, ${recs.filter(r => r.place === 1).length} won.`
+      : 'No finished games yet. Finish a game and it appears here.';
+    $('histGames').replaceChildren(...recs.slice(-10).reverse().map(r => el('li', { textContent:
+      `${r.at.slice(0, 10)} · ${ordinal(r.place)} of ${r.players} · ${r.difficulty} bots · out at ${r.lastRound} · ${r.traits.slice(0, 3).join(', ') || 'no traits'}` })));
+    $('histUnits').replaceChildren(...stats.slice(0, 10).map(s => el('tr', {},
+      el('th', { scope: 'row', textContent: s.name }), el('td', { textContent: s.games }), el('td', { textContent: s.avgPlace.toFixed(1) }), el('td', { textContent: s.wins }))));
+    $('histUnitsWrap').hidden = !stats.length;
+    $('histDownload').disabled = $('histClear').disabled = !recs.length;
+    $('history').showModal();
   }
 
   showCarousel() {
@@ -217,6 +234,7 @@ export class UI {
     if (g.over) {
       $('overText').textContent = `You finished ${ordinal(g.you.place)} of ${g.players.length}.`;
       $('finalPlaces').replaceChildren(...this.playerRows());
+      history.record(g);
       $('over').showModal();
       play(g.you.place === 1 ? 'win' : 'lose');
       this.say(`Game over. You finished ${ordinal(g.you.place)}.`);
@@ -381,6 +399,10 @@ export class UI {
     document.addEventListener('contextmenu', e => { if (e.target.closest('[data-uid], [data-id]')) e.preventDefault(); }); // phones open a menu on long press
     $('unitClose').addEventListener('click', () => $('unitcard').close());
     $('helpBtn').addEventListener('click', () => $('help').showModal());
+    $('historyBtn').addEventListener('click', () => this.showHistory());
+    $('histClose').addEventListener('click', () => $('history').close());
+    $('histDownload').addEventListener('click', () => { history.download(history.load()); this.say('Feedback file saved to your downloads'); });
+    $('histClear').addEventListener('click', () => { if (confirm('Delete the game history on this device?')) { history.clear(); this.showHistory(); this.say('History cleared'); } });
     $('helpClose').addEventListener('click', () => $('help').close());
     const showMute = () => { $('mute').setAttribute('aria-pressed', String(isMuted())); $('mute').textContent = isMuted() ? 'Sound off' : 'Sound on'; };
     showMute();

@@ -164,3 +164,13 @@ dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border
 /* ---- club colour: a floor disc under each player, a dot on cards ---- */
 .hex.filled::after { content: ""; position: absolute; left: 22%; right: 22%; top: 28%; bottom: 22%; border-radius: 50%; background: var(--jersey, transparent); border: 2px solid var(--black); z-index: 0; pointer-events: none; }
 .shopcard .tr.lv::before { content: "● "; color: var(--jersey); -webkit-text-stroke: 1px var(--black); }
+/* ---- history ---- */
+.histgames { margin: 8px 0; padding-left: 20px; font-size: 13px; display: grid; gap: 3px; }
+#history h3 { font-size: 14px; margin: 10px 0 4px; }
+.histunits { width: 100%; border-collapse: collapse; font-size: 13px; }
+.histunits th, .histunits td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--teal-light); }
+.histunits td { font-variant-numeric: tabular-nums; }
+.histbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+.histbtns button { padding: 8px 12px; border-radius: 8px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }
+.histbtns button:first-child { background: var(--gold); color: var(--black); }
+.histbtns button:disabled { background: var(--teal-light); color: var(--black); border-style: dashed; }

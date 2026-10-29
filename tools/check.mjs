@@ -351,6 +351,16 @@ if (cg.you.place === null) {
   assert.ok(taken >= 1, 'carousel units come out of the pool');
 }
 
+// History: a finished game summarises to plain facts only; per-player totals add up.
+const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
+const { g: done } = playGame('history');
+const rec = hist.summarize(done, new Date('2026-10-29T12:00:00Z'));
+assert.deepEqual(Object.keys(rec).sort(), ['at', 'augments', 'board', 'difficulty', 'lastRound', 'level', 'place', 'players', 'seed', 'traits', 'version'], 'history record has only game facts');
+assert.ok(rec.place >= 1 && rec.place <= 8 && rec.board.every(b => byId[b.id] && b.name === byId[b.id].display));
+const fake = [{ place: 1, board: [{ id: 'a', name: 'A', star: 1 }, { id: 'b', name: 'B', star: 2 }] }, { place: 5, board: [{ id: 'a', name: 'A', star: 1 }] }];
+const st = hist.unitStats(fake);
+assert.deepEqual(st.map(s => [s.id, s.games, s.avgPlace, s.wins]), [['a', 2, 3, 1], ['b', 1, 1, 1]], 'per-player totals');
+
 // Stage art: every name the seed can pick has an image and a style rule; club colours exist for every level.
 const css = readFileSync(join(GAME, 'style.css'), 'utf8');
 for (const st of cfg.game.stageArt) {
