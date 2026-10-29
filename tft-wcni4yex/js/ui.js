@@ -133,7 +133,7 @@ export class UI {
         el('span', { className: 'tr', textContent: by !== null ? `Taken: ${g.players[by].name}` : `${u.tier}-cost` }));
       b.style.setProperty('--ring', g.cfg.tierRing[String(u.tier)]);
       b.dataset.id = id;
-      b.setAttribute('aria-label', by !== null ? `${u.display}, taken by ${g.players[by].name}` : `Take ${u.display}, ${u.tier}-cost ${u.style}`);
+      if (by === null) b.prepend(el('span', { className: 'vh', textContent: 'Take ' }));
       b.addEventListener('click', () => {
         const r = g.chooseCarousel(k);
         if (r.ok) play('pick');
@@ -275,8 +275,8 @@ export class UI {
     b.style.setProperty('--jersey', this.g.cfg.jerseyByLevel[u.team.level]);
     b.dataset.id = id;
     if (this.g.you.gold < u.tier) b.setAttribute('aria-disabled', 'true'); // still focusable, so its card can be read
-    b.setAttribute('aria-label', `Buy ${u.display} for ${u.tier} gold, ${u.style}, ${u.team.level}, ${u.archetype}`);
-    b.append(
+    b.append( // the visible text is the name; a hidden 'Buy' in front says what the button does
+      el('span', { className: 'vh', textContent: 'Buy ' }),
       el('span', { className: 'spr', style: spriteStyle(u.look, 'portrait', 0, 84) }),
       el('span', { className: 'nm', textContent: u.display }),
       el('span', { className: 'tr', textContent: u.style }),

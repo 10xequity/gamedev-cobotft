@@ -18,3 +18,6 @@ ui.say(`Round ${game.round.label}. Buy from the shop, tap a unit then a slot to 
 
 // First visit on this device: open How to play once.
 try { if (!localStorage.getItem(HELP_KEY)) { localStorage.setItem(HELP_KEY, '1'); document.getElementById('help').showModal(); } } catch { /* no storage: skip it */ }
+
+// Offline copy (sw.js). Fails quietly where service workers are unavailable.
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

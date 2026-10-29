@@ -351,6 +351,17 @@ if (cg.you.place === null) {
   assert.ok(taken >= 1, 'carousel units come out of the pool');
 }
 
+// Offline copy: sw.js carries the pages' version and stores every module, stage and icon.
+const sw = readFileSync(join(GAME, 'sw.js'), 'utf8');
+const pageVersion = readFileSync(join(GAME, 'index.html'), 'utf8').match(/\?v=([\d.]+)/)[1];
+assert.equal(sw.match(/const VERSION = '([\d.]+)'/)?.[1], pageVersion, 'sw.js VERSION must match the pages');
+const swModules = JSON.parse(sw.match(/const MODULES = (\[[^\]]*\])/)[1].replace(/'/g, '"'));
+const jsFiles = (await import('node:fs')).readdirSync(join(GAME, 'js')).filter(f => f.endsWith('.js'));
+assert.deepEqual(swModules.sort(), jsFiles.map(m => m.replace('.js', '')).sort(), 'sw.js MODULES must list every js file');
+assert.deepEqual(JSON.parse(sw.match(/const STAGES = (\[[^\]]*\])/)[1].replace(/'/g, '"')).sort(), [...cfg.game.stageArt].sort(), 'sw.js STAGES must match stageArt');
+const appManifest = JSON.parse(readFileSync(join(GAME, 'app.webmanifest'), 'utf8'));
+for (const ic of appManifest.icons) { assert.ok(existsSync(join(GAME, ic.src)), `missing icon ${ic.src}`); assert.ok(sw.includes(ic.src), `sw.js does not store ${ic.src}`); }
+
 // History: a finished game summarises to plain facts only; per-player totals add up.
 const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
 const { g: done } = playGame('history');

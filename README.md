@@ -17,3 +17,6 @@ To try balance numbers without editing the config, pass overrides as JSON:
 
 After any change to the game folder, bump the `?v=` version string in both pages (every
 occurrence, including the import map); `tools/check.mjs` fails if a page mixes versions.
+
+The game works offline once visited (`tft-wcni4yex/sw.js`) and can be added to a phone's home
+screen. Releases must bump the version in `sw.js` together with the pages; the check enforces it.

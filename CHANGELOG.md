@@ -2,6 +2,25 @@
 
 Player names never appear in this file.
 
+## v2.0.0 — 2026-10-29 · Milestone 20: offline, installable, audits
+
+- Works offline: `sw.js` (a service worker) stores every file the game needs on the first visit (code, data,
+  stage art, all 25 sprite sheets, icons; about 6 MB, fetched in the background after the page is up). Later
+  visits load from that copy, so the game runs with no signal. Pages are fetched network-first, so a phone with
+  signal always gets the newest release; each release's version string replaces the stored copy.
+- Installable: `app.webmanifest` and icons (a gold volleyball on brand teal, no people) let staff add it to a
+  phone's home screen as a full-screen app. The page stays noindex and unlinked.
+- `tools/check.mjs` fails if `sw.js` carries a different version from the pages or misses a module, stage or icon.
+- Audit (Lighthouse, mobile): accessibility 95 → 100, best practices 100. Fixes: gold-on-teal text was below
+  the 4.5:1 contrast minimum (section headings and header labels are now cream; prices are black on a gold pill;
+  stars on cards black); shop and carousel cards now announce exactly their visible text with "Buy"/"Take" in
+  front; the game sits in a main landmark. SEO stays low on purpose (noindex is a hard rule).
+- Speed (Fast 4G, 4x slower CPU, first visit): first content 0.5 s, main content 1.0 s, loaded 1.2 s, 251 KB.
+  Layout shift on load 0.33 → 0.04: the header starts with its final text so it no longer gains a row, and
+  the lists the script fills have reserved space.
+- Tested offline in Chrome: with the network cut, the game reloads and plays. (The app's built-in preview
+  browser does not run service workers, so it always plays online.)
+
 ## v1.9.0 — 2026-10-29 · Milestone 19: history, player stats, feedback file
 
 - `js/history.js`: when a game ends, a summary is kept on this device (last 50 games): date, version, seed,
