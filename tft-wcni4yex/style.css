@@ -92,7 +92,6 @@ body.game { padding-bottom: 96px; }
 dialog .players { grid-template-columns: repeat(2, 1fr); }
 dialog .players li { color: var(--cream); }
 dialog .players li.you { color: var(--black); }
-dialog #again { margin-top: 12px; padding: 10px 16px; border-radius: 8px; border: 2px solid var(--black); background: var(--gold); color: var(--black); font-weight: 800; }
 .msg { margin: 8px 12px; min-height: 1.4em; font-weight: 600; }
 .shop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .shopcard { border-radius: 10px; border: 3px solid var(--ring); background: var(--cream); color: var(--black); padding: 6px 4px; display: grid; justify-items: center; gap: 2px; min-height: 150px; }

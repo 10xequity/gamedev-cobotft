@@ -8,11 +8,21 @@ const KEY = 'tacticalboom.history';
 const KEEP = 50;
 const VERSION = new URL(import.meta.url).searchParams.get('v') || 'dev';
 
+// Daily challenge: one seed per local calendar day, the same on every device; bots always Normal.
+export const DAILY_DIFFICULTY = 'normal';
+export const today = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export const dailySeed = (date = today()) => `daily-${date}`;
+export const dailyDate = seed => (String(seed).startsWith('daily-') ? String(seed).slice(6) : null);
+export function dailyBest(records, date = today()) {
+  const places = records.filter(r => r.daily === date).map(r => r.place);
+  return places.length ? Math.min(...places) : null;
+}
+
 // One finished game as plain facts.
 export function summarize(game, at = new Date()) {
   const you = game.you;
   return {
-    at: at.toISOString(), version: VERSION, seed: game.seed, difficulty: game.difficulty || 'normal',
+    at: at.toISOString(), version: VERSION, seed: game.seed, daily: dailyDate(game.seed), difficulty: game.difficulty || 'normal',
     place: you.place, players: game.players.length, lastRound: game.round.label, level: you.level,
     augments: you.augments.slice(),
     board: eco.onCourt(you).map(i => ({ id: i.id, name: game.unitsById[i.id].display, star: i.star })),

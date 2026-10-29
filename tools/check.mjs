@@ -365,11 +365,21 @@ for (const ic of appManifest.icons) { assert.ok(existsSync(join(GAME, ic.src)), 
 const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
 const { g: done } = playGame('history');
 const rec = hist.summarize(done, new Date('2026-10-29T12:00:00Z'));
-assert.deepEqual(Object.keys(rec).sort(), ['at', 'augments', 'board', 'difficulty', 'lastRound', 'level', 'place', 'players', 'seed', 'traits', 'version'], 'history record has only game facts');
+assert.deepEqual(Object.keys(rec).sort(), ['at', 'augments', 'board', 'daily', 'difficulty', 'lastRound', 'level', 'place', 'players', 'seed', 'traits', 'version'], 'history record has only game facts');
 assert.ok(rec.place >= 1 && rec.place <= 8 && rec.board.every(b => byId[b.id] && b.name === byId[b.id].display));
 const fake = [{ place: 1, board: [{ id: 'a', name: 'A', star: 1 }, { id: 'b', name: 'B', star: 2 }] }, { place: 5, board: [{ id: 'a', name: 'A', star: 1 }] }];
 const st = hist.unitStats(fake);
 assert.deepEqual(st.map(s => [s.id, s.games, s.avgPlace, s.wins]), [['a', 2, 3, 1], ['b', 1, 1, 1]], 'per-player totals');
+
+// Daily challenge: the same date gives the same seed, pool, bots and first shop on any device; best place per day.
+assert.equal(hist.dailySeed('2026-10-29'), 'daily-2026-10-29');
+assert.equal(hist.dailyDate('daily-2026-10-29'), '2026-10-29'); assert.equal(hist.dailyDate('123456'), null);
+assert.equal(hist.today(new Date(2026, 0, 5)), '2026-01-05', 'local calendar date, zero-padded');
+const d1 = new Game(cfg, roster, manifest.looks.length), d2 = new Game(cfg, roster, manifest.looks.length);
+d1.newGame(hist.dailySeed('2026-10-29'), hist.DAILY_DIFFICULTY); d2.newGame(hist.dailySeed('2026-10-29'), hist.DAILY_DIFFICULTY);
+assert.deepEqual([d1.pool, d1.you.shop, d1.players.map(p => p.pers)], [d2.pool, d2.you.shop, d2.players.map(p => p.pers)], 'daily games start identically');
+assert.equal(hist.dailyBest([{ daily: '2026-10-29', place: 4 }, { daily: '2026-10-29', place: 2 }, { daily: '2026-10-28', place: 1 }, { daily: null, place: 1 }], '2026-10-29'), 2, 'best place today only');
+assert.equal(hist.dailyBest([], '2026-10-29'), null);
 
 // Stage art: every name the seed can pick has a drawn theme that builds a well-formed image;
 // club colours exist for every level.

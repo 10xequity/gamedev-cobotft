@@ -112,7 +112,7 @@ export class UI {
     const g = this.g, you = g.you, cfg = g.cfg, info = g.round;
     $('hp').textContent = Math.max(0, you.hp);
     $('gold').textContent = you.gold;
-    $('round').textContent = info.label + (info.practice ? ' practice' : '');
+    $('round').textContent = info.label + (info.practice ? ' practice' : '') + (history.dailyDate(g.seed) ? ' · daily' : '');
     const toNext = eco.xpToNext(you, cfg);
     $('level').textContent = `Lv ${you.level}` + (toNext === null ? ' (max)' : ` · ${toNext} XP to next`);
     $('courtCount').textContent = `${eco.onCourt(you).length} / ${eco.courtMax(you, cfg)}`;
@@ -148,6 +148,8 @@ export class UI {
     $('histSummary').textContent = recs.length
       ? `${recs.length} game${recs.length === 1 ? '' : 's'} on this device. Average place ${avg}, ${recs.filter(r => r.place === 1).length} won.`
       : 'No finished games yet. Finish a game and it appears here.';
+    const best = history.dailyBest(recs);
+    if (best) $('histSummary').textContent += ` Today's challenge best: ${ordinal(best)}.`;
     $('histGames').replaceChildren(...recs.slice(-10).reverse().map(r => el('li', { textContent:
       `${r.at.slice(0, 10)} · ${ordinal(r.place)} of ${r.players} · ${r.difficulty} bots · out at ${r.lastRound} · ${r.traits.slice(0, 3).join(', ') || 'no traits'}` })));
     $('histUnits').replaceChildren(...stats.slice(0, 10).map(s => el('tr', {},
@@ -470,9 +472,19 @@ export class UI {
       try { localStorage.setItem(DIFF_KEY, $('difficulty').value); } catch { /* per-device preference only */ }
       this.say(`Bots: ${$('difficulty').value}, from the next new game`);
     });
-    const fresh = () => { this.g.newGame(undefined, $('difficulty').value); this.selected = null; this.scout = null; this.lastFight = null; this.lastLine = ''; this.say('New game'); this.render(); this.resetTimer(); };
-    $('newgame').addEventListener('click', () => { if (confirm('Start a new game? The current one is lost.')) fresh(); });
-    $('again').addEventListener('click', () => { $('over').close(); fresh(); });
+    const fresh = (daily = false) => {
+      if (daily) this.g.newGame(history.dailySeed(), history.DAILY_DIFFICULTY); else this.g.newGame(undefined, $('difficulty').value);
+      this.selected = null; this.scout = null; this.lastFight = null; this.lastLine = '';
+      this.say(daily ? `Today's challenge, ${history.today()}: same players and bots for everyone today` : 'New game');
+      this.render(); this.resetTimer();
+    };
+    const dailyLine = () => { const best = history.dailyBest(history.load()); return `Today's challenge (${history.today()}): same pool, shops and bots for everyone today, bots on Normal. ${best ? `Your best today: ${ordinal(best)}.` : 'Not played yet today.'}`; };
+    $('newgame').addEventListener('click', () => { $('dailyNote').textContent = dailyLine(); $('newDlg').showModal(); });
+    $('newClose').addEventListener('click', () => $('newDlg').close());
+    $('newFree').addEventListener('click', () => { $('newDlg').close(); fresh(false); });
+    $('newDaily').addEventListener('click', () => { $('newDlg').close(); fresh(true); });
+    $('again').addEventListener('click', () => { $('over').close(); fresh(false); });
+    $('againDaily').addEventListener('click', () => { $('over').close(); fresh(true); });
     for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));
     $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {

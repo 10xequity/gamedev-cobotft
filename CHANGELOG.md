@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v2.5.0 — 2026-10-29 · Milestone 25: daily challenge
+
+- New game now asks: Free play (bots as set in Settings) or Today's challenge. The challenge seed is the local
+  calendar date (`daily-2026-10-29`), so every staff phone gets the same pool, the same bots (always Normal) and
+  the same shops for the same choices that day. The round label shows "daily" while you play one.
+- Your best place in today's challenge shows in the New game panel and in History. The game-over panel offers
+  both modes.
+- Tests: same date gives identical pool, first shop and bot personalities; best place counts today only.
+
 ## v2.4.0 — 2026-10-29 · Milestone 24: replays
 
 - "Your fights" lists every fight you played this game (round, opponent, result). Tap one to watch it again on
