@@ -33,11 +33,16 @@ const LINES = {
 // Slots: row 0 (net) cols 2,4 · row 1 cols 1,3,5 · row 2 col 3.  k = row*7+col
 const SLOTS = [2, 4, 8, 10, 12, 17];
 
-function board(roles, uidBase) {
-  const used = new Set();
+// Each fight draws seeded random players of the right role (same tier when possible), so a
+// line measures its roles and traits rather than the quirks of a few fixed players.
+const { rngFrom } = await import(pathToFileURL(join(GAME, 'js', 'rng.js')).href);
+function board(roles, uidBase, seed) {
+  const rng = rngFrom(seed), used = new Set();
   const court = Array(28).fill(null);
   roles.forEach((role, i) => {
-    const u = units.find(x => x.role === role && x.tier === TIER && !used.has(x.id)) || units.find(x => x.role === role && !used.has(x.id));
+    let pool = units.filter(x => x.role === role && x.tier === TIER && !used.has(x.id));
+    if (!pool.length) pool = units.filter(x => x.role === role && !used.has(x.id));
+    const u = pool[Math.floor(rng() * pool.length)];
     used.add(u.id);
     court[SLOTS[i]] = { uid: uidBase + i, id: u.id, star: STAR };
   });
@@ -45,14 +50,13 @@ function board(roles, uidBase) {
 }
 
 const names = Object.keys(LINES);
-const boards = Object.fromEntries(names.map(n => [n, board(LINES[n], 1)]));
-const farBoards = Object.fromEntries(names.map(n => [n, board(LINES[n], 101)]));
 const wins = Object.fromEntries(names.map(n => [n, Object.fromEntries(names.map(m => [m, 0]))]));
 let totalActions = 0, fights = 0, draws = 0;
 for (const x of names) for (const y of names) {
   if (x === y) continue;
   for (let i = 0; i < N; i++) {
-    const r = simulate({ seed: `bal-${x}-${y}-${i}`, near: boards[x], far: farBoards[y], unitsById: byId, cfg });
+    const near = board(LINES[x], 1, `near-${x}-${i}`), far = board(LINES[y], 101, `far-${y}-${i}`);
+    const r = simulate({ seed: `bal-${x}-${y}-${i}`, near, far, unitsById: byId, cfg });
     totalActions += r.actions; fights++;
     if (r.winner === 'near') wins[x][y] += 1; else if (r.winner === 'far') wins[y][x] += 1; else draws++;
   }

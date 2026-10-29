@@ -1,6 +1,6 @@
 # Tactical Boom — Design
 
-**Version** 1.0 · **Date** 2026-10-23 · **Status** Approved by owner (chat, 2026-10-23) · **Supersedes** nothing
+**Version** 2.0 · **Date** 2026-10-29 · **Status** Approved by owner (chat, 2026-10-23; milestones 11-20 and combat rulings 2026-10-29) · **Supersedes** v1.0 (2026-10-23, in git history)
 **Codename** TFT (internal). "Tactical Boom" is a placeholder title.
 
 ## Intent
@@ -135,6 +135,11 @@ Targeting weights for the seeded draw: Libero within 2 rows of the net 6, Middle
 centre three columns 4, Outside/Opposite/Utility 2 (+1 in the front row), Setter 0.5.
 Splash: Follow Through, Slide, 3-star Spike. Line: Ace Serve.
 
+Rulings approved 2026-10-29 (numbers in config): Block returns a share of what it absorbed,
+not of the whole hit. Set boosts the two strongest teammates. A Setter's basic action is a
+set: her strongest non-Setter teammate takes the hit with a bonus (`combat.setterSetBonus`).
+Targeting weights and the action cap were tuned in milestone 10 and live in config.
+
 ## Look
 
 HD-2D: a 3D court in perspective (CSS 3D transforms, no library), net across the
@@ -189,6 +194,19 @@ Game folder `tft-wcni4yex/`: `index.html`, `style.css`, `data/roster.json`,
 8. Bots, pairing, health, elimination, placement. First full game. ✔ v0.8.0
 9. Rally playback with poses and ball flight, phone polish, accessibility, save and resume. ✔ v0.9.0
 10. Balance tuning to the line targets, staff build, changelog. ✔ v1.0.0 (Pins still above the band; see CHANGELOG)
+
+Second ten, approved 2026-10-29. All offline: no accounts, no chat, no network after load.
+
+11. Balance pass 2: Pins down into the band, Engine and Wall up. ✔ v1.1.0 (fairer measurement; Engine still low)
+12. Smarter bots: trait-aware buying and placement; Easy / Normal / Hard setting.
+13. Augments: pick 1 of 3 at 2-1, 3-2 and 4-2 (about 24, all in config).
+14. Carousel: a shared draft at each stage start, lowest HP picks first.
+15. Scouting: view any player's board while planning; damage chart after each fight.
+16. Sound: synthesized effects (no audio files), mute switch.
+17. Unit card (hold, or press I) and a short how-to-play overlay.
+18. Stage art picked by seed; jersey colour by club level.
+19. Local game history and per-unit stats; download a feedback file.
+20. Works offline and installs on phones; accessibility and speed audit.
 
 ## Left to the builder
 

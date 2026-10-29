@@ -2,6 +2,22 @@
 
 Player names never appear in this file.
 
+## v1.1.0 — 2026-10-29 · Milestone 11: balance pass 2
+
+- The balance script now draws seeded random players of each role for every fight (same tier when it can),
+  instead of always fielding the same few players. The old "Pins 75%" was mostly four specific players and
+  their archetype and club-level traits; with random draws the real outlier was All-Utility (82%).
+- Result (tier 2, 1-star, 200 fights per pair): Hitters 54.8, Servers 55.0, All-Utility 54.7 at the band's
+  edge; Wall 56.3, Diggers 57.2, Pins 58.4; Balanced 42.1, Engine 21.6. The spread is 22-58% (v1.0.0 measured
+  10-75% with the old method). Game length unchanged: first out 4-2, last fight 6-4.
+- Pin players now pay a little for their flexibility, like Utility: stats x0.97 (`styles.Pin.statMult`).
+- Number changes: Libero dodge 8% base (10), Libero trait +13/+18%, Middle trait +7/+23 armor, Outside trait
+  +7/+18%, Setter trait +3/+8 mana, Setter HP x1.5, Setter set bonus +35%, Set attack buff 25%, Spike 1.85x,
+  Ace Serve 3.45x, Dig heal 1.55x, Tip 0.56x, Second Wind 10% (2-star 20%), Target aggro 4.6. Descriptions match.
+- `tools/tune.mjs`: hill-climbs any named config numbers against the balance script (`APPLY=1` writes them).
+- Design doc is now v2 (`docs/tft-design_v2_2026-10-29.md`): records the three combat rulings and the plan for
+  milestones 11-20, both approved 2026-10-29.
+
 ## v1.0.0 — 2026-10-29 · Milestone 10: balance pass, staff build
 
 - Balance (tier 2, 1-star, 200 fights per pair): five lines in the 50-55% band — Hitters 53.0, Servers 54.8,

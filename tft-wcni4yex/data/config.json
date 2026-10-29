@@ -160,7 +160,7 @@
     },
     "Setter": {
       "attack": 0.85,
-      "hp": 1.14,
+      "hp": 1.5,
       "armor": 0,
       "speed": 0.9,
       "manaGain": 1.5,
@@ -171,7 +171,7 @@
       "hp": 1.19,
       "armor": 0,
       "speed": 1,
-      "dodge": 0.1,
+      "dodge": 0.08,
       "styles": ["Libero"]
     },
     "Opposite": {
@@ -182,7 +182,7 @@
       "styles": ["Opposite", "Pin"]
     },
     "Utility": {
-      "attack": 0.95,
+      "attack": 0.97,
       "hp": 0.95,
       "armor": 0,
       "speed": 0.95,
@@ -224,8 +224,8 @@
       "scales": "rows"
     },
     "Second Wind": {
-      "desc": "Returns once at 17% of max HP with keywords off. 2-star: 34%.",
-      "hp": 0.17,
+      "desc": "Returns once at 10% of max HP with keywords off. 2-star: 20%.",
+      "hp": 0.1,
       "scales": "hp"
     }
   },
@@ -237,6 +237,7 @@
     },
     "Pin": {
       "keyword": "Rebound Attack",
+      "statMult": 0.97,
       "ability": "Spike",
       "countsAs": ["Outside", "Opposite"]
     },
@@ -293,7 +294,7 @@
     }
   },
   "aggro": {
-    "Target": 4.4,
+    "Target": 4.6,
     "MiddleCentre": 4,
     "Hitter": 2,
     "FrontRowBonus": 1,
@@ -302,14 +303,14 @@
   },
   "combat": {
     "maxActions": 120,
-    "setterSetBonus": 0.28,
+    "setterSetBonus": 0.35,
     "timeoutRule": "higher total HP percent wins, equal is a draw"
   },
   "traits": {
-    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.08, 0.18], "desc": "Team attack +8% / +18%" },
-    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [7, 20], "desc": "Front-row armor +7 / +20" },
-    "Setter": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "manaPerAction", "values": [3, 7], "desc": "Team mana per action +3 / +7" },
-    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.13, 0.2], "desc": "Team dodge +13% / +20%" },
+    "Outside": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "attack", "values": [0.07, 0.18], "desc": "Team attack +7% / +18%" },
+    "Middle": { "family": "Role", "breakpoints": [2, 3], "applies": "front", "effect": "armor", "values": [7, 23], "desc": "Front-row armor +7 / +23" },
+    "Setter": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "manaPerAction", "values": [3, 8], "desc": "Team mana per action +3 / +8" },
+    "Libero": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "dodge", "values": [0.13, 0.18], "desc": "Team dodge +13% / +18%" },
     "Opposite": { "family": "Role", "breakpoints": [2, 3], "applies": "team", "effect": "abilityDamage", "values": [0.75, 1.35], "desc": "Ability damage +75% / +135%" },
     "No Specialization": { "family": "Role", "breakpoints": [2, 4, 6], "applies": "holders", "effect": "allStats", "values": [0.08, 0.11, 0.16], "doubleCastAt": 6, "desc": "Utility units +8% / +11% / +16% all stats; 6: every Utility casts twice" },
     "Colorado": { "family": "Club level", "breakpoints": [3, 5], "applies": "holders", "effect": "speed", "values": [0.08, 0.16], "desc": "Attack speed +8% / +16%" },
@@ -339,12 +340,12 @@
   },
   "abilities": {
     "Spike": {
-      "mult": 1.73,
+      "mult": 1.85,
       "splashAt3Star": 0.5,
       "desc": "Big hit on the target; 3-star splashes half to neighbours."
     },
     "Ace Serve": {
-      "mult": 2.59,
+      "mult": 3.45,
       "desc": "Hits the target and every enemy in the same column."
     },
     "Big Block": {
@@ -362,11 +363,11 @@
       "desc": "Two strongest teammates gain mana and attack for their next actions."
     },
     "Dig": {
-      "heal": 1.45,
+      "heal": 1.55,
       "desc": "Heals the lowest-HP ally."
     },
     "Tip": {
-      "mult": 0.75,
+      "mult": 0.56,
       "shred": 10,
       "desc": "Casts the filled role's ability; otherwise a small splash that lowers armor."
     }

@@ -18,16 +18,17 @@ export function deriveUnit(player, cfg, lookCount) {
     id: player.id, display: player.display, team: player.team,
     tier, role, style, archetype, roll, look,
     keyword: s.keyword, ability: s.ability, countsAs: s.countsAs,
-    base: baseStats(tier, role, roll, cfg),
+    base: baseStats(tier, role, style, roll, cfg),
   };
 }
 
-function baseStats(tier, role, roll, cfg) {
+// Style statMult (default 1) lets a flexible style, like Pin, pay for its flexibility.
+function baseStats(tier, role, style, roll, cfg) {
   const t = cfg.stats.byTier[String(tier)];
-  const r = cfg.roles[role];
+  const r = cfg.roles[role], sm = cfg.styles[style].statMult ?? 1;
   return {
-    hp: Math.round(t.hp * r.hp * roll.hp),
-    attack: Math.round(t.attack * r.attack * roll.attack),
+    hp: Math.round(t.hp * r.hp * roll.hp * sm),
+    attack: Math.round(t.attack * r.attack * roll.attack * sm),
     armor: t.armor + r.armor,
     mana: t.mana,
     speed: r.speed,
