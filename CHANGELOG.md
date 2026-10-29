@@ -2,6 +2,27 @@
 
 Player names never appear in this file.
 
+## v0.7.0 — 2026-10-29 · Milestone 7: keywords and star upgrades
+
+- All seven keywords now work in combat: Rebound Attack (every third action, one extra hit), Follow Through
+  (basic attacks splash 40% to neighbours), Block (takes 40% less from each hit and returns 25% of it; returns
+  never bounce back), First Touch (first hit ignored), Pregame (two nearest allies +20 mana at the start),
+  Target (draws attacks while within two rows of the net; replaces the old "Libero near the net" rule, so a
+  Libero who loses it is no longer a magnet), Second Wind (once, returns at 30% HP with keywords off).
+- Stars: each keyword names the one number that doubles at 2-star (`scales` in config): Rebound Attack's extra
+  hits, the splash, Block's return, ignored hits, Pregame mana, Target rows, Second Wind HP. 3-star keeps that
+  and adds a second keyword at its 1-star number, drawn by seed from the player's id (`keywordsAt` in
+  `js/units.js`).
+- New combat events for the playback: `rebound`, `ignore`, `revive`, and `mana` with `keyword: "Pregame"`;
+  Block returns are `hit` events of kind `Block`, splash is kind `Follow Through`. Trait ability damage now
+  applies only to ability hits, not to splash or returns.
+- Picking up a unit announces her keywords at her star level ("Block x2 + Pregame").
+- Styles needed no new code: each style already chose its keyword and ability.
+- Tests: every keyword fires in fights, 2-star doubles, 3-star adds a seeded second keyword, Target Libero is
+  attacked first far more than one fight in six, 2-star First Touch ignores at most two hits.
+- Balance snapshot (tier 2, 1-star, 200 fights per pair): AllUtility 96%, Pins 76%, Balanced 61%, Hitters 58%,
+  Wall 49%, Diggers 45%, Servers 14%, Engine 0%. No line is in the 50-55% band. Tuning is milestone 10.
+
 ## v0.6.0 — 2026-10-28 · Milestone 6: traits and wild cards
 
 - `js/traits.js`: each distinct player on court counts once toward her game role, club level and archetype

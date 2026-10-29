@@ -3,7 +3,7 @@
 // seeded draw weighted by speed; who gets hit is a seeded draw weighted by the aggro table.
 // Positions matter for aggro and splash, nobody walks. Same seed + same boards = same events.
 import { rngFrom } from './rng.js';
-import { statsAt } from './units.js';
+import { statsAt, keywordsAt } from './units.js';
 import { neighbors, key, slotToHex, HALF } from './hex.js';
 import { computeTraits, tagsOf, abilityOf } from './traits.js';
 
@@ -27,6 +27,7 @@ function fighters(court, side, unitsById, cfg) {
       side, uid: inst.uid, id: inst.id, unit, star: inst.star, col, row, base: statsAt(unit, inst.star, cfg),
       rowFromNet: side === 'near' ? row - HALF : HALF - 1 - row,
       filled: filled[inst.uid] || null, tags: tagsOf(unit, filled[inst.uid]), ability: abilityOf(unit, filled[inst.uid], cfg),
+      kw: keywordsAt(unit, inst.star, cfg), acted: 0, untouched: 0, revived: false,
       mods: { ...NO_MODS }, doubleCast: false, buff: 0, buffLeft: 0, alive: true,
     });
   });
@@ -64,10 +65,13 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
   const living = side => all.filter(f => f.alive && f.side === side);
   const enemiesOf = f => living(f.side === 'near' ? 'far' : 'near');
   const alliesOf = f => living(f.side);
-  const A = cfg.aggro, AB = cfg.abilities, ST = cfg.stats;
+  const A = cfg.aggro, AB = cfg.abilities, ST = cfg.stats, KW = cfg.keywords;
+  // A keyword's scaling number for this fighter (0 when she lacks it); fixed numbers read KW directly.
+  const kwNum = (f, name) => f.kw[name] ? KW[name][KW[name].scales] * f.kw[name] : 0;
+  for (const f of all) f.untouched = kwNum(f, 'First Touch');
 
   const aggroWeight = f => {
-    if (f.unit.role === 'Libero' && f.rowFromNet < A.LiberoRowsFromNet) return A.Libero;
+    if (f.rowFromNet < kwNum(f, 'Target')) return A.Target;
     if (f.unit.role === 'Middle' && f.col >= 2 && f.col <= 4) return A.MiddleCentre;
     if (f.unit.role === 'Setter') return A.Setter;
     const hitter = ['Outside', 'Opposite', 'Utility'].includes(f.unit.role) ? A.Hitter : A.Default;
@@ -77,14 +81,26 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
   const clutchBelow = cfg.traits['Clutch Closer'].below;
   function damage(src, tgt, raw, kind) {
     if (!tgt.alive) return 0;
-    if (kind !== 'hit') raw *= 1 + src.mods.abilityDamage;
+    if (AB[kind]) raw *= 1 + src.mods.abilityDamage;
     if (src.mods.clutch && src.hp < src.maxHp * clutchBelow) raw *= 1 + src.mods.clutch;
+    if (tgt.untouched > 0) { tgt.untouched--; events.push({ t: 'ignore', from: src.uid, to: tgt.uid, keyword: 'First Touch' }); return 0; }
     let amount = Math.round(raw * 100 / (100 + tgt.armor));
+    const blocking = tgt.kw.Block && kind !== 'Block';
+    const returned = blocking ? raw * kwNum(tgt, 'Block') : 0;
+    if (blocking) amount = Math.round(amount * (1 - KW.Block.absorb));
     if (tgt.shield > 0) { const used = Math.min(tgt.shield, amount); tgt.shield -= used; amount -= used; }
     tgt.hp -= amount;
     tgt.mana = Math.min(tgt.manaToCast, tgt.mana + ST.manaPerHitTaken);
     events.push({ t: 'hit', kind, from: src.uid, to: tgt.uid, amount, hp: Math.max(0, tgt.hp) });
-    if (tgt.hp <= 0) { tgt.alive = false; at.delete(key(tgt.col, tgt.row)); events.push({ t: 'death', uid: tgt.uid }); }
+    if (tgt.hp <= 0) {
+      if (tgt.kw['Second Wind'] && !tgt.revived) {
+        tgt.hp = Math.round(tgt.maxHp * kwNum(tgt, 'Second Wind'));
+        tgt.revived = true; tgt.kw = {}; tgt.untouched = 0; tgt.mana = 0;
+        events.push({ t: 'revive', uid: tgt.uid, hp: tgt.hp, keyword: 'Second Wind' });
+      } else { tgt.alive = false; at.delete(key(tgt.col, tgt.row)); events.push({ t: 'death', uid: tgt.uid }); }
+    }
+    // Block returns a share of the hit (before absorb) to the attacker; returns never bounce back.
+    if (returned && src.alive && src !== tgt) damage(tgt, src, returned, 'Block');
     return amount;
   }
   const heal = (src, tgt, raw) => {
@@ -101,6 +117,8 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
     const tgt = weightedPick(rng, enemies, aggroWeight);
     if (tgt.dodge && rng() < tgt.dodge) { events.push({ t: 'dodge', from: f.uid, to: tgt.uid }); return; }
     damage(f, tgt, power(f), 'hit');
+    const splash = kwNum(f, 'Follow Through');
+    if (splash) for (const e of adjacentEnemies(f, tgt)) damage(f, e, power(f) * splash, 'Follow Through');
   }
 
   function cast(f) {
@@ -136,11 +154,21 @@ export function simulate({ seed, near, far, unitsById, cfg }) {
   // Who serves first: the side with more units, else the seed decides.
   let side = living('near').length === living('far').length ? (rng() < 0.5 ? 'near' : 'far') : (living('near').length > living('far').length ? 'near' : 'far');
   events.push({ t: 'start', first: side, near: living('near').map(f => f.uid), far: living('far').map(f => f.uid) });
+  for (const f of all) {
+    const mana = kwNum(f, 'Pregame');
+    if (mana) for (const ally of nearestAllies(f, KW.Pregame.allies)) {
+      ally.mana = Math.min(ally.manaToCast, ally.mana + mana);
+      events.push({ t: 'mana', from: f.uid, to: ally.uid, mana: ally.mana, keyword: 'Pregame' });
+    }
+  }
   let actions = 0;
   while (actions < cfg.combat.maxActions && living('near').length && living('far').length) {
     const actor = weightedPick(rng, living(side), f => f.speed);
     events.push({ t: 'action', n: actions, side, uid: actor.uid });
     if (actor.mana >= actor.manaToCast) cast(actor); else { hit(actor); actor.mana = Math.min(actor.manaToCast, actor.mana + ST.manaPerAction * actor.manaGain + actor.mods.manaPerAction); }
+    if (actor.kw['Rebound Attack'] && ++actor.acted % KW['Rebound Attack'].every === 0) {
+      for (let i = kwNum(actor, 'Rebound Attack'); i > 0 && actor.alive; i--) { events.push({ t: 'rebound', uid: actor.uid }); hit(actor); }
+    }
     if (actor.mods.regen && actor.alive) heal(actor, actor, Math.round(actor.maxHp * actor.mods.regen));
     if (actor.buffLeft > 0 && --actor.buffLeft === 0) actor.buff = 0;
     side = side === 'near' ? 'far' : 'near';

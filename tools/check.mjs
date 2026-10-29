@@ -220,4 +220,40 @@ const twice = simulate({ seed: 'traits', near: at(util.slice(0, 6)), far: sixFar
 const castIdx = twice.findIndex(e => e.t === 'cast' && e.uid >= 500 && e.uid < 600);
 assert.ok(castIdx >= 0 && twice.slice(castIdx + 1).find(e => e.t === 'cast' || e.t === 'action')?.t === 'cast', 'double cast emits two casts in a row');
 
+// Keywords and stars: each keyword names a number that scales; 2-star doubles it; 3-star adds a second keyword.
+const { keywordsAt } = await import(pathToFileURL(join(GAME, 'js', 'units.js')).href);
+for (const [name, k] of Object.entries(cfg.keywords)) assert.equal(typeof k[k.scales], 'number', `${name}: scales must name a number`);
+const kwUnit = a[0];
+assert.deepEqual(keywordsAt(kwUnit, 1, cfg), { [kwUnit.keyword]: 1 }, '1-star: own keyword at x1');
+assert.deepEqual(keywordsAt(kwUnit, 2, cfg), { [kwUnit.keyword]: 2 }, '2-star doubles the keyword');
+for (const u of a.slice(0, 40)) {
+  const k3 = keywordsAt(u, 3, cfg);
+  assert.equal(Object.keys(k3).length, 2, '3-star has two keywords'); assert.equal(k3[u.keyword], 2);
+  assert.deepEqual(k3, keywordsAt(u, 3, cfg), 'second keyword is seeded');
+}
+// Every keyword shows up in fights: a court of one of each style against six Utility units.
+const byStyle = st => a.find(u => u.style === st);
+const styles6 = ['Outside', 'Opposite', 'Defensive Middle', 'Offensive Middle', 'Setter', 'Libero'].map(byStyle);
+const kwCourt = (star) => at(styles6).map(i => i && { ...i, star });
+const utilFar = at(util.slice(0, 6)).map(i => i && { ...i, uid: i.uid + 100 });
+const seenKw = new Set();
+for (let i = 0; i < 20; i++) for (const e of simulate({ seed: `kw${i}`, near: kwCourt(1), far: utilFar, unitsById: byId, cfg }).events) {
+  if (e.t === 'rebound') seenKw.add('Rebound Attack');
+  if (e.t === 'hit' && (e.kind === 'Follow Through' || e.kind === 'Block')) seenKw.add(e.kind);
+  if (e.keyword) seenKw.add(e.keyword);
+}
+for (const k of Object.keys(cfg.keywords).filter(k => k !== 'Target')) assert.ok(seenKw.has(k), `keyword ${k} never fired`);
+// Target: a Libero at the net is the first unit attacked far more often than one in six.
+let libFirst = 0;
+for (let i = 0; i < 100; i++) {
+  const first = simulate({ seed: `tg${i}`, near: kwCourt(1), far: utilFar, unitsById: byId, cfg }).events.find(e => (e.t === 'dodge' || (e.t === 'hit' && e.kind === 'hit') || e.t === 'ignore') && e.to < 600);
+  if (first?.to === 505) libFirst++;
+}
+assert.ok(libFirst > 25, `Target Libero should be attacked first well over 1 in 6 fights, got ${libFirst}/100`);
+// 2-star First Touch ignores two hits.
+const ft = simulate({ seed: 'ft', near: kwCourt(2), far: utilFar, unitsById: byId, cfg });
+assert.equal(ft.byUid[503].kw['First Touch'], 2);
+assert.ok(ft.events.filter(e => e.t === 'ignore' && e.to === 503).length <= 2, '2-star First Touch ignores at most two hits');
+assert.ok(ft.byUid[503].untouched === 0 || ft.events.filter(e => e.t === 'hit' && e.to === 503).length === 0, 'hits only land after the ignores run out');
+
 console.log(`check ok: ${roster.length} players, tiers ${JSON.stringify(perTier)}, roles ${JSON.stringify(roleCount)}, looks ${manifest.looks.length}, economy ok, hex ok, combat ok (mirror ${(share * 100).toFixed(0)}% near, ${r1.actions} actions)`);

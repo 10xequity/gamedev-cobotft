@@ -272,32 +272,42 @@
   },
   "keywords": {
     "Rebound Attack": {
-      "desc": "Every third action, acts twice (hit into the block, hit again).",
-      "every": 3
+      "desc": "Every third action, acts twice (hit into the block, hit again). 2-star: three times.",
+      "every": 3,
+      "extra": 1,
+      "scales": "extra"
     },
     "Follow Through": {
-      "desc": "Attacks deal a share of their damage to hexes next to the target.",
-      "splash": 0.4
+      "desc": "Attacks deal 40% of their damage to hexes next to the target. 2-star: 80%.",
+      "splash": 0.4,
+      "scales": "splash"
     },
     "Block": {
-      "desc": "Absorbs a share of each hit taken and returns part of it to the attacker.",
+      "desc": "Absorbs 40% of each hit taken and returns 25% of it to the attacker. 2-star: returns 50%.",
       "absorb": 0.4,
-      "return": 0.25
+      "return": 0.25,
+      "scales": "return"
     },
     "First Touch": {
-      "desc": "Ignores the first hit it takes each fight."
+      "desc": "Ignores the first hit it takes each fight. 2-star: the first two.",
+      "hits": 1,
+      "scales": "hits"
     },
     "Pregame": {
-      "desc": "At combat start the two nearest allies gain mana.",
-      "mana": 20
+      "desc": "At combat start the two nearest allies gain 20 mana. 2-star: 40.",
+      "mana": 20,
+      "allies": 2,
+      "scales": "mana"
     },
     "Target": {
-      "desc": "Draws attacks first while within two rows of the net.",
-      "rows": 2
+      "desc": "Draws attacks first while within two rows of the net. 2-star: anywhere on the court.",
+      "rows": 2,
+      "scales": "rows"
     },
     "Second Wind": {
-      "desc": "Returns once at a share of max HP, keywords off.",
-      "hp": 0.3
+      "desc": "Returns once at 30% of max HP with keywords off. 2-star: 60%.",
+      "hp": 0.3,
+      "scales": "hp"
     }
   },
   "styles": {
@@ -360,12 +370,11 @@
     }
   },
   "starKeyword": {
-    "2": "double the keyword's number",
-    "3": "add a second keyword drawn by seed"
+    "multiplierFrom2Star": 2,
+    "desc": "2-star doubles the keyword's number; 3-star keeps that and adds a second keyword drawn by seed at its 1-star number."
   },
   "aggro": {
-    "Libero": 6,
-    "LiberoRowsFromNet": 2,
+    "Target": 6,
     "MiddleCentre": 4,
     "Hitter": 2,
     "FrontRowBonus": 1,

@@ -3,6 +3,7 @@ import { spriteStyle } from './sprite.js';
 import { Arena } from './arena.js';
 import * as eco from './economy.js';
 import { computeTraits } from './traits.js';
+import { keywordsAt } from './units.js';
 
 const $ = id => document.getElementById(id);
 const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
@@ -107,7 +108,8 @@ export class UI {
     } else if (inst) {
       this.selected = inst.uid;
       const u = this.g.unitsById[inst.id];
-      this.say(`${u.display} picked up: ${u.style}, ${u.keyword}. Tap a hex or bench slot to move, or Sell.`);
+      const kws = Object.entries(keywordsAt(u, inst.star, this.g.cfg)).map(([k, m]) => m > 1 ? `${k} x${m}` : k).join(' + ');
+      this.say(`${u.display} picked up: ${u.style}, ${kws}. Tap a hex or bench slot to move, or Sell.`);
     }
     this.render();
   }

@@ -42,4 +42,11 @@ export function statsAt(unit, star, cfg) {
   return { ...unit.base, hp: Math.round(unit.base.hp * m), attack: Math.round(unit.base.attack * m) };
 }
 
+// Keywords at a star: own keyword at x1 (x2 from 2-star), plus a seeded second keyword at x1 for 3-star.
+export function keywordsAt(unit, star, cfg) {
+  const kw = { [unit.keyword]: star >= 2 ? cfg.starKeyword.multiplierFrom2Star : 1 };
+  if (star >= 3) kw[pick(rngFrom(unit.id, 'star3'), Object.keys(cfg.keywords).filter(k => k !== unit.keyword))] = 1;
+  return kw;
+}
+
 export const deriveAll = (roster, cfg, lookCount) => roster.map(p => deriveUnit(p, cfg, lookCount));
