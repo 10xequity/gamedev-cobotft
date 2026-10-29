@@ -5,6 +5,7 @@ import * as eco from './economy.js';
 import { computeTraits } from './traits.js';
 import { keywordsAt } from './units.js';
 import { Playback } from './playback.js';
+import { play, isMuted, setMuted } from './sound.js';
 
 const $ = id => document.getElementById(id);
 const AUTO_KEY = 'tacticalboom.auto';
@@ -36,6 +37,7 @@ export class UI {
     if (!this.auto || this.paused || this.fighting || this.g.over || $('over').open) return;
     this.timeLeft -= 1;
     $('timer').textContent = Math.max(0, this.timeLeft);
+    if (this.timeLeft > 0 && this.timeLeft <= 5) play('tick');
     if (this.timeLeft <= 0) this.runRound();
   }
 
@@ -52,7 +54,7 @@ export class UI {
       const mineNear = r.side === 'near';
       this.arena.render({ court: mineNear ? r.near : r.far }, { court: mineNear ? r.far : r.near }, this.g.unitsById, this.g.cfg, null, r.maxHp);
       this.say(`${r.label}: fight against ${r.opponent}${r.ghost ? ' (a copy)' : ''}. Escape skips.`);
-      await this.playback.play(r.events, r.maxHp);
+      await this.playback.play(r.events, r.maxHp, r.side);
       this.setFighting(false);
     }
     this.render();
@@ -114,6 +116,7 @@ export class UI {
       b.setAttribute('aria-label', by !== null ? `${u.display}, taken by ${g.players[by].name}` : `Take ${u.display}, ${u.tier}-cost ${u.style}`);
       b.addEventListener('click', () => {
         const r = g.chooseCarousel(k);
+        if (r.ok) play('pick');
         $('carousel').close();
         this.say(r.ok ? `Carousel: ${r.unit.display} joins your bench` : r.reason);
         this.render();
@@ -130,6 +133,7 @@ export class UI {
       const b = el('button', { type: 'button', className: 'augcard' }, el('b', { textContent: a.name }), el('span', { textContent: a.desc }));
       b.addEventListener('click', () => {
         const r = g.chooseAugment(g.you, k);
+        if (r.ok) play('pick');
         $('augment').close();
         this.say(r.ok ? `Augment: ${a.name}. ${a.desc}` : r.reason);
         this.render();
@@ -211,6 +215,7 @@ export class UI {
       $('overText').textContent = `You finished ${ordinal(g.you.place)} of ${g.players.length}.`;
       $('finalPlaces').replaceChildren(...this.playerRows());
       $('over').showModal();
+      play(g.you.place === 1 ? 'win' : 'lose');
       this.say(`Game over. You finished ${ordinal(g.you.place)}.`);
     } else this.say(`${this.lastLine}. Round ${g.round.label}, +${r.income} gold.`);
   }
@@ -256,7 +261,9 @@ export class UI {
       el('span', { className: 'cost', textContent: `${u.tier}g` }),
     );
     b.addEventListener('click', () => {
+      const stars = eco.owned(this.g.you).reduce((a, i) => a + i.star, 0);
       const r = this.g.buy(k);
+      if (r.ok) play(eco.owned(this.g.you).reduce((a, i) => a + i.star, 0) <= stars ? 'merge' : 'buy');
       this.say(r.ok ? `Bought ${r.unit.display}` : r.reason);
       this.render();
     });
@@ -324,11 +331,14 @@ export class UI {
   }
 
   bind() {
-    $('sell').addEventListener('click', () => { if (this.selected === null) return; const r = this.g.sell(this.selected); this.say(r.ok ? `Sold for ${r.gold} gold` : r.reason); this.selected = null; this.render(); });
-    $('reroll').addEventListener('click', () => { const r = this.g.reroll(); this.say(r.ok ? 'New shop' : r.reason); this.render(); });
-    $('xp').addEventListener('click', () => { const r = this.g.buyXp(); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
+    $('sell').addEventListener('click', () => { if (this.selected === null) return; const r = this.g.sell(this.selected); if (r.ok) play('sell'); this.say(r.ok ? `Sold for ${r.gold} gold` : r.reason); this.selected = null; this.render(); });
+    $('reroll').addEventListener('click', () => { const r = this.g.reroll(); if (r.ok) play('reroll'); this.say(r.ok ? 'New shop' : r.reason); this.render(); });
+    $('xp').addEventListener('click', () => { const lv = this.g.you.level; const r = this.g.buyXp(); if (r.ok) play(this.g.you.level > lv ? 'level' : 'buy'); this.say(r.ok ? `Level ${this.g.you.level}` : r.reason); this.render(); });
     $('next').addEventListener('click', () => this.runRound());
     $('skip').addEventListener('click', () => this.playback.skip());
+    const showMute = () => { $('mute').setAttribute('aria-pressed', String(isMuted())); $('mute').textContent = isMuted() ? 'Sound off' : 'Sound on'; };
+    showMute();
+    $('mute').addEventListener('click', () => { setMuted(!isMuted()); showMute(); play('pick'); this.say(isMuted() ? 'Sound off' : 'Sound on'); });
     for (const d of ['augment', 'carousel']) $(d).addEventListener('cancel', e => e.preventDefault()); // a pick is required; Escape does not dismiss
     $('speed').addEventListener('click', () => {
       this.playback.speed = this.playback.speed === 1 ? 2 : 1;

@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v1.6.0 — 2026-10-29 · Milestone 16: sound
+
+- `js/sound.js`: short synthesized tones (Web Audio oscillators), no audio files and no downloads. Buy, merge
+  chime, sell, reroll, level up, augment and carousel picks, a tick in the last 5 seconds of the timer; in your
+  fight the hits, spikes and casts, sets, dodges and knockouts (at most two a beat, none while skipping), and a
+  win or loss jingle at the end of a fight and of the game.
+- Sound on/off button in the header, remembered on this device. Audio starts after your first tap, as browsers
+  require.
+
 ## v1.5.0 — 2026-10-29 · Milestone 15: scouting and fight damage
 
 - Scouting: every living bot in the Players list is a button. Pick one and their board stands on the far half

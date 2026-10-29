@@ -3,6 +3,7 @@
 // between two actions happens in that beat. Reduced motion: no ball, no pose frames.
 import { spriteStyle } from './sprite.js';
 import { FAR_UID } from './game.js';
+import { play } from './sound.js';
 
 const BEAT_MS = 380; // about 28 s for a typical 74-action fight at 1x
 const CAST_POSE = { Spike: 'spike', 'Ace Serve': 'spike', Slide: 'spike', Tip: 'spike', Set: 'set', Dig: 'dig', 'Big Block': 'block' };
@@ -59,31 +60,35 @@ export class Playback {
     ], { duration: BEAT_MS * 0.6 / this.speed, easing: 'ease-in-out' }).finished.then(() => ball.remove(), () => ball.remove());
   }
 
-  // events: the fight's list; maxHp: uid → max HP.
-  async play(events, maxHp) {
-    this.maxHp = maxHp; this.skipping = false;
+  // At most two sounds a beat, none while skipping, so a busy rally does not turn into noise.
+  sfx(name) { if (this.skipping || this.beatSounds >= 2) return; this.beatSounds += 1; play(name); }
+
+  // events: the fight's list; maxHp: uid → max HP; mine: your side in the sim ('near' or 'far').
+  async play(events, maxHp, mine) {
+    this.maxHp = maxHp; this.skipping = false; this.beatSounds = 0;
     for (const uid of Object.keys(maxHp)) this.hp(uid, maxHp[uid]);
     let aimed = false; // the actor's pose and ball already shown this beat
     for (const e of events) {
       switch (e.t) {
-        case 'action': await this.wait(BEAT_MS); aimed = false; break;
-        case 'set': this.pose(e.from, 'set'); break;
+        case 'action': await this.wait(BEAT_MS); aimed = false; this.beatSounds = 0; break;
+        case 'set': this.pose(e.from, 'set'); this.sfx('set'); break;
         case 'rebound': await this.wait(BEAT_MS / 2); aimed = false; this.float(e.uid, 'Rebound', 'kw'); break;
-        case 'cast': this.pose(e.uid, CAST_POSE[e.ability] || 'spike'); this.float(e.uid, e.ability, 'kw'); aimed = true; break;
+        case 'cast': this.pose(e.uid, CAST_POSE[e.ability] || 'spike'); this.float(e.uid, e.ability, 'kw'); this.sfx('spike'); aimed = true; break;
         case 'hit':
           if (!aimed && e.kind === 'hit') { this.pose(e.from, 'spike'); this.ball(e.from, e.to); aimed = true; await this.wait(BEAT_MS * 0.55); }
           if (e.kind === 'Block') this.pose(e.from, 'block');
-          this.pose(e.to, 'dig'); this.hp(e.to, e.hp); this.float(e.to, `-${e.amount}`, 'dmg'); break;
-        case 'dodge': this.pose(e.from, 'spike'); this.ball(e.from, e.to); this.float(e.to, 'Dodge', 'kw'); break;
+          this.pose(e.to, 'dig'); this.sfx('hit'); this.hp(e.to, e.hp); this.float(e.to, `-${e.amount}`, 'dmg'); break;
+        case 'dodge': this.pose(e.from, 'spike'); this.ball(e.from, e.to); this.float(e.to, 'Dodge', 'kw'); this.sfx('dodge'); break;
         case 'ignore': this.float(e.to, e.keyword, 'kw'); break;
         case 'heal': this.hp(e.to, e.hp); this.float(e.to, `+${e.amount}`, 'heal'); break;
         case 'shield': this.float(e.to, 'Shield', 'kw'); break;
         case 'revive': { const spr = this.tile(e.uid)?.querySelector('.spr'); if (spr) delete spr.dataset.down; this.tile(e.uid)?.classList.remove('down'); this.hp(e.uid, e.hp); this.float(e.uid, e.keyword, 'heal'); break; }
-        case 'death': this.pose(e.uid, 'faint', true); { const t = this.tile(e.uid); t?.classList.add('down'); t?.querySelector('.spr')?.setAttribute('data-down', '1'); } break;
+        case 'death': this.pose(e.uid, 'faint', true); this.sfx('down'); { const t = this.tile(e.uid); t?.classList.add('down'); t?.querySelector('.spr')?.setAttribute('data-down', '1'); } break;
         case 'end': // the winning side's survivors dance
           for (const t of this.box.querySelectorAll('.hex[data-uid]:not(.down)')) {
             if (e.winner === (Number(t.dataset.uid) >= FAR_UID ? 'far' : 'near')) this.pose(t.dataset.uid, 'dance', true);
           }
+          if (e.winner) play(e.winner === mine ? 'win' : 'lose');
           await this.wait(BEAT_MS * 2);
           break;
       }
