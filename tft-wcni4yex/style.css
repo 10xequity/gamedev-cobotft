@@ -195,3 +195,13 @@ html[data-motion="reduce"] .hop { animation: none !important; }
 .achs li { padding: 4px 8px; border-radius: 6px; border: 2px dashed var(--teal-dark); }
 .achs li.got { border: 2px solid var(--gold-dark); background: var(--gold); }
 .achs li b { font-family: var(--display); }
+/* ---- hit effects ---- */
+.spark { position: absolute; left: 50%; top: 35%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; pointer-events: none; z-index: 45;
+  background: radial-gradient(circle, #fff 0 20%, var(--cream) 30%, rgba(255, 249, 240, 0) 70%); animation: burst .45s ease-out forwards; }
+.spark.big { width: 44px; height: 44px; margin: -22px 0 0 -22px; background: radial-gradient(circle, #fff 0 15%, var(--gold) 35%, rgba(229, 184, 0, 0) 70%); }
+@keyframes burst { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+.ko { position: absolute; left: 50%; top: 10%; transform: translateX(-50%); font-family: var(--display); font-weight: 800; font-size: 18px; letter-spacing: 1px;
+  color: var(--black); background: var(--gold); border: 2px solid var(--black); border-radius: 6px; padding: 0 6px; z-index: 46; pointer-events: none; animation: kopop .9s ease-out forwards; }
+@keyframes kopop { 0% { transform: translateX(-50%) scale(.4); opacity: 0; } 20% { transform: translateX(-50%) scale(1.15); opacity: 1; } 75% { opacity: 1; } 100% { transform: translateX(-50%) translateY(-10px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .spark, .ko { display: none; } }
+html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: none; }

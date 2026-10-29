@@ -224,7 +224,7 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 25. Daily challenge: one shared seed per day, your best kept. ✔ v2.5.0
 26. Local ladder: a rating that moves with placements, with ranks. ✔ v2.6.0
 27. Achievements (local), shown in History. ✔ v2.7.0
-28. Hit sparks, screen shake, knockout effects (reduced-motion safe).
+28. Hit sparks, screen shake, knockout effects (reduced-motion safe). ✔ v2.8.0
 29. Guided first game: step-by-step tips.
 30. Watch the other fights of each round.
 31. Spanish language switch.

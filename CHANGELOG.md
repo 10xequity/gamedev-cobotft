@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.8.0 — 2026-10-29 · Milestone 28: hit effects
+
+- Every hit bursts a spark on the target (ability hits a bigger gold one); a hit worth more than a quarter of the
+  target's HP and every knockout give the court a short shake; a knocked-out player gets a "KO" badge.
+- None of it plays with reduced motion (the device setting or Settings → Motion → Reduce) or while skipping.
+- Checked in Chrome: 19 sparks and 2 KO badges in six seconds of a fight; none with Motion set to Reduce.
+
 ## v2.7.0 — 2026-10-29 · Milestone 27: achievements
 
 - `js/achievements.js`: 17 achievements kept on this device, checked when a game ends: Opening Serve, Top Half,

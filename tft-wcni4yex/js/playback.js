@@ -43,6 +43,30 @@ export class Playback {
     setTimeout(() => n.remove(), 900);
   }
 
+  // Effects: a spark on every hit (gold and bigger for abilities), a short court shake on big
+  // hits and knockouts, a KO badge. None with reduced motion or while skipping.
+  spark(uid, big) {
+    if (this.skipping || reducedMotion()) return;
+    const unit = this.tile(uid)?.querySelector('.unit');
+    if (!unit) return;
+    const n = Object.assign(document.createElement('span'), { className: 'spark' + (big ? ' big' : '') });
+    unit.append(n);
+    setTimeout(() => n.remove(), 450);
+  }
+  shake(strength) {
+    if (this.skipping || reducedMotion()) return;
+    const d = 3 + 5 * strength;
+    this.box.animate([{ transform: 'none' }, { transform: `translate(${d}px, ${-d / 2}px)` }, { transform: `translate(${-d}px, ${d / 2}px)` }, { transform: `translate(${d / 2}px, 0)` }, { transform: 'none' }], { duration: 220 / this.speed });
+  }
+  ko(uid) {
+    if (this.skipping || reducedMotion()) return;
+    const unit = this.tile(uid)?.querySelector('.unit');
+    if (!unit) return;
+    const n = Object.assign(document.createElement('span'), { className: 'ko', textContent: 'KO' });
+    unit.append(n);
+    setTimeout(() => n.remove(), 900);
+  }
+
   ball(fromUid, toUid) {
     if (this.skipping || reducedMotion()) return;
     const a = this.tile(fromUid)?.querySelector('.spr'), b = this.tile(toUid)?.querySelector('.spr');
@@ -79,13 +103,16 @@ export class Playback {
         case 'hit':
           if (!aimed && e.kind === 'hit') { this.pose(e.from, 'spike'); this.ball(e.from, e.to); aimed = true; await this.wait(BEAT_MS * 0.55); }
           if (e.kind === 'Block') this.pose(e.from, 'block');
-          this.pose(e.to, 'dig'); this.sfx('hit'); this.hp(e.to, e.hp); this.float(e.to, `-${e.amount}`, 'dmg'); break;
+          this.pose(e.to, 'dig'); this.sfx('hit'); this.hp(e.to, e.hp); this.float(e.to, `-${e.amount}`, 'dmg');
+          this.spark(e.to, e.kind !== 'hit' && e.kind !== 'Follow Through' && e.kind !== 'Block');
+          if (e.amount > 0.25 * this.maxHp[e.to]) this.shake(0.5);
+          break;
         case 'dodge': this.pose(e.from, 'spike'); this.ball(e.from, e.to); this.float(e.to, 'Dodge', 'kw'); this.sfx('dodge'); break;
         case 'ignore': this.float(e.to, e.keyword, 'kw'); break;
         case 'heal': this.hp(e.to, e.hp); this.float(e.to, `+${e.amount}`, 'heal'); break;
         case 'shield': this.float(e.to, 'Shield', 'kw'); break;
         case 'revive': { const spr = this.tile(e.uid)?.querySelector('.spr'); if (spr) delete spr.dataset.down; this.tile(e.uid)?.classList.remove('down'); this.hp(e.uid, e.hp); this.float(e.uid, e.keyword, 'heal'); break; }
-        case 'death': this.pose(e.uid, 'faint', true); this.sfx('down'); { const t = this.tile(e.uid); t?.classList.add('down'); t?.querySelector('.spr')?.setAttribute('data-down', '1'); } break;
+        case 'death': this.pose(e.uid, 'faint', true); this.sfx('down'); this.ko(e.uid); this.shake(1); { const t = this.tile(e.uid); t?.classList.add('down'); t?.querySelector('.spr')?.setAttribute('data-down', '1'); } break;
         case 'end': // the winning side's survivors dance
           for (const t of this.box.querySelectorAll('.hex[data-uid]:not(.down)')) {
             if (e.winner === (Number(t.dataset.uid) >= FAR_UID ? 'far' : 'near')) this.pose(t.dataset.uid, 'dance', true);
