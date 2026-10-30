@@ -416,12 +416,12 @@
     "Colorado": "#065A62"
   },
   "roleArt": {
-    "Outside": { "pose": "spike", "kit": "teal" },
-    "Opposite": { "pose": "spike", "flip": true, "kit": "teal" },
-    "Middle": { "pose": "block", "kit": "black" },
-    "Setter": { "pose": "set", "kit": "black" },
-    "Libero": { "pose": "dig", "kit": "white" },
-    "Utility": { "pose": "threeq_white", "kit": "white" }
+    "Outside": { "abbr": "OH", "pose": "spike", "kit": "teal" },
+    "Opposite": { "abbr": "OPP", "pose": "spike", "flip": true, "kit": "teal" },
+    "Middle": { "abbr": "MB", "pose": "block", "kit": "black" },
+    "Setter": { "abbr": "S", "pose": "set", "kit": "black" },
+    "Libero": { "abbr": "L", "pose": "dig", "kit": "white" },
+    "Utility": { "abbr": "U", "pose": "threeq_white", "kit": "white" }
   },
   "kits": {
     "white": { "bg": "#FFF9F0", "fg": "#111111" },

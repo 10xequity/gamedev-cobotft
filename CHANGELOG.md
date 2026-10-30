@@ -2,6 +2,14 @@
 
 Player names never appear in this file.
 
+## v2.20.0 — 2026-10-29 · Milestone 40: role letters beside kit colours, kit contrast check
+
+- Bench, shop and carousel cards carry the role's volleyball letters in the corner, in the kit colour: OH,
+  OPP, MB, S, L, U (`config roleArt.abbr`). Roles now read without relying on colour alone. Screen readers
+  already hear the role in each card's label, so the letters are hidden from them.
+- `check.mjs` now fails if a role lacks art, a kit or letters, or if any kit's text falls under the 4.5:1
+  contrast minimum (current kits: white 18.0, black 18.0, teal 4.7).
+
 ## v2.19.0 — 2026-10-29 · Milestone 39: row hints while dragging
 
 - While you drag a unit (or a shop card), the empty hexes in the row that suits her role glow gold and the

@@ -241,3 +241,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 38 ✔ (v2.18.0) court units hold their role pose while planning.
 
 ### Milestone 39 ✔ (v2.19.0) row hints while dragging.
+
+### Milestone 40 ✔ (v2.20.0) role letters beside kit colours, kit contrast check.

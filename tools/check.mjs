@@ -8,6 +8,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const GAME = join(ROOT, 'tft-wcni4yex');
 const roster = JSON.parse(readFileSync(join(GAME, 'data', 'roster.json'), 'utf8'));
 const cfg = JSON.parse(readFileSync(join(GAME, 'data', 'config.json'), 'utf8'));
+// Role kits: every role has art and a kit, every kit's text is readable on it (WCAG AA, 4.5:1).
+const lum = hex => { const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+for (const role of Object.keys(cfg.roles)) { const art = cfg.roleArt[role]; assert.ok(art && cfg.kits[art.kit] && art.abbr, `role ${role} has no art, kit or abbreviation`); }
+for (const [name, k] of Object.entries(cfg.kits)) assert.ok(contrast(k.bg, k.fg) >= 4.5, `kit ${name} text contrast ${contrast(k.bg, k.fg).toFixed(2)} < 4.5`);
 
 // Roster: only public fields, every id and display name unique.
 const ALLOWED = ['id', 'first', 'display', 'team'].sort().join();

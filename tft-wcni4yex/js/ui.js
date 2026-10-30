@@ -432,6 +432,8 @@ export class UI {
     const k = this.g.cfg.kits[this.g.cfg.roleArt[u.role].kit];
     b.style.setProperty('--ring', this.g.cfg.tierRing[String(u.tier)]);
     b.style.setProperty('--kit-bg', k.bg); b.style.setProperty('--kit-fg', k.fg);
+    // The role's letters in the kit colour, so roles read without relying on colour alone.
+    b.append(el('span', { className: 'abbr', ariaHidden: 'true', textContent: this.g.cfg.roleArt[u.role].abbr }));
   }
 
   // ---- unit card: hold a unit for half a second, or focus it and press I ----
