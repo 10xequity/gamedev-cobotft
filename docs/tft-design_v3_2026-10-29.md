@@ -217,7 +217,7 @@ save format versioning. All numbers live in `data/config.json`.
 Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no network after load.
 
 21. ✔ v2.2.0 HD arenas drawn in code (sharp at any size), replacing the pixel-art stages; AI image prompts kept in
-    `docs/arena-art-prompts_v1_2026-10-29.md` for an optional photo-like set later.
+    `docs/arena-art-prompts_v2_2026-10-30.md` for an optional photo-like set later.
 22. Floor, court lines, net and backdrop drawn in the same perspective as the hex board. ✔ v2.2.0
 23. Settings panel (sound, timer, bots, motion, text size). ✔ v2.3.0
 24. Replay any of your fights from the current game. ✔ v2.4.0
@@ -271,3 +271,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 53 ✔ (v2.33.0) eight new achievements.
 
 ### Milestone 54 ✔ (v2.34.0) balance pass 5 with gear, bug sweep.
+
+### Milestone 55 ✔ (v2.35.0) one-screen wide layout, sell by dragging to the shop, lifted drag, taller net, new park.

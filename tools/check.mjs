@@ -392,7 +392,7 @@ const items = await import(pathToFileURL(join(GAME, 'js', 'items.js')).href);
   // every pair of pieces makes exactly one recipe
   const ids = cfg.items.components.map(c => c.id);
   for (const x of ids) for (const y of ids) assert.equal(cfg.items.recipes.filter(r => r.from.slice().sort().join('+') === [x, y].sort().join('+')).length, 1, `one recipe for ${x} + ${y}`);
-  for (const d of [...cfg.items.components, ...cfg.items.recipes]) { assert.ok(d.name_es && d.desc_es, `Spanish for ${d.id}`); for (const k of Object.keys(d.mods)) assert.ok(EFFECTS.includes(k), `${d.id}: unknown effect ${k}`); }
+  for (const d of [...cfg.items.components, ...cfg.items.recipes]) { assert.ok(items.defOf(d.id, cfg)?.abbr, `${d.id} resolves with a label (court tags use it)`); assert.ok(d.name_es && d.desc_es, `Spanish for ${d.id}`); for (const k of Object.keys(d.mods)) assert.ok(EFFECTS.includes(k), `${d.id}: unknown effect ${k}`); }
   const before = you.items.length + inst.items.length;
   eco.sell(you, g.pool, inst.uid, g.unitsById);
   assert.equal(you.items.length, before, 'selling returns her gear to the bag');

@@ -16,7 +16,7 @@ export const THEMES = {
   retro: { wall: ['#3a0b18', '#6b1a2c'], crowd: ['#E5B800', '#0E7C86', '#FFF9F0', '#d1495b'], led: ['#d1495b', '#E5B800'], light: '#ffd0e0',
     apron: ['#C49A00', '#8a6b00'], floor: ['#ddb06b', '#b9843f'], planks: true, line: '#111111' },
   park: { wall: ['#6fb7e0', '#d9f0f8'], crowd: null, sky: 'day', led: null, light: '#fff6d6', beams: false,
-    apron: ['#3f7f2e', '#2f6823'], floor: ['#79b552', '#5f9d3d'], planks: false, mow: true, line: '#FFF9F0' },
+    apron: ['#4a8a34', '#3a7029'], floor: ['#86c160', '#68a845'], planks: false, mow: true, line: '#FFF9F0' },
 };
 
 const pt = p => `${(p.x * W).toFixed(1)},${(p.y * H).toFixed(1)}`;
@@ -55,20 +55,34 @@ export function stageSVG(name, project, seed = 'stage') {
     }
     parts.push(`<g filter="url(#soft)">${dots.join('')}</g>`);
   } else if (t.sky === 'day') {
-    // Daytime: sun, a few soft clouds, and a tree line where the stands would be.
-    parts.push(`<circle cx="${(W * 0.82).toFixed(1)}" cy="70" r="70" fill="#fff6d6" opacity=".35" filter="url(#glow)"/><circle cx="${(W * 0.82).toFixed(1)}" cy="70" r="34" fill="#fff6d6"/>`);
+    // Daytime park: sun glow, soft clouds, two layers of distant hills, then a tree line with lit tops
+    // and shaded bases, and a trimmed hedge where the stands would be.
+    parts.push(`<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa9dc"/><stop offset=".7" stop-color="#bfe3f3"/><stop offset="1" stop-color="#f3efd8"/></linearGradient>
+      <radialGradient id="sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fffbe8"/><stop offset=".25" stop-color="#fff3c4" stop-opacity=".9"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient></defs>`,
+      `<rect width="${W}" height="${top.toFixed(1)}" fill="url(#sky)"/>`,
+      `<circle cx="${(W * 0.8).toFixed(1)}" cy="64" r="150" fill="url(#sun)"/>`);
     const clouds = [];
-    for (let i = 0; i < 6; i++) {
-      const cx = rng() * W, cy = 30 + rng() * (top * 0.35), r = 22 + rng() * 26;
-      clouds.push(`<ellipse cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" rx="${(r * 2.4).toFixed(1)}" ry="${r.toFixed(1)}" fill="#fff" opacity="${(0.55 + rng() * 0.3).toFixed(2)}"/>`);
+    for (let i = 0; i < 7; i++) {
+      const cx = rng() * W, cy = 26 + rng() * (top * 0.3), r = 16 + rng() * 22;
+      for (let k = 0; k < 4; k++) clouds.push(`<ellipse cx="${(cx + (k - 1.5) * r * 1.1).toFixed(1)}" cy="${(cy - (k % 2) * r * 0.35).toFixed(1)}" rx="${(r * 1.3).toFixed(1)}" ry="${(r * 0.8).toFixed(1)}" fill="#fff" opacity=".8"/>`);
     }
-    parts.push(`<g filter="url(#soft)">${clouds.join('')}</g>`);
+    parts.push(`<g filter="url(#soft)" opacity=".85">${clouds.join('')}</g>`);
+    const hills = (y, amp, fill, op) => {
+      let d = `M0,${top} L0,${y}`;
+      for (let x = 0; x <= W; x += 125) d += ` Q${x + 62},${(y - amp * (0.4 + rng() * 0.6)).toFixed(1)} ${x + 125},${(y + (rng() - 0.5) * amp * 0.4).toFixed(1)}`;
+      return `<path d="${d} L${W},${top} Z" fill="${fill}" opacity="${op}"/>`;
+    };
+    parts.push(`<g filter="url(#soft)">${hills(top - 70, 50, '#8fb8a6', 0.75)}${hills(top - 48, 40, '#6f9f7c', 0.9)}</g>`);
     const trees = [];
-    for (let x = -20; x < W + 40; x += 26 + rng() * 22) {
-      const r = 34 + rng() * 30, y = top - 18 - rng() * 22;
-      trees.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${['#2f6a2a', '#3d7f33', '#285c25'][Math.floor(rng() * 3)]}"/>`);
+    for (let x = -30; x < W + 40; x += 30 + rng() * 26) {
+      const r = 26 + rng() * 26, y = top - 30 - rng() * 18;
+      trees.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${r.toFixed(1)}" ry="${(r * 1.1).toFixed(1)}" fill="#2c5e2a"/>`,
+        `<ellipse cx="${(x - r * 0.25).toFixed(1)}" cy="${(y - r * 0.3).toFixed(1)}" rx="${(r * 0.7).toFixed(1)}" ry="${(r * 0.65).toFixed(1)}" fill="#4f8c3c" opacity=".9"/>`,
+        `<ellipse cx="${(x - r * 0.35).toFixed(1)}" cy="${(y - r * 0.45).toFixed(1)}" rx="${(r * 0.35).toFixed(1)}" ry="${(r * 0.3).toFixed(1)}" fill="#86b95a" opacity=".55"/>`);
     }
-    parts.push(`<g filter="url(#soft)">${trees.join('')}</g>`, `<rect x="0" y="${(top - 26).toFixed(1)}" width="${W}" height="30" fill="#2a5a24"/>`);
+    parts.push(`<g>${trees.join('')}</g>`,
+      `<rect x="0" y="${(top - 22).toFixed(1)}" width="${W}" height="26" rx="10" fill="#2f6427"/>`,
+      `<rect x="0" y="${(top - 22).toFixed(1)}" width="${W}" height="6" fill="#4e8a3a" opacity=".7"/>`);
   } else {
     const stars = [];
     for (let i = 0; i < 120; i++) stars.push(`<circle cx="${(rng() * W).toFixed(1)}" cy="${(rng() * (top - 60)).toFixed(1)}" r="${(0.6 + rng() * 1.4).toFixed(1)}" fill="#FFF9F0" opacity="${(0.3 + rng() * 0.6).toFixed(2)}"/>`);
@@ -96,11 +110,16 @@ export function stageSVG(name, project, seed = 'stage') {
     for (let i = 0; i < 32; i += 3) planks.push(quad(project, i / 32, (i + 1) / 32, 0, 1, 'fill="#fff" opacity=".05"'));
     parts.push(planks.join(''));
   } else if (t.mow) {
-    // Mown grass: alternating stripes across the court, plus a scatter of darker blades.
-    const stripes = [];
-    for (let i = 0; i < 12; i += 2) stripes.push(quad(project, -0.6, 1.6, i / 12, (i + 1) / 12, 'fill="#fff" opacity=".07"'));
-    for (let i = 0; i < 300; i++) { const p = project(rng() * 1.2 - 0.1, rng()); stripes.push(`<circle cx="${(p.x * W).toFixed(1)}" cy="${(p.y * H).toFixed(1)}" r="${(0.6 + p.s * 0.7).toFixed(1)}" fill="#2f6a2a" opacity=".3"/>`); }
-    parts.push(stripes.join(''));
+    // Mown grass: stripes running into the distance (as a mower leaves them), fine blade texture,
+    // and warm sunlight falling across from the right.
+    const g = [];
+    for (let i = 0; i < 22; i += 2) g.push(quad(project, -0.6 + i * 0.1, -0.5 + i * 0.1, -0.02, 1.25, 'fill="#fff" opacity=".06"'));
+    for (let i = 0; i < 900; i++) {
+      const p = project(rng() * 1.6 - 0.3, rng() * 1.2), l = 2 + p.s * 4;
+      g.push(`<line x1="${(p.x * W).toFixed(1)}" y1="${(p.y * H).toFixed(1)}" x2="${(p.x * W + (rng() - 0.5) * 2).toFixed(1)}" y2="${(p.y * H - l).toFixed(1)}" stroke="${rng() < 0.5 ? '#2f6a2a' : '#a6d77a'}" stroke-width="${(0.6 + p.s * 0.6).toFixed(1)}" opacity=".35"/>`);
+    }
+    parts.push(g.join(''), `<defs><radialGradient id="sunfall" cx=".85" cy=".1" r=".9"><stop offset="0" stop-color="#fff2b0" stop-opacity=".28"/><stop offset="1" stop-color="#fff2b0" stop-opacity="0"/></radialGradient></defs>`,
+      `<rect x="0" y="${top.toFixed(1)}" width="${W}" height="${(H - top).toFixed(1)}" fill="url(#sunfall)"/>`);
   } else {
     const grain = [];
     for (let i = 0; i < 400; i++) { const p = project(rng() * 1.2 - 0.1, rng()); grain.push(`<circle cx="${(p.x * W).toFixed(1)}" cy="${(p.y * H).toFixed(1)}" r="${(0.6 + p.s * 0.8).toFixed(1)}" fill="#7a5a2a" opacity=".25"/>`); }

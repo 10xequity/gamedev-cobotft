@@ -2,10 +2,11 @@
   --teal: #0E7C86; --teal-dark: #065A62; --teal-light: #E4F2F3;
   --gold: #E5B800; --gold-dark: #C49A00; --cream: #FFF9F0; --black: #111111;
   --display: 'Montserrat', sans-serif; --body: 'Open Sans', sans-serif;
+  --page: #0a0a0a; --panel: #161616; --panel-2: #1f1f1f;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
-body { background: var(--teal); color: var(--cream); font-family: var(--body); font-size: 15px; line-height: 1.4; }
+body { background: var(--page); color: var(--cream); font-family: var(--body); font-size: 15px; line-height: 1.4; }
 h1, h2, h3 { font-family: var(--display); font-weight: 800; margin: 0; }
 button { font: inherit; cursor: pointer; }
 :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
@@ -42,7 +43,7 @@ dialog .close { float: right; border: 2px solid var(--black); background: var(--
 
 /* ---- game screen ---- */
 body.game { padding-bottom: 96px; }
-.bar { position: sticky; top: 0; z-index: 5; background: var(--teal-dark); padding: 8px 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-weight: 600; }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--panel); padding: 8px 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-weight: 600; }
 .bar .stat .k { color: var(--cream); font-family: var(--display); font-size: 12px; }
 .bar .stat b { font-size: 18px; }
 .bar #pause { margin-left: auto; }
@@ -102,7 +103,7 @@ body.game { padding-bottom: 96px; }
 .lit .spr { filter: drop-shadow(0 0 3px var(--gold)) drop-shadow(0 0 3px var(--gold)); }
 .slot.lit, .shopcard.lit { outline: 3px solid var(--gold); outline-offset: 1px; }
 .players { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 4px; font-size: 12px; }
-.players li { padding: 3px 6px; border-radius: 6px; background: var(--teal-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.players li { padding: 3px 6px; border-radius: 6px; background: var(--panel-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .players li.you { background: var(--gold); color: var(--black); }
 .players li.out { text-decoration: line-through; }
 dialog .players { grid-template-columns: repeat(2, 1fr); }
@@ -151,7 +152,9 @@ dialog .players li.you { color: var(--black); }
 .hex .unit .spr { background-repeat: no-repeat; }
 .hex .unit.flip .spr { transform: scaleX(-1); }
 .hex .unit .stars { color: var(--gold); font-size: 11px; line-height: 1; text-shadow: 0 1px 0 var(--black); margin-top: -2px; }
-.dragghost { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; will-change: transform; }
+.dragghost { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; will-change: transform; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .55)); }
+.dragghost > * { rotate: -3deg; scale: 1.06; }
+.lifted { opacity: .25; }
 .dragghost .spr { background-repeat: no-repeat; filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
 .slot.drop, #sell.drop { outline: 4px solid var(--gold); outline-offset: -2px; }
 /* Shop cards let a vertical swipe scroll the page on phones; tap still buys, mouse drags still work. */
@@ -256,7 +259,7 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
   .bar .stat .k { font-size: 10px; }
   .bar .stat b { font-size: 15px; }
   .bar { flex-wrap: wrap; row-gap: 6px; column-gap: 9px; }
-  .pocket { display: block; position: absolute; left: 12px; bottom: 100%; padding: 3px 8px; border-radius: 6px 6px 0 0; background: var(--teal-dark); color: var(--cream); font-weight: 700; font-size: 13px; }
+  .pocket { display: block; position: absolute; left: 12px; bottom: 100%; padding: 3px 8px; border-radius: 6px 6px 0 0; background: var(--panel); color: var(--cream); font-weight: 700; font-size: 13px; }
   .shopcard { min-width: 0; min-height: 0; padding: 4px 2px; }
   .shopcard .spr { zoom: .7; }
   .shopcard .nm { font-size: 10px; padding: 1px 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -275,3 +278,75 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
 .gearpc b { font-family: var(--display); color: var(--teal-dark); }
 .gearpc[aria-pressed="true"] { background: var(--gold); }
 .gearpc { touch-action: none; }
+
+/* ==== v2.35 layout: black stage, dark spotlight cards, sell over the shop, wide no-scroll board ==== */
+/* Cards: a dark spotlight tinted with the cost colour, so the figure stands out. */
+.shopcard, .slot.filled { background: radial-gradient(ellipse 80% 70% at 50% 35%, color-mix(in srgb, var(--ring) 45%, #2a2a2a) 0%, #151515 75%); color: var(--cream); }
+.shopcard .tr { color: #d9e6e7; }
+.slot.filled .stars, .slot .stars { color: var(--gold); }
+.shopcard:disabled, .shopcard[aria-disabled="true"] { background: #1b1b1b; color: #9aa; border-style: dashed; }
+.shopcard[aria-disabled="true"] .spr { opacity: .55; }
+.slot { background: rgba(255, 255, 255, .04); border-color: rgba(255, 249, 240, .35); }
+.zone h2, .zone h2 .sub { color: var(--cream); }
+
+/* Sell: drop a player on the shop (or pick her up and tap here). */
+.shopwrap { position: relative; }
+#sell { position: absolute; inset: 0; z-index: 4; border-radius: 10px; border: 3px dashed var(--gold); background: rgba(10, 10, 10, .82); color: var(--gold); font-family: var(--display); font-weight: 800; font-size: 20px; }
+#sell:disabled { display: none; }
+#sell.drop { background: rgba(229, 184, 0, .25); }
+
+/* Ready only matters with auto-advance off (Settings); the timer moves the game on otherwise. */
+body:not(.manual) #next { display: none; }
+.actions { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--panel); }
+
+/* The net stands from the floor to above head height: posts the full height, the mesh in the top
+   part with open space underneath, white tape top and bottom, red-and-white antennas. */
+.arena .net { height: calc(27% * var(--netS)); background: none; border: 0; }
+.arena .net::before, .arena .net::after { top: -6%; bottom: 0; width: 1.6%; background: linear-gradient(90deg, #2a2a2a, #555 50%, #1a1a1a); }
+.arena .net .mesh { position: absolute; left: 2.5%; right: 2.5%; top: 0; height: 44%; background: repeating-linear-gradient(90deg, rgba(255,249,240,.5) 0 1px, transparent 1px 6px), repeating-linear-gradient(0deg, rgba(255,249,240,.5) 0 1px, transparent 1px 6px), rgba(0, 0, 0, .18); border-top: 5px solid var(--cream); border-bottom: 3px solid var(--cream); box-shadow: 0 6px 10px rgba(0, 0, 0, .25); }
+.arena .net .mesh::before, .arena .net .mesh::after { content: ""; position: absolute; top: -60%; height: 160%; width: 3px; background: repeating-linear-gradient(0deg, #d1495b 0 6px, #fff 6px 12px); }
+.arena .net .mesh::before { left: 0; } .arena .net .mesh::after { right: 0; }
+
+/* Wide screens: the whole game in one window, nothing scrolls. Traits down the left, players and
+   fight damage down the right, the court in the middle, bench and shop docked at the bottom. */
+@media (min-width: 900px) and (min-height: 600px) {
+  html, body { height: 100%; overflow: hidden; }
+  body, body.game { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100dvh; padding-bottom: 0; }
+  .bar { position: static; max-width: none; margin: 0; padding: 6px 14px; gap: 6px 14px; }
+  .bar #pause { margin-left: auto; }
+  .board { display: grid; grid-template-columns: 220px minmax(0, 1fr) 240px; gap: 10px; min-height: 0; padding: 6px 10px 0; }
+  .board .zone, .dock .zone { max-width: none; margin: 0; padding: 0; }
+  .side { min-height: 0; overflow-y: auto; display: grid; align-content: start; gap: 10px; padding-right: 2px; scrollbar-width: thin; }
+  .side .traits { flex-direction: column; flex-wrap: nowrap; }
+  .side .players { grid-template-columns: 1fr; }
+  .center { display: flex; flex-direction: column; align-items: center; min-height: 0; }
+  .center h2 { align-self: stretch; }
+  .center .arena { flex: 1 1 0; min-height: 0; height: 100%; width: auto; max-width: 100%; }
+  .center .msg { margin: 4px 0 0; min-height: 1.3em; font-size: 13px; text-align: center; }
+  .dock { background: var(--panel); border-top: 2px solid #262626; padding: 6px 10px 8px; display: grid; gap: 6px; justify-items: center; }
+  .dock h2#hBench, .dock h2#hShop { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .dock .slots.bench { grid-template-columns: repeat(9, 76px); justify-content: center; }
+  .dock .gearbag { justify-content: center; }
+  .shopbar { display: grid; grid-template-columns: 130px minmax(0, 720px); gap: 8px; width: min(100%, 870px); }
+  .actions { position: static; transform: none; width: auto; max-width: none; margin: 0; padding: 0; background: none; grid-auto-flow: row; grid-auto-columns: auto; align-content: stretch; }
+  .actions button { padding: 6px 4px; background: #262626; border: 2px solid #3d3d3d; font-size: 15px; }
+  .actions button:hover:not(:disabled) { border-color: var(--gold); }
+  .actions button:disabled { background: #1b1b1b; border: 2px dashed #444; color: #8a8a8a; }
+  .actions button:disabled small { color: #8a8a8a; }
+  .pocket { display: none !important; }
+  .shopcard { min-height: 0; height: clamp(124px, 20vh, 176px); overflow: hidden; padding: 4px 3px; align-content: start; }
+  .shopcard .spr { zoom: .82; }
+  .shopcard .tr { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .shopcard .hint { top: 3px; left: 3px; }
+  /* Bench and gear share one row so the court keeps as much height as possible. */
+  .dock > section[aria-labelledby="hBench"] { display: flex; align-items: center; gap: 10px; }
+  .dock .slots.bench { grid-template-columns: repeat(9, clamp(46px, 7vh, 62px)); gap: 5px; }
+  .dock .slot .spr { zoom: .78; }
+  .dock .gearbag { margin: 0; max-width: 260px; justify-content: start; }
+  .tip { top: 52px; bottom: auto; }
+}
+@media (min-width: 900px) and (min-height: 600px) and (max-height: 820px) {
+  .shopcard .spr { zoom: .62; }
+  .dock .slot .spr { zoom: .62; }
+  .shopcard .tr.lv { display: none; }
+}

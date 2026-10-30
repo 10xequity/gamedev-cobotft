@@ -1,10 +1,10 @@
 # Tactical Boom — Arena Art Prompts
 
-**Version** 1.0 · **Date** 2026-10-29 · **Status** Optional, not commissioned · **Supersedes** nothing
+**Version** 2.0 · **Date** 2026-10-30 · **Status** Park prompt requested by the owner; others optional · **Supersedes** v1.0 (2026-10-29)
 
-The game now draws its four arenas in code (`tft-wcni4yex/js/stage.js`): sharp at any size, tiny, offline.
+The game draws its five arenas in code (`tft-wcni4yex/js/stage.js`): sharp at any size, tiny, offline.
 These prompts are for an optional photo-like set from an image generator (Runway is connected; each image
-spends credits, so generate only when you want them). Nothing here is used by the game until someone adds the
+spends credits, so generate only when you want them; ChatGPT image generation works the same way). Nothing here is used by the game until someone adds the
 images and switches the stage over.
 
 ## What every image must match
@@ -14,7 +14,7 @@ images and switches the stage over.
   quarter of the way down the image and is about 58% of the image width, centred. The near baseline is at the
   bottom edge, nearly the full width. The net crosses at about 58% down. This is the perspective the hex board
   already uses; an image that does not match will look wrong under the hexes.
-- **Court:** an empty indoor volleyball court (beach theme: sand), no players, no people close up, no ball.
+- **Court:** an empty volleyball court (beach theme: sand; park theme: grass), no players, no people close up, no ball.
 - **No text or logos** of any real club, brand or sponsor. A plain LED ribbon board is fine; the game can
   overlay its own text.
 - **No real people:** crowd only as distant, soft-focus shapes. Nothing that could be matched to a real person.
@@ -38,6 +38,22 @@ images and switches the stage over.
    black lines, seen from a raised position behind one baseline looking down the court, maroon walls with
    teal and gold pennant banners, pull-out wooden bleachers with a soft-focus crowd, red-and-gold LED ribbon
    board with no text, HD, photorealistic, no logos, no text, no people in focus."
+
+5. **Park (grass)** — paste this into ChatGPT (image generation), as one message:
+
+   "Create a wide, photorealistic image, 2000 × 1800 pixels, of an empty outdoor grass volleyball court in a
+   sunny park on a summer afternoon. Camera: raised, standing behind one baseline and looking straight down the
+   length of the court. The far baseline is about a quarter of the way down the image and about 58% of the image
+   width, centred; the near baseline runs along the bottom edge, almost the full width; the net crosses the
+   court about 58% of the way down. The court is freshly mown, even green grass with soft lengthwise mowing
+   stripes and crisp white boundary tape; a slightly darker grass border around it. Behind the far end: a row of
+   full, rounded deciduous trees with sunlight on their tops, a low trimmed hedge in front of them, gentle hills
+   and a soft blue sky with a few light clouds; warm sun from the upper right casting soft shadows toward the
+   camera. Leave the net out (the game draws its own). No people, no ball, no benches, no text, no logos, no
+   signs. Natural colours, crisp detail, like a high-end sports game background."
+
+   Save the result as `tft-wcni4yex/assets/stages/park-hd.webp` (or send the image back here) and ask for it to
+   be used as the park backdrop.
 
 ## Using them
 

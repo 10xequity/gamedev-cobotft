@@ -2,6 +2,26 @@
 
 Player names never appear in this file.
 
+## v2.35.0 — 2026-10-29 · Milestone 55: one-screen wide layout, sell by dragging to the shop, lifted drag, taller net, new park
+
+- Bug fix: a court player wearing a finished item (Block Sleeves and so on) crashed the court drawing, which
+  froze that fight; broken since v2.31.0. The self-check now proves every item resolves with a label.
+- One-screen wide layout (windows at least 900 × 600): nothing scrolls. Traits run down the left, players' HP
+  and the collapsible fight damage down the right, the court fills the middle, and the bench, gear, Reroll /
+  Buy XP (stacked on the left, as in TFT) and the shop sit in a dock along the bottom. The bench and shop scale
+  down on short screens. Narrow phone screens keep the stacked, scrolling layout.
+- Selling works like TFT: drag a player onto the shop (a "Sell for Xg" bar covers it while you drag), or pick
+  her up and tap that bar. The Next round button is gone; the timer moves the game on. It reappears only when
+  auto-advance is turned off in Settings, and N still works.
+- Dragging lifts the card itself: what you grabbed follows the pointer from the point you grabbed it, tilted
+  with a shadow, while its slot fades. The drop spot is worked out at release, so quick flicks land too.
+- Black page instead of teal; cards get a dark spotlight tinted with their cost colour so the figures stand out.
+- The net now stands from the floor to above head height: posts the full height, mesh in the top part with open
+  space below, white tape top and bottom, red-and-white antennas.
+- Park court redrawn: sky gradient and sun glow, two layers of hills, trees with lit tops and shaded bases, a
+  hedge line, lengthwise mowing stripes, grass texture and warm sunlight. A ChatGPT prompt for a photo-like park
+  image is in `docs/arena-art-prompts_v2_2026-10-30.md` (v1 moved to v2).
+
 ## v2.34.0 — 2026-10-29 · Milestone 54: balance pass 5 with gear, bug sweep
 
 - Balance pass 5 (400 full bot games with gear, augments and carousels):

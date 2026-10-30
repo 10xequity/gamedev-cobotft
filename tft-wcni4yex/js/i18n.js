@@ -118,6 +118,7 @@ export const ES = {
 
 // The How to play list, item by item (English markup → Spanish markup; both written here, never from input).
 export const ES_HTML = {
+  '<b>Sell:</b> drag a player onto the shop, or pick her up and tap the Sell bar over the shop. Her gear goes back to your bag.': '<b>Vender:</b> arrastra una jugadora hasta la tienda, o tócala y luego toca la barra Vender sobre la tienda. Su equipo vuelve a tu bolsa.',
   '<b>Gear:</b> after some practice rounds everyone gets a piece of gear. Tap or drag it onto a player. A second piece on a player who already wears one combines them into a finished item. Up to three items each; selling a player gives her gear back.': '<b>Equipo:</b> después de algunas rondas de práctica cada equipo recibe una pieza. Tócala o arrástrala hasta una jugadora. Una segunda pieza en una jugadora que ya lleva una las combina en un objeto terminado. Hasta tres objetos por jugadora; al venderla, su equipo vuelve a la bolsa.',
   '<b>Goal:</b> be the last of eight teams standing. Lose a fight and you lose HP; at 0 you are out.': '<b>Objetivo:</b> ser el último de ocho equipos en pie. Si pierdes un partido pierdes vida; con 0 quedas fuera.',
   '<b>Build:</b> buy players in the Shop with gold, then tap a player and a hex to put her on your court. Your level sets how many can play.': '<b>Arma tu equipo:</b> compra jugadoras en la Tienda con oro; toca una jugadora y luego un hexágono para ponerla en tu cancha. Tu nivel marca cuántas pueden jugar.',
@@ -127,5 +128,5 @@ export const ES_HTML = {
   '<b>Gold:</b> income every round, more on a win or loss streak. Reroll the shop for 1, buy XP for 4.': '<b>Oro:</b> ingresos en cada ronda, más con una racha de victorias o derrotas. Renovar la tienda cuesta 1; comprar XP, 4.',
   '<b>Extras:</b> pick an augment at 2-1, 3-2 and 4-2; take a free player from the carousel at the start of stages 3 to 7.': '<b>Extras:</b> elige una mejora en 2-1, 3-2 y 4-2; llévate una jugadora gratis del carrusel al empezar las etapas 3 a 7.',
   '<b>Look closer:</b> hold a player (or press I) for her card; tap a team in Players to scout their board.': '<b>Mira de cerca:</b> mantén pulsada una jugadora (o pulsa I) para ver su ficha; toca un equipo en Jugadoras para espiar su cancha.',
-  '<b>Keys:</b> R reroll, X buy XP, S sell, N next round, Escape skips a fight, arrow keys move around the court.': '<b>Teclas:</b> R renovar, X comprar XP, S vender, N siguiente ronda, Escape salta un partido, las flechas mueven por la cancha.',
+  '<b>Keys:</b> R reroll, X buy XP, S sell, N next round (or wait for the timer), Escape skips a fight, arrow keys move around the court.': '<b>Teclas:</b> R renovar, X comprar XP, S vender, N siguiente ronda, Escape salta un partido, las flechas mueven por la cancha.',
 };

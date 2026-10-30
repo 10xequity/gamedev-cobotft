@@ -3,6 +3,7 @@
 // which keeps every tile a real button and works on any phone.
 import { COLS, ROWS, HALF, slotToHex } from './hex.js';
 import { spriteStyle } from './sprite.js';
+import { defOf } from './items.js';
 import { stageSVG } from './stage.js';
 import { t } from './i18n.js';
 
@@ -40,7 +41,7 @@ export class Arena {
     this.box.classList.toggle('fighting', !!maxHp);
     const stage = this.box.dataset.stage;
     if (stage !== this.stageName) { this.stageName = stage; this.backdrop = el('div', { className: 'backdrop-wrap', innerHTML: stageSVG(stage, project, stage) }); }
-    const kids = [this.backdrop, el('div', { className: 'net', ariaHidden: 'true' })];
+    const kids = [this.backdrop, el('div', { className: 'net', ariaHidden: 'true' }, el('i', { className: 'mesh' }))];
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const mine = r >= HALF;
       const k = mine ? (r - HALF) * COLS + c : (HALF - 1 - r) * COLS + (COLS - 1 - c);
@@ -72,7 +73,7 @@ export class Arena {
         // Fights start from idle; playback animates from there.
         const sprite = el('span', { className: 'spr', style: spriteStyle(u2.look, maxHp ? 'idle' : cfg.roleArt[u2.role].pose, 0, h) });
         Object.assign(sprite.dataset, { look: u2.look, h });
-        spr.append(sprite, el('span', { className: 'stars', textContent: '★'.repeat(inst.star) + (inst.items?.length ? ' ' + inst.items.map(id => cfg.items.components.find(c => c.id === id).abbr).join(' ') : '') }));
+        spr.append(sprite, el('span', { className: 'stars', textContent: '★'.repeat(inst.star) + (inst.items?.length ? ' ' + inst.items.map(id => defOf(id, cfg).abbr).join(' ') : '') }));
         if (maxHp) spr.append(el('span', { className: 'hpbar' }, el('i')));
         spr.style.zIndex = r * 3 + 1;
         tile.append(spr);

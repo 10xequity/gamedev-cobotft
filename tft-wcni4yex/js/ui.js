@@ -43,6 +43,7 @@ export class UI {
     this.paused = false;
     try { this.auto = localStorage.getItem(AUTO_KEY) !== 'off'; } catch { this.auto = true; }
     $('auto').checked = this.auto;
+    document.body.classList.toggle('manual', !this.auto); // shows Ready (Next round) only without auto-advance
     $('difficulty').value = game.difficulty || 'normal';
     this.bind();
     this.resetTimer();
@@ -566,7 +567,7 @@ export class UI {
     const inst = uid !== null ? eco.owned(this.g.you).find(i => i.uid === uid) : null;
     if (shopK < 0 && gearK < 0 && !inst) return;
     const u = gearK < 0 ? this.g.unitsById[inst ? inst.id : src.dataset.id] : null;
-    const start = [e.clientX, e.clientY];
+    const start = [e.clientX, e.clientY], box = src.getBoundingClientRect(), grab = [start[0] - box.left, start[1] - box.top];
     let ghost = null, over = null, last = null, raf = 0;
     // Pointer events arrive faster than frames; the ghost follows on the next frame only.
     // It has pointer-events: none, so elementFromPoint sees through it.
@@ -574,16 +575,25 @@ export class UI {
       raf = 0;
       if (!ghost) return;
       const z = Number(document.body.style.zoom) || 1; // the text-size setting zooms the page
-      ghost.style.transform = `translate(${last.clientX / z}px, ${last.clientY / z}px) translate(-50%, -90%)`;
-      const t = document.elementFromPoint(last.clientX, last.clientY)?.closest('[data-drop]');
+      ghost.style.transform = `translate(${(last.clientX - grab[0]) / z}px, ${(last.clientY - grab[1]) / z}px)`;
+      retarget(last);
+    };
+    const retarget = ev => {
+      const t = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('[data-drop]');
       if (t !== over) { over?.classList.remove('drop'); over = t; over?.classList.add('drop'); }
     };
     const onMove = ev => {
       last = ev;
       if (!ghost) {
         if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
-        ghost = el('div', { className: 'dragghost' }, u ? this.spr(u, 96) : src.cloneNode(true));
+        // The card itself lifts: a copy of exactly what was grabbed follows the pointer from the
+        // point it was grabbed, and the original fades in place until it is dropped.
+        const z = Number(document.body.style.zoom) || 1, copy = src.cloneNode(true);
+        copy.classList.remove('drop', 'selected', 'lit');
+        copy.style.cssText += `;position:relative;left:0;top:0;margin:0;transform:none;width:${box.width / z}px;height:${box.height / z}px;`;
+        ghost = el('div', { className: 'dragghost' }, copy);
         document.body.append(ghost);
+        src.classList.add('lifted');
         if (!u) return void (raf ||= requestAnimationFrame(place)); // gear: no row hint, no Sell
         // Suggest a row: light the empty hexes in the row bots use for this role.
         const row = ROW_FOR[u.role];
@@ -596,11 +606,13 @@ export class UI {
     const onUp = ev => {
       cancelAnimationFrame(raf);
       if (ev.type === 'pointercancel') { over?.classList.remove('drop'); over = null; } // the page took the gesture (a scroll): drop nothing
+      else if (ghost) retarget(ev); // where the pointer was let go, even if no frame was drawn since the last move
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
       document.removeEventListener('pointercancel', onUp);
       if (!ghost) return; // a plain tap: the click handler takes it
       ghost.remove();
+      src.classList.remove('lifted');
       for (const h of $('court').querySelectorAll('.suggest')) h.classList.remove('suggest');
       over?.classList.remove('drop');
       this.suppressClick = true;
@@ -670,6 +682,7 @@ export class UI {
     });
     $('auto').addEventListener('change', () => {
       this.auto = $('auto').checked;
+      document.body.classList.toggle('manual', !this.auto);
       try { localStorage.setItem(AUTO_KEY, this.auto ? 'on' : 'off'); } catch { /* per-device preference only */ }
       this.resetTimer();
       this.say(t(this.auto ? 'Auto-advance on' : 'Auto-advance off: press Next round when ready'));
