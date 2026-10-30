@@ -118,6 +118,7 @@ export const ES = {
 
 // The How to play list, item by item (English markup → Spanish markup; both written here, never from input).
 export const ES_HTML = {
+  '<b>Gear:</b> after some practice rounds everyone gets a piece of gear. Tap or drag it onto a player. A second piece on a player who already wears one combines them into a finished item. Up to three items each; selling a player gives her gear back.': '<b>Equipo:</b> después de algunas rondas de práctica cada equipo recibe una pieza. Tócala o arrástrala hasta una jugadora. Una segunda pieza en una jugadora que ya lleva una las combina en un objeto terminado. Hasta tres objetos por jugadora; al venderla, su equipo vuelve a la bolsa.',
   '<b>Goal:</b> be the last of eight teams standing. Lose a fight and you lose HP; at 0 you are out.': '<b>Objetivo:</b> ser el último de ocho equipos en pie. Si pierdes un partido pierdes vida; con 0 quedas fuera.',
   '<b>Build:</b> buy players in the Shop with gold, then tap a player and a hex to put her on your court. Your level sets how many can play.': '<b>Arma tu equipo:</b> compra jugadoras en la Tienda con oro; toca una jugadora y luego un hexágono para ponerla en tu cancha. Tu nivel marca cuántas pueden jugar.',
   '<b>Upgrade:</b> three copies of a player merge into a 2-star; three 2-stars make a 3-star.': '<b>Mejora:</b> tres copias de una jugadora se unen en una de 2 estrellas; tres de 2 estrellas hacen una de 3.',

@@ -497,9 +497,9 @@ export class UI {
     const uid = Number(t.dataset.uid);
     const inst = this.g.players.flatMap(p => eco.owned(p)).find(i => i.uid === uid) ||
       [...(this.lastFight?.near || []), ...(this.lastFight?.far || [])].find(i => i && i.uid === uid);
-    if (inst) this.showUnit(inst.id, inst.star);
+    if (inst) this.showUnit(inst.id, inst.star, inst);
   }
-  showUnit(id, star) {
+  showUnit(id, star, inst = null) {
     const g = this.g, cfg = g.cfg, u = g.unitsById[id], s = statsAt(u, star, cfg);
     const kws = Object.entries(keywordsAt(u, star, cfg));
     $('unitName').textContent = `${u.display} ${'★'.repeat(star)}`;
@@ -511,6 +511,7 @@ export class UI {
       ...kws.map(([k, m]) => [m > 1 ? t('Keyword x{n}', { n: m }) : t('Keyword'), `${k}: ${loc(cfg.keywords[k], 'desc')}`]),
       [t('Ability'), `${u.ability}: ${loc(ability, 'desc')}`],
       [t('Traits'), `${u.role === 'Utility' ? t('No Specialization (wild card)') : u.style === 'Pin' ? t('Outside or Opposite (wild card)') : u.role}, ${u.team.level}, ${u.archetype}`],
+      ...(inst?.items?.length ? [[t('Gear'), inst.items.map(x => `${this.itemName(x)} (${loc(items.defOf(x, cfg), 'desc').replace(/.$/, '')})`).join('; ')]] : []),
       [t('Stats'), t('HP {hp} · attack {atk} · armor {arm} · mana {mana} · speed {spd}', { hp: s.hp, atk: s.attack, arm: s.armor, mana: s.mana, spd: s.speed }) + (s.dodge ? t(' · dodge {n}%', { n: Math.round(s.dodge * 100) }) : '')],
     ];
     $('unitFacts').replaceChildren(...rows.flatMap(([k, v]) => [el('dt', { textContent: k }), el('dd', { textContent: v })]));

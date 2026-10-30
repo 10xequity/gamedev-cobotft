@@ -7,6 +7,7 @@
 import * as eco from './economy.js';
 import { rngFrom, pick } from './rng.js';
 import { computeTraits } from './traits.js';
+import * as items from './items.js';
 
 export function personality(seed, idx, cfg, difficulty = 'normal') {
   const rng = rngFrom(seed, 'bot', idx);
@@ -42,6 +43,18 @@ export function planBot(p, pool, unitsById, cfg, stage, roll, others = []) {
     p.shop = roll();
   }
   arrange(p, unitsById, cfg, fav, d.traitAware);
+  wearGear(p, unitsById, cfg, fav);
+}
+
+// Gear: each piece in the bag goes to the best court unit already wearing a lone piece (so they
+// combine), else to the best court unit with room. Same state, same choices.
+export function wearGear(p, unitsById, cfg, fav) {
+  const best = eco.onCourt(p).sort((a, b) => score(b, unitsById, fav) - score(a, unitsById, fav) || a.uid - b.uid);
+  while (p.items?.length && best.length) {
+    const id = p.items[0], piece = items.isPiece(id, cfg);
+    const to = (piece && best.find(i => i.items?.some(x => items.isPiece(x, cfg)))) || best.find(i => (i.items?.length || 0) < cfg.items.perUnit);
+    if (!to || !items.equip(p, 0, to.uid, cfg).ok) break;
+  }
 }
 
 // Which offered augment a bot takes: one for its favourite role, else a team boost, else economy

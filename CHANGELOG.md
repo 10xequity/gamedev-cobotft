@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v2.32.0 — 2026-10-29 · Milestone 52: bots wear gear; gear on the unit card and in help (items part 3)
+
+- Gear, part 3 of 3. Bots now wear their gear: each piece goes to their best court player already wearing a
+  lone piece (so it combines), else to their best player with room.
+- A player's card (hold her, or focus and press I) lists her gear and what each item does. The help panel
+  explains gear, in English and Spanish.
+- 400 bot games with gear: game length unchanged (first out 4-3, last fight 6-3). Setter-favouring bots slip
+  to 5.21, and Setter Summit / Setter School sit just past 5.2; the balance pass (M54) takes these on.
+
 ## v2.31.0 — 2026-10-29 · Milestone 51: finished items and drag-to-equip (items part 2)
 
 - Gear, part 2 of 3: finished items. Putting a piece on a player who already wears a lone piece combines the

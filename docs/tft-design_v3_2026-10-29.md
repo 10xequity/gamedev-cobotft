@@ -265,3 +265,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 50 ✔ (v2.30.0) gear drops and equipping (items part 1).
 
 ### Milestone 51 ✔ (v2.31.0) finished items and drag-to-equip (items part 2).
+
+### Milestone 52 ✔ (v2.32.0) bots wear gear; gear on the unit card and in help (items part 3).
