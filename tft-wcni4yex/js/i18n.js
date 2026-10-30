@@ -65,7 +65,7 @@ export const ES = {
   ' practice': ' práctica', ' · daily': ' · reto del día', 'Lv {level}': 'Nv {level}', ' (max)': ' (máx.)', ' · {n} XP to next': ' · {n} XP para subir',
   'arrow keys move between hexes': 'las flechas mueven entre hexágonos', 'scouting {name}: {traits}': 'espiando a {name}: {traits}', 'no traits': 'sin rasgos',
   'Augments: {list}': 'Mejoras: {list}', 'Reroll free ({n}) ': 'Renovar gratis ({n}) ', 'Reroll ': 'Renovar ', 'Sell for {g}g': 'Vender por {g} de oro',
-  'Place units on the court to start traits.': 'Pon jugadoras en la cancha para activar rasgos.', '. Tap to show who holds it.': '. Toca para ver quién lo tiene.', 'Showing who holds {name}': 'Mostrando quién tiene {name}', 'Trait highlight off': 'Resaltado de rasgo apagado', 'wild cards: {list}': 'comodines: {list}', '{name} as {role}': '{name} como {role}',
+  'Place units on the court to start traits.': 'Pon jugadoras en la cancha para activar rasgos.', '. Tap to show who holds it.': '. Toca para ver quién lo tiene.', 'Showing who holds {name}': 'Mostrando quién tiene {name}', 'Trait highlight off': 'Resaltado de rasgo apagado', '★ upgrade': '★ mejora', 'pair': 'pareja', '+ trait': '+ rasgo', 'wild cards: {list}': 'comodines: {list}', '{name} as {role}': '{name} como {role}',
   '{name}: {count} of {next} to start': '{name}: {count} de {next} para activarse', 'Sold': 'Vendida', 'Buy ': 'Comprar ', 'Take ': 'Elegir ',
   'Taken: {name}': 'Elegida: {name}', '{tier}-cost': 'cuesta {tier}', '{name}, {hp} HP. Stop scouting': '{name}, {hp} de vida. Dejar de espiar',
   '{name}, {hp} HP. Scout their board': '{name}, {hp} de vida. Espiar su equipo', '{hp} HP': '{hp} de vida', 'Empty {where} slot {k}': 'Puesto vacío de {where} {k}',

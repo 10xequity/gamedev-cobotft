@@ -2,6 +2,12 @@
 
 Player names never appear in this file.
 
+## v2.16.0 — 2026-10-29 · Milestone 36: shop hints for upgrades, pairs and new traits
+
+- Shop cards carry a corner badge when buying helps: "★ upgrade" (a third copy merges into 2-star), "pair"
+  (you own one copy), "+ trait" (she would raise a court trait to a new level). The figure glows gold.
+- "+ trait" shows only while the court has a free spot; otherwise nearly every early card carried it.
+
 ## v2.15.0 — 2026-10-29 · Milestone 35: trait chips in kit colours, tap to light up holders
 
 - Trait chips are buttons. Role traits wear the same kit colour as their units' name strips (teal hitters,

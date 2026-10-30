@@ -113,6 +113,11 @@ dialog .players li.you { color: var(--black); }
 .shopcard .spr { background-repeat: no-repeat; }
 .shopcard .nm { font-family: var(--display); font-weight: 800; font-size: 11px; text-align: center; }
 .shopcard .tr { font-size: 9.5px; font-weight: 600; text-align: center; color: var(--teal-dark); }
+.shopcard { position: relative; }
+.shopcard .hint { position: absolute; top: 4px; left: 4px; z-index: 1; font-size: 10px; font-weight: 800; line-height: 1; padding: 3px 5px; border-radius: 4px; border: 1px solid var(--black); background: var(--cream); color: var(--black); }
+.shopcard .hint.up { background: var(--gold); }
+.shopcard .hint.pair { background: var(--teal); color: var(--cream); }
+.shopcard.hinted .spr { filter: drop-shadow(0 0 4px var(--gold)); }
 .shopcard .cost { font-weight: 800; color: var(--black); background: var(--gold); border-radius: 4px; padding: 0 6px; font-size: 13px; }
 .actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: 1fr 1fr 1fr 1.4fr; gap: 6px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--teal-dark); }
 .actions button { padding: 10px 4px; border-radius: 8px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; font-size: 13px; display: grid; gap: 2px; }

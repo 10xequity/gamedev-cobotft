@@ -382,6 +382,8 @@ export class UI {
       el('span', { className: 'tr lv', textContent: `${u.team.level} · ${u.archetype}` }),
       el('span', { className: 'cost', textContent: `${u.tier}g` }),
     );
+    const hint = this.shopHint(id);
+    if (hint) { b.prepend(el('span', { className: `hint ${hint.kind}`, textContent: hint.text })); b.classList.add('hinted'); }
     b.addEventListener('click', () => {
       if (this.suppressClick) { this.suppressClick = false; return; }
       const stars = eco.owned(this.g.you).reduce((a, i) => a + i.star, 0);
@@ -391,6 +393,18 @@ export class UI {
       this.render();
     });
     return b;
+  }
+
+  // Shop hint: buying this copy would upgrade a unit (third copy), make a pair, or raise a
+  // trait on court to a new level if she joined it (only while the court has room).
+  shopHint(id) {
+    const g = this.g, you = g.you, copies = eco.owned(you).filter(i => i.id === id && i.star === 1).length;
+    if (copies >= 2) return { kind: 'up', text: t('★ upgrade') };
+    if (copies === 1) return { kind: 'pair', text: t('pair') };
+    // Only when she could join without benching anyone, or nearly every card would carry it.
+    if (eco.onCourt(you).some(i => i.id === id) || eco.onCourt(you).length >= eco.courtMax(you, g.cfg)) return null;
+    const lv = court => computeTraits(court, g.unitsById, g.cfg).traits.reduce((a, tr) => a + tr.level, 0);
+    return lv([...you.court, { uid: -1, id, star: 1 }]) > lv(you.court) ? { kind: 'trait', text: t('+ trait') } : null;
   }
 
   // Lights every unit (court, bench, shop) that holds the trait picked in the trait panel.
