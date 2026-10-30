@@ -249,3 +249,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 42 ✔ (v2.22.0) phone layout pass at 375px.
 
 ### Milestone 43 ✔ (v2.23.0) load: no layout shift, modules preloaded.
+
+### Milestone 44 ✔ (v2.24.0) balance pass 4 (no changes) and bug sweep.

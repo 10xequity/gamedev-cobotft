@@ -93,7 +93,7 @@ body.game { padding-bottom: 96px; }
 .traits .trait { all: unset; box-sizing: border-box; display: block; padding: 4px 8px; cursor: pointer; border-radius: 4px; }
 .traits .trait:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
 .traits .trait[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--gold); }
-.traits .sw { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 50%; border: 1px solid var(--black); background: var(--kit-bg, transparent); vertical-align: 0; }
+.traits .sw { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 50%; border: 1px solid var(--black); box-shadow: 0 0 0 1px var(--cream); background: var(--kit-bg, transparent); vertical-align: 0; } /* cream halo: a teal dot stays visible on the teal page */
 .traits li:not(.kit) .sw:not([style]) { display: none; }
 .traits li b { font-family: var(--display); }
 .traits li.on .bp { color: var(--teal-dark); font-weight: 700; }

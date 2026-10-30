@@ -330,7 +330,7 @@ export class UI {
         el('p', {}, el('b', { textContent: t('MVP: {name}', { name: u.display }) }), el('br'), t('{n} damage, {style}', { n: rc.mvp.dealt.toLocaleString(), style: u.style }))));
     }
     kids.push(el('p', { textContent: t('Your team dealt {n} damage over {w} wins and {l} losses.', { n: rc.total.toLocaleString(), w: rc.wins, l: rc.losses }) }));
-    if (rc.best) {
+    if (rc.best && rc.best.dealt > 0) { // nothing worth watching from an empty court
       const b = el('button', { type: 'button', textContent: t('Watch best fight: {label} vs {opp}', { label: rc.best.label, opp: rc.best.opponent }) });
       b.addEventListener('click', async () => { $('over').close(); await this.replay(rc.best.i); if (this.g.over) $('over').showModal(); });
       kids.push(b);
@@ -650,6 +650,7 @@ export class UI {
     for (const id of ['court', 'bench', 'shop']) $(id).addEventListener('pointerdown', e => this.drag(e));
     $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && this.lit && !this.fighting && !document.querySelector('dialog[open]')) { this.lit = null; this.say(t('Trait highlight off')); this.render(); return; }
       if (e.target.matches?.('input, select, textarea')) return;
       if (this.fighting) { if (e.key === 'Escape') { e.preventDefault(); this.playback.skip(); } return; }
       if (e.key.toLowerCase() === 'i') { const t = document.activeElement?.closest('[data-uid], [data-id]'); if (t) { e.preventDefault(); this.showUnitFrom(t); } return; }

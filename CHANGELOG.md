@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v2.24.0 — 2026-10-29 · Milestone 44: balance pass 4 (no changes) and bug sweep
+
+- Balance pass 4: no number changes. The report (`LOBBY=300`) still shows 4 lines in the 50-55% band, every
+  augment inside 3.8-5.2, and favourite roles averaging 4.02-4.96. Tried: Outside 3-trait +26% → +22% (Hitters
+  59.1 → 53.5% but Outside-loving bots fall to 4.99-5.06), Setter set bonus 0.6 → 0.7 (Setters 4.96 → 4.71),
+  and a Utility trim (wrecked the head-to-head band). Each fixed one number by breaking another, so none shipped.
+- Bug sweep: the recap hides "Watch best fight" when your team dealt no damage (an empty court); Escape clears
+  the trait highlight (and still skips a fight while one plays); trait-chip colour dots get a cream halo so a
+  teal dot stays visible on the teal page.
+- Checked in Chrome: recap renders, "Watch best fight" replays and returns to the panel. Lighthouse (mobile):
+  accessibility 100, best practices 100; SEO fails only because the page is deliberately noindex.
+
 ## v2.23.0 — 2026-10-29 · Milestone 43: load: no layout shift, modules preloaded
 
 - Layout shift on load (measured in Chrome): desktop 0.70 → 0.03, phone 0.22 → 0.02 (under 0.1 is "good").
