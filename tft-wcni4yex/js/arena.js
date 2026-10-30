@@ -68,7 +68,9 @@ export class Arena {
         tile.dataset.uid = inst.uid;
         const spr = el('span', { className: 'unit' + (mine ? '' : ' flip') });
         const h = Math.round(this.box.clientWidth * 0.24 * p.s) || 80; // sprite height follows depth
-        const sprite = el('span', { className: 'spr', style: spriteStyle(u2.look, 'idle', 0, h) });
+        // Planning: each unit shows her role's pose (as on her card) so positions read at a glance.
+        // Fights start from idle; playback animates from there.
+        const sprite = el('span', { className: 'spr', style: spriteStyle(u2.look, maxHp ? 'idle' : cfg.roleArt[u2.role].pose, 0, h) });
         Object.assign(sprite.dataset, { look: u2.look, h });
         spr.append(sprite, el('span', { className: 'stars', textContent: '★'.repeat(inst.star) }));
         if (maxHp) spr.append(el('span', { className: 'hpbar' }, el('i')));

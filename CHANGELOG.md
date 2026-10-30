@@ -2,6 +2,12 @@
 
 Player names never appear in this file.
 
+## v2.18.0 — 2026-10-29 · Milestone 38: court units hold their role pose while planning
+
+- During planning, units on the court hold their role's pose, the same one their card shows (spike, block,
+  dig, set, white-kit stance for Utility), so positions read at a glance. Fights still start from idle and
+  animate from there. Feet stay on the hex: every pose's figure box ends at the cell's bottom edge.
+
 ## v2.17.0 — 2026-10-29 · Milestone 37: drag to buy, drag onto Sell
 
 - Drag a shop card onto a bench slot or a court hex to buy her straight into that spot (a third copy just
