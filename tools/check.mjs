@@ -431,6 +431,11 @@ for (const a of cfg.augments.list) assert.ok(a.name_es && a.desc_es, `${a.id}: n
 for (const a of ach.LIST) assert.ok(a.name_es && a.desc_es, `achievement ${a.id}: no Spanish`);
 for (const tip of guideMod.TIPS) assert.ok(tip.text_es, `tip ${tip.id}: no Spanish`);
 const page = readFileSync(join(GAME, 'index.html'), 'utf8');
+// Every module in the import map is also preloaded, at the same version.
+{ const idx = readFileSync(join(GAME, 'index.html'), 'utf8');
+  const mapped = [...idx.matchAll(/"\.\/js\/[\w-]+\.js": "([^"]+)"/g)].map(m => m[1]).sort();
+  const pre = [...idx.matchAll(/rel="modulepreload" href="([^"]+)"/g)].map(m => m[1]).sort();
+  assert.deepEqual(pre, mapped, 'modulepreload links must match the import map'); }
 for (const [, txt] of page.matchAll(/data-i18n>([^<]+)</g)) assert.ok(i18n.ES[txt], `no Spanish for page text "${txt}"`);
 for (const [, aria] of page.matchAll(/aria-label="([^"]+)"[^>]*data-i18n-aria/g)) assert.ok(i18n.ES[aria], `no Spanish for label "${aria}"`);
 for (const [, html] of page.matchAll(/<li data-i18n-html>([\s\S]*?)<\/li>/g)) assert.ok(i18n.ES_HTML[html.trim()], `no Spanish for help item "${html.slice(0, 40)}"`);

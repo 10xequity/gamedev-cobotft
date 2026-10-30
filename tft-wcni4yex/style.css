@@ -130,7 +130,7 @@ dialog .players li.you { color: var(--black); }
 @media (min-width: 700px) { .zone, .bar, .actions { max-width: 760px; margin-inline: auto; } .actions { left: 50%; transform: translateX(-50%); width: 100%; } .slot .nm { font-size: 12px; } .shopcard .nm { font-size: 13px; } .shopcard .tr { font-size: 11px; } }
 
 /* ---- arena: perspective court ---- */
-.arena { position: relative; width: 100%; aspect-ratio: 1 / 0.9; overflow: hidden; border-radius: 10px; border: 3px solid var(--black); background: var(--teal-dark) center top / cover no-repeat; touch-action: none; }
+.arena { isolation: isolate; position: relative; width: 100%; aspect-ratio: 1 / 0.9; overflow: hidden; border-radius: 10px; border: 3px solid var(--black); background: var(--teal-dark) center top / cover no-repeat; touch-action: none; }
 .arena .backdrop-wrap, .arena .backdrop { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 .arena .net { position: absolute; left: calc(var(--netL) * 100%); right: calc((1 - var(--netR)) * 100%); top: calc(var(--netY) * 100%); height: calc(8% * var(--netS)); transform: translateY(-100%); z-index: 11; background: repeating-linear-gradient(90deg, rgba(255,249,240,.55) 0 1px, transparent 1px 7px), repeating-linear-gradient(0deg, rgba(255,249,240,.55) 0 1px, transparent 1px 7px); border-top: 4px solid var(--cream); border-bottom: 2px solid rgba(17,17,17,.6); pointer-events: none; }
 .arena .net::before, .arena .net::after { content: ""; position: absolute; top: -10%; bottom: -40%; width: 2.5%; background: var(--black); border-radius: 2px; }
@@ -231,7 +231,8 @@ html[data-motion="reduce"] .hop { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .spark, .ko { display: none; } }
 html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: none; }
 /* ---- guided tips ---- */
-.tip { flex-basis: 100%; margin: 0 -12px -8px; padding: 8px 12px; background: var(--gold); color: var(--black); font-weight: 600; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; border-bottom: 2px solid var(--black); }
+/* Tips float just above the action bar, so showing or hiding one never pushes the page around. */
+.tip { position: fixed; z-index: 6; left: 50%; transform: translateX(-50%); width: min(736px, calc(100% - 16px)); box-sizing: border-box; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); padding: 8px 12px; background: var(--gold); color: var(--black); font-weight: 600; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; border: 2px solid var(--black); border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, .35); }
 .tip span { flex: 1 1 220px; }
 .tip button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }
 .tip #tipOff { background: transparent; color: var(--black); }
@@ -242,11 +243,19 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
 .recap .mvp .spr { background-repeat: no-repeat; flex: none; }
 .recap button { justify-self: start; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }
 /* ---- phones (under 700px) ---- */
-.pocket { display: none; }
+.pocket, .brk { display: none; }
 @media (max-width: 699px) {
   /* The header scrolls away instead of covering a third of the screen; gold and HP ride on the action bar. */
   .bar { position: static; gap: 8px 12px; }
-  .bar button { padding: 6px 10px; }
+  .bar button { padding: 4px 8px; font-size: 13px; }
+  /* Fixed lines: HP, gold and round; then level and time; then the buttons. The header keeps its height when
+     the game fills in the real round and level text (it used to rewrap and push the page down). */
+  .brk { display: block; flex-basis: 100%; height: 0; }
+  .bar #pause { margin-left: 0; }
+  .bar .stat { white-space: nowrap; font-size: 13px; }
+  .bar .stat .k { font-size: 10px; }
+  .bar .stat b { font-size: 15px; }
+  .bar { flex-wrap: wrap; row-gap: 6px; column-gap: 9px; }
   .pocket { display: block; position: absolute; left: 12px; bottom: 100%; padding: 3px 8px; border-radius: 6px 6px 0 0; background: var(--teal-dark); color: var(--cream); font-weight: 700; font-size: 13px; }
   .shopcard { min-width: 0; min-height: 0; padding: 4px 2px; }
   .shopcard .spr { zoom: .7; }
@@ -256,5 +265,6 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
   .slots.bench { gap: 3px; }
   .slot .abbr { font-size: 7px; padding: 1px 2px; top: 1px; right: 1px; }
   .slot .spr { zoom: .5; }
+  .tip { bottom: calc(108px + env(safe-area-inset-bottom, 0px)); font-size: 13px; } /* clear the gold/HP tab */
   .slot .nm { font-size: 8px; }
 }

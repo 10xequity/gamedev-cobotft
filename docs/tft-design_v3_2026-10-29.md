@@ -247,3 +247,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 41 ✔ (v2.21.0) end-of-game recap with MVP and best-fight replay.
 
 ### Milestone 42 ✔ (v2.22.0) phone layout pass at 375px.
+
+### Milestone 43 ✔ (v2.23.0) load: no layout shift, modules preloaded.

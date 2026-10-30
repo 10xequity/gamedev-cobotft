@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v2.23.0 — 2026-10-29 · Milestone 43: load: no layout shift, modules preloaded
+
+- Layout shift on load (measured in Chrome): desktop 0.70 → 0.03, phone 0.22 → 0.02 (under 0.1 is "good").
+  Causes: the tip banner appearing inside the header pushed the whole page down (since M29), and on phones
+  the stats line rewrapped once "practice" was added to the round. Tips now float above the action bar at
+  every width; on phones the header has fixed lines (HP, gold, round / level, time / buttons).
+- Every game module is preloaded in parallel (`modulepreload`, one per import-map entry; `check.mjs` keeps
+  the two lists identical). Largest paint on a throttled phone: about 1.5-1.7 s.
+- Court tiles and tall sprites no longer draw over the fixed action bar (the court is its own layer).
+- Not done: the sprite sheets (5.1 MB, cached by the service worker for offline play) stay as they are;
+  re-encoding saved about 17% at visibly lower quality, so it was not worth it.
+
 ## v2.22.0 — 2026-10-29 · Milestone 42: phone layout pass at 375px
 
 - Phones (under 700px wide), checked at 375px: the page no longer runs wider than the screen (the five shop
