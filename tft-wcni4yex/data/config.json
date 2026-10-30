@@ -336,9 +336,15 @@
       { "id": "block-party", "name": "Block Party", "kind": "combat", "applies": "role:Middle", "effect": "armor", "value": 25, "desc": "Middles armor +25.", "name_es": "Fiesta de bloqueo", "desc_es": "Las Middle +25 de defensa." },
       { "id": "setter-school", "name": "Setter School", "kind": "combat", "applies": "role:Setter", "effect": "manaPerAction", "value": 14, "desc": "Setters +14 mana per action.", "name_es": "Escuela de colocadoras", "desc_es": "Las Setter +14 de maná por acción." },
       { "id": "libero-camp", "name": "Libero Camp", "kind": "combat", "applies": "role:Libero", "effect": "hpPct", "value": 0.25, "desc": "Liberos HP +25%.", "name_es": "Campus de Libero", "desc_es": "Las Libero +25% de vida." },
-      { "id": "jack-of-all-trades", "name": "Jack of All Trades", "kind": "combat", "applies": "role:Utility", "effect": "allStats", "value": 0.08, "desc": "Utility units +8% all stats.", "name_es": "Todoterreno", "desc_es": "Jugadoras Utility +8% a todas las estadísticas." },
+      { "id": "jack-of-all-trades", "name": "Jack of All Trades", "kind": "combat", "applies": "role:Utility", "effect": "allStats", "value": 0.07, "desc": "Utility units +7% all stats.", "name_es": "Todoterreno", "desc_es": "Jugadoras Utility +7% a todas las estadísticas." },
       { "id": "net-presence", "name": "Net Presence", "kind": "combat", "applies": "front", "effect": "armor", "value": 15, "desc": "Front-row armor +15.", "name_es": "Presencia en la red", "desc_es": "Defensa de la primera fila +15." },
-      { "id": "back-row-attack", "name": "Back Row Attack", "kind": "combat", "applies": "back", "effect": "attack", "value": 0.15, "desc": "Back two rows attack +15%.", "name_es": "Ataque de zaga", "desc_es": "Las dos filas de atrás atacan +15%." }
+      { "id": "back-row-attack", "name": "Back Row Attack", "kind": "combat", "applies": "back", "effect": "attack", "value": 0.15, "desc": "Back two rows attack +15%.", "name_es": "Ataque de zaga", "desc_es": "Las dos filas de atrás atacan +15%." },
+      { "id": "team-dinner", "name": "Team Dinner", "kind": "econ", "gold": 6, "xp": 4, "desc": "+6 gold and +4 XP now.", "name_es": "Cena de equipo", "desc_es": "+6 de oro y +4 de XP ahora." },
+      { "id": "pancake-drill", "name": "Pancake Drill", "kind": "combat", "applies": "role:Libero", "effect": "dodge", "value": 0.12, "desc": "Liberos dodge +12%.", "name_es": "Ejercicio de plancha", "desc_es": "Las líberos esquivan un +12%." },
+      { "id": "swing-lab", "name": "Swing Lab", "kind": "combat", "applies": "role:Outside", "effect": "speed", "value": 0.15, "desc": "Outsides attack speed +15%.", "name_es": "Taller de remate", "desc_es": "Las atacantes exteriores, velocidad de ataque +15%." },
+      { "id": "setter-summit", "name": "Setter Summit", "kind": "combat", "applies": "role:Setter", "effect": "startMana", "value": 30, "desc": "Setters start with 30 mana.", "name_es": "Cumbre de colocadoras", "desc_es": "Las colocadoras empiezan con 30 de maná." },
+      { "id": "front-row-fire", "name": "Front Row Fire", "kind": "combat", "applies": "front", "effect": "attack", "value": 0.12, "desc": "Front-row attack +12%.", "name_es": "Fuego en la red", "desc_es": "Ataque de la primera fila +12%." },
+      { "id": "back-row-defense", "name": "Back Row Defense", "kind": "combat", "applies": "back", "effect": "armor", "value": 12, "desc": "Back two rows armor +12.", "name_es": "Defensa de zaga", "desc_es": "Armadura de las dos filas de atrás +12." }
     ]
   },
   "bots": {

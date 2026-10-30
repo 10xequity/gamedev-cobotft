@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v2.26.0 — 2026-10-29 · Milestone 46: six new augments
+
+- Six new augments (30 in all), each with Spanish text: Team Dinner (+6 gold and +4 XP now), Pancake Drill
+  (Liberos dodge +12%), Swing Lab (Outsides attack speed +15%), Setter Summit (Setters start with 30 mana),
+  Front Row Fire (front-row attack +12%), Back Row Defense (back two rows armor +12). All reuse effects the
+  combat code already had.
+- 400 bot games: the new ones average 4.35-4.81 (4.5 is fair). With the larger pool Jack of All Trades drifted
+  to 3.79, so it goes from +8% to +7% all stats; now every augment sits inside 3.8-5.2.
+
 ## v2.25.0 — 2026-10-29 · Milestone 45: role letters out of the spoken card names
 
 - Role letters on cards are drawn by CSS instead of being text inside the button, so a screen reader's name
