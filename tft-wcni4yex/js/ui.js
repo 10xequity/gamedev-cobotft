@@ -701,7 +701,7 @@ export class UI {
       if (e.key.toLowerCase() === 'i') { const t = document.activeElement?.closest('[data-uid], [data-id]'); if (t) { e.preventDefault(); this.showUnitFrom(t); } return; }
       const map = { s: 'sell', r: 'reroll', x: 'xp', n: 'next' };
       if (map[e.key.toLowerCase()]) { e.preventDefault(); $(map[e.key.toLowerCase()]).click(); }
-      if (e.key === 'Escape' && this.selected !== null) { this.selected = null; this.say(t('Put down')); this.render(); }
+      if (e.key === 'Escape' && (this.selected !== null || (this.selItem ?? null) !== null)) { this.selected = null; this.selItem = null; this.say(t('Put down')); this.render(); }
     });
     addEventListener('resize', () => { if (!this.fighting) this.render(); });
   }

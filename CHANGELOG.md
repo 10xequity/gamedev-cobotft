@@ -2,6 +2,22 @@
 
 Player names never appear in this file.
 
+## v2.34.0 — 2026-10-29 · Milestone 54: balance pass 5 with gear, bug sweep
+
+- Balance pass 5 (400 full bot games with gear, augments and carousels):
+  - "Fast" bots now reroll once a round: their average place goes from 5.77 to 4.53. Every bot personality now
+    sits in 3.99-4.87.
+  - Setter School +14 → +18 mana per action (back inside the 3.8-5.2 band); Jack of All Trades +7% → +5%.
+  - Unchanged: head-to-head lines (4 in the 50-55% band, Hitters 59.1%) and game length (first out 4-3, last
+    fight 6-3).
+  - Tried and not shipped: a bigger Setter set bonus (pushed Hitters to 60% and emptied the band), stronger Setter
+    trait values and Setter Summit at 45 mana (no measurable effect).
+  - Still open: Setter-favouring bots average 5.21, and Setter Summit (5.31) and Jack of All Trades (3.76) sit
+    just outside the band. Those figures track which bots pick them more than the numbers themselves, so they
+    need a smarter Setter-building bot rather than more tuning.
+- Bug sweep: Escape also puts down a picked-up gear piece. Lighthouse (mobile) with gear in play: accessibility
+  100 (the bench-card name advisory is gone), best practices 100, layout shift 0.048.
+
 ## v2.33.0 — 2026-10-29 · Milestone 53: eight new achievements
 
 - Eight new achievements (25 in all), with Spanish: Speed Round (finish a hyper roll game), Lightning Champion
