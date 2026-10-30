@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.15.0 — 2026-10-29 · Milestone 35: trait chips in kit colours, tap to light up holders
+
+- Trait chips are buttons. Role traits wear the same kit colour as their units' name strips (teal hitters,
+  black Middles and Setters, white Liberos and No Specialization); club-level traits show their jersey dot.
+- Tap a chip to light up every unit that holds the trait on court, bench and in the shop (a gold glow
+  around the figure); tap again to turn it off. Off court, wild cards light for any role they could fill.
+
 ## v2.14.1 — 2026-10-29 · Front-pose clean-up
 
 - Sheets 04 and 23 had floor lines running to the cell edges in the front pose, which made every card

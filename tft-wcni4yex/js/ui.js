@@ -2,7 +2,7 @@
 import { spriteStyle } from './sprite.js';
 import { Arena } from './arena.js';
 import * as eco from './economy.js';
-import { computeTraits } from './traits.js';
+import { tagsOf, computeTraits } from './traits.js';
 import { keywordsAt, statsAt } from './units.js';
 import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
@@ -158,6 +158,7 @@ export class UI {
     this.renderTip();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
+    this.markLit();
 
     const augs = you.augments.map(id => loc(g.augById[id], 'name'));
     $('owned').textContent = augs.length ? t('Augments: {list}', { list: augs.join(', ') }) : '';
@@ -236,15 +237,34 @@ export class UI {
     $('augment').showModal();
   }
 
+  // Trait chips: role traits wear the same kit colour as their units' name strips, club-level
+  // traits carry their jersey dot. Tapping a chip lights up every unit that holds the trait.
   renderTraits() {
-    const { filled, traits } = computeTraits(this.g.you.court, this.g.unitsById, this.g.cfg);
+    const cfg = this.g.cfg, { filled, traits } = computeTraits(this.g.you.court, this.g.unitsById, cfg);
+    this.filled = filled;
+    if (this.lit && !traits.some(tr => tr.name === this.lit)) this.lit = null;
     $('traits').replaceChildren(...(traits.length ? traits.map(tr => {
-      if (!tr.level) return el('li', { textContent: `${tr.name} ${tr.count}/${tr.next}`, ariaLabel: t('{name}: {count} of {next} to start', { name: tr.name, count: tr.count, next: tr.next }) });
-      const marks = tr.breakpoints.map(b => tr.count >= b ? `[${b}]` : b).join(' / ');
-      return el('li', { className: 'on' },
-        el('b', { textContent: `${tr.name} ${tr.count}` }),
-        el('span', { className: 'bp', textContent: ` ${marks}` }),
-        el('span', { className: 'd', textContent: ` · ${loc(this.g.cfg.traits[tr.name], 'desc')}` }));
+      const art = cfg.roleArt[tr.name === 'No Specialization' ? 'Utility' : tr.name];
+      const li = el('li', { className: tr.level ? 'on' : '' });
+      if (art) { const k = cfg.kits[art.kit]; li.classList.add('kit'); li.style.setProperty('--kit-bg', k.bg); li.style.setProperty('--kit-fg', k.fg); }
+      const b = el('button', { type: 'button', className: 'trait' }, el('span', { className: 'sw', ariaHidden: 'true' }));
+      b.setAttribute('aria-pressed', String(this.lit === tr.name));
+      if (cfg.jerseyByLevel[tr.name]) b.firstChild.style.background = cfg.jerseyByLevel[tr.name];
+      if (!tr.level) {
+        b.append(`${tr.name} ${tr.count}/${tr.next}`);
+        b.setAttribute('aria-label', t('{name}: {count} of {next} to start', { name: tr.name, count: tr.count, next: tr.next }) + t('. Tap to show who holds it.'));
+      } else {
+        const marks = tr.breakpoints.map(bp => tr.count >= bp ? `[${bp}]` : bp).join(' / ');
+        b.append(el('b', { textContent: `${tr.name} ${tr.count}` }), el('span', { className: 'bp', textContent: ` ${marks}` }),
+          el('span', { className: 'd', textContent: ` · ${loc(cfg.traits[tr.name], 'desc')}` }));
+      }
+      b.addEventListener('click', () => {
+        this.lit = this.lit === tr.name ? null : tr.name;
+        this.say(this.lit ? t('Showing who holds {name}', { name: tr.name }) : t('Trait highlight off'));
+        this.render();
+      });
+      li.append(b);
+      return li;
     }) : [el('li', { textContent: t('Place units on the court to start traits.') })]));
     const wild = this.g.you.court.filter(i => i && filled[i.uid]).map(i => t('{name} as {role}', { name: this.g.unitsById[i.id].display, role: filled[i.uid] }));
     $('wild').textContent = wild.length ? t('wild cards: {list}', { list: wild.join(', ') }) : '';
@@ -371,6 +391,20 @@ export class UI {
       this.render();
     });
     return b;
+  }
+
+  // Lights every unit (court, bench, shop) that holds the trait picked in the trait panel.
+  // Off court, wild cards light for any role they could fill (u.countsAs).
+  markLit() {
+    const g = this.g, name = this.lit, owned = Object.fromEntries(eco.owned(g.you).map(i => [i.uid, i]));
+    for (const n of document.querySelectorAll('#court [data-uid], #bench [data-uid], #shop [data-id]')) {
+      let on = false;
+      if (name) {
+        const inst = n.dataset.uid ? owned[n.dataset.uid] : null, u = g.unitsById[inst ? inst.id : n.dataset.id];
+        if (u) on = tagsOf(u, this.filled?.[inst?.uid] ?? null).includes(name) || (!this.filled?.[inst?.uid] && u.countsAs.includes(name));
+      }
+      n.classList.toggle('lit', on);
+    }
   }
 
   // Cards show each role in its own pose (hitters spike, Middles block, Liberos dig, Setters

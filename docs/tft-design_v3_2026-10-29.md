@@ -231,3 +231,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 32. Balance pass 3, now counting augments and carousel. ✔ v2.12.0
 
 ### Milestone 33 ✔ (v2.13.0) role poses on cards, kit colours by role, figure cut-outs, smoother drag; old stage images removed.
+
+### Milestone 35 ✔ (v2.15.0) trait chips in kit colours, tap to light up holders.
