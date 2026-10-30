@@ -16,6 +16,8 @@ export const THEMES = {
   retro: { wall: ['#3a0b18', '#6b1a2c'], crowd: ['#E5B800', '#0E7C86', '#FFF9F0', '#d1495b'], led: ['#d1495b', '#E5B800'], light: '#ffd0e0',
     apron: ['#C49A00', '#8a6b00'], floor: ['#ddb06b', '#b9843f'], planks: true, line: '#111111' },
   park: { wall: ['#6fb7e0', '#d9f0f8'], crowd: null, sky: 'day', led: null, light: '#fff6d6', beams: false,
+    // Scenery photo (sky, hills, trees, hedge) generated with ChatGPT; its bottom edge is the hedge line.
+    image: 'assets/stages/park-hd.webp', imageAspect: 1322 / 406,
     apron: ['#4a8a34', '#3a7029'], floor: ['#86c160', '#68a845'], planks: false, mow: true, line: '#FFF9F0' },
 };
 
@@ -54,6 +56,11 @@ export function stageSVG(name, project, seed = 'stage') {
       dots.push(`<ellipse cx="${(rng() * W).toFixed(1)}" cy="${y.toFixed(1)}" rx="${r.toFixed(1)}" ry="${(r * 1.25).toFixed(1)}" fill="${t.crowd[Math.floor(rng() * t.crowd.length)]}" opacity="${(0.35 + rng() * 0.4).toFixed(2)}"/>`);
     }
     parts.push(`<g filter="url(#soft)">${dots.join('')}</g>`);
+  } else if (t.image) {
+    // A scenery image whose bottom edge sits where the floor meets the far side; the drawn sky shows
+    // above it if the court box is taller than the image.
+    const h = W / t.imageAspect;
+    parts.push(`<image href="${t.image}" x="0" y="${(top - h).toFixed(1)}" width="${W}" height="${h.toFixed(1)}" preserveAspectRatio="xMidYMax slice"/>`);
   } else if (t.sky === 'day') {
     // Daytime park: sun glow, soft clouds, two layers of distant hills, then a tree line with lit tops
     // and shaded bases, and a trimmed hedge where the stands would be.

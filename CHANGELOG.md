@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v2.36.0 — 2026-10-29 · Milestone 56: ChatGPT scenery for the park court
+
+- The park court's scenery is now a photo-like image generated with ChatGPT (from the prompt in
+  `docs/arena-art-prompts_v2_2026-10-30.md`): sky, wooded hills, trees and a trimmed hedge. Only the band above
+  the hedge is used (`assets/stages/park-hd.webp`, 1322 × 406, 137 KB), because the image's own court lines do
+  not match the game's perspective; the game still draws the grass, court lines and hexes.
+- Stages can now carry a scenery image (`image`, `imageAspect` in `js/stage.js`); the service worker caches it
+  for offline play.
+
 ## v2.35.0 — 2026-10-29 · Milestone 55: one-screen wide layout, sell by dragging to the shop, lifted drag, taller net, new park
 
 - Bug fix: a court player wearing a finished item (Block Sleeves and so on) crashed the court drawing, which

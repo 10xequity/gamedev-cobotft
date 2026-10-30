@@ -273,3 +273,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 54 ✔ (v2.34.0) balance pass 5 with gear, bug sweep.
 
 ### Milestone 55 ✔ (v2.35.0) one-screen wide layout, sell by dragging to the shop, lifted drag, taller net, new park.
+
+### Milestone 56 ✔ (v2.36.0) ChatGPT scenery for the park court.
