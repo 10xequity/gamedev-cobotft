@@ -149,7 +149,9 @@ dialog .players li.you { color: var(--black); }
 .hex .unit .stars { color: var(--gold); font-size: 11px; line-height: 1; text-shadow: 0 1px 0 var(--black); margin-top: -2px; }
 .dragghost { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; will-change: transform; }
 .dragghost .spr { background-repeat: no-repeat; filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
-.slot.drop { outline: 4px solid var(--gold); outline-offset: -2px; }
+.slot.drop, #sell.drop { outline: 4px solid var(--gold); outline-offset: -2px; }
+/* Shop cards let a vertical swipe scroll the page on phones; tap still buys, mouse drags still work. */
+.shopcard { touch-action: pan-y; }
 /* ---- augments ---- */
 .augs { display: grid; gap: 8px; margin-top: 8px; }
 .augcard { display: grid; gap: 2px; text-align: left; padding: 10px 12px; border-radius: 8px; border: 2px solid var(--black); background: var(--teal-light); color: var(--black); font: inherit; }

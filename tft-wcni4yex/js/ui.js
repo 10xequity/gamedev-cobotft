@@ -492,13 +492,15 @@ export class UI {
   }
 
   // Drag: press on a unit, move more than a few pixels, release over a hex or bench slot.
+  // Owned units can also be dropped on Sell; shop cards dragged to a slot are bought there.
   drag(e) {
-    const src = e.target.closest('[data-uid]');
+    const src = e.target.closest('[data-uid], #shop [data-id]');
     if (!src || e.button > 0 || this.fighting) return;
-    const uid = Number(src.dataset.uid);
-    const inst = eco.owned(this.g.you).find(i => i.uid === uid);
-    if (!inst) return;
-    const u = this.g.unitsById[inst.id];
+    const shopK = src.dataset.id ? [...$('shop').children].indexOf(src) : -1;
+    const uid = shopK < 0 ? Number(src.dataset.uid) : null;
+    const inst = shopK < 0 ? eco.owned(this.g.you).find(i => i.uid === uid) : null;
+    if (shopK < 0 && !inst) return;
+    const u = this.g.unitsById[inst ? inst.id : src.dataset.id];
     const start = [e.clientX, e.clientY];
     let ghost = null, over = null, last = null, raf = 0;
     // Pointer events arrive faster than frames; the ghost follows on the next frame only.
@@ -517,11 +519,13 @@ export class UI {
         if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
         ghost = el('div', { className: 'dragghost' }, this.spr(u, 96));
         document.body.append(ghost);
+        if (inst) { this.selected = uid; $('sell').disabled = false; $('sell').textContent = t('Sell for {g}g', { g: this.sellValue() }); this.selected = null; }
       }
       if (!raf) raf = requestAnimationFrame(place);
     };
-    const onUp = () => {
+    const onUp = ev => {
       cancelAnimationFrame(raf);
+      if (ev.type === 'pointercancel') { over?.classList.remove('drop'); over = null; } // the page took the gesture (a scroll): drop nothing
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
       document.removeEventListener('pointercancel', onUp);
@@ -530,7 +534,22 @@ export class UI {
       over?.classList.remove('drop');
       this.suppressClick = true;
       setTimeout(() => { this.suppressClick = false; }, 0);
-      if (over) { const [where, k] = over.dataset.drop.split(':'); this.selected = uid; this.moveSelected(where, Number(k)); this.selected = null; this.render(); }
+      if (!over) { this.render(); return; }
+      const [where, k] = over.dataset.drop.split(':');
+      if (where === 'sell') {
+        if (inst) { const r = this.g.sell(uid); if (r.ok) play('sell'); this.say(r.ok ? t('Sold for {gold} gold', { gold: r.gold }) : t(r.reason)); }
+      } else if (shopK >= 0) {
+        const before = new Set(eco.owned(this.g.you).map(i => i.uid));
+        const r = this.g.buy(shopK);
+        if (!r.ok) this.say(t(r.reason));
+        else {
+          const fresh = eco.owned(this.g.you).find(i => !before.has(i.uid)); // none when it merged
+          play(fresh ? 'buy' : 'merge');
+          this.say(t('Bought {name}', { name: r.unit.display }));
+          if (fresh) { this.selected = fresh.uid; this.moveSelected(where, Number(k)); this.selected = null; }
+        }
+      } else { this.selected = uid; this.moveSelected(where, Number(k)); this.selected = null; }
+      this.render();
     };
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp);
@@ -600,7 +619,7 @@ export class UI {
     $('newDaily').addEventListener('click', () => { $('newDlg').close(); fresh(true); });
     $('again').addEventListener('click', () => { $('over').close(); fresh(false); });
     $('againDaily').addEventListener('click', () => { $('over').close(); fresh(true); });
-    for (const id of ['court', 'bench']) $(id).addEventListener('pointerdown', e => this.drag(e));
+    for (const id of ['court', 'bench', 'shop']) $(id).addEventListener('pointerdown', e => this.drag(e));
     $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {
       if (e.target.matches?.('input, select, textarea')) return;

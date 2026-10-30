@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.17.0 — 2026-10-29 · Milestone 37: drag to buy, drag onto Sell
+
+- Drag a shop card onto a bench slot or a court hex to buy her straight into that spot (a third copy just
+  merges). Drag any of your units onto Sell to sell; Sell shows the price while you hold her over it.
+- A drag the browser takes over for scrolling (pointercancel) now drops nothing instead of dropping wherever
+  the finger was. Shop cards still let a vertical swipe scroll the page on phones; tap still buys.
+
 ## v2.16.0 — 2026-10-29 · Milestone 36: shop hints for upgrades, pairs and new traits
 
 - Shop cards carry a corner badge when buying helps: "★ upgrade" (a third copy merges into 2-star), "pair"
