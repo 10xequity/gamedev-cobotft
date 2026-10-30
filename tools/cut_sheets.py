@@ -92,7 +92,7 @@ def boxes(looks: list[str]) -> dict:
     """Per pose, the [x, y, w, h] box inside a cell that holds every look's figure, so the
     game can show just the figure instead of the whole cell."""
     out = {}
-    sheets = [Image.open(OUT / f"{n}.webp").getchannel("A") for n in looks]
+    sheets = [Image.open(OUT / f"{n}.webp").getchannel("A").point(lambda v: 255 if v > 8 else 0) for n in looks]  # ignore faint specks
     for pose, cells in POSES.items():
         x0, y0, x1, y1 = CELL_W, CELL_H, 0, 0
         for r, c in (cells if isinstance(cells[0], list) else [cells]):

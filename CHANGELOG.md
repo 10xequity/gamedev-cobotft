@@ -5,7 +5,7 @@ Player names never appear in this file.
 ## v2.14.1 — 2026-10-29 · Front-pose clean-up
 
 - Sheets 04 and 23 had floor lines running to the cell edges in the front pose, which made every card
-  reserve full-cell width for it. Lines removed, front box now 49-171 wide instead of 0-210.
+  reserve full-cell width for it. Lines removed, front box now 44-172 wide instead of 0-210; box measuring ignores near-invisible specks (alpha 8 or less).
 
 ## v2.14.0 — 2026-10-29 · Milestone 34: sprite clean-up
 
