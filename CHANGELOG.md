@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.28.0 — 2026-10-29 · Milestone 48: outdoor grass court stage
+
+- Fifth stage, "park": an outdoor grass court with sky, sun, soft clouds, a tree line, mown stripes and white
+  lines, no stands or spotlights. Drawn in code like the others, in the same perspective as the board.
+- The game's seed picks one of five stages now, so some seeds land on a different stage than before (cosmetic
+  only; a saved game keeps its stage).
+
 ## v2.27.0 — 2026-10-29 · Milestone 47: saver, reroller and copycat bots
 
 - Three new bot personalities: savers hold their gold (buying only pairs and favourites, no levels or

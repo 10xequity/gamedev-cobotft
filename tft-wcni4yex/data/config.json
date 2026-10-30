@@ -11,7 +11,7 @@
       "rowsPerSide": 4
     },
     "planningSeconds": 30,
-    "stageArt": ["fieldhouse", "arena", "beach", "retro"],
+    "stageArt": ["fieldhouse", "arena", "beach", "retro", "park"],
     "stages": {
       "practiceRounds": 3,
       "roundsPerStage": 4,
