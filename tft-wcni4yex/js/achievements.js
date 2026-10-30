@@ -6,6 +6,11 @@ import { computeTraits } from './traits.js';
 const KEY = 'tacticalboom.achievements';
 
 const traitsOf = g => computeTraits(g.you.court, g.unitsById, g.cfg).traits.filter(t => t.level);
+// Gear on court: finished items are the ones made from two pieces (config items.recipes).
+const recipeIds = g => new Set(g.cfg.items.recipes.map(r => r.id));
+const worn = g => eco.onCourt(g.you).flatMap(i => i.items || []);
+const pieces = g => [...g.you.items, ...eco.owned(g.you).flatMap(i => i.items || [])].reduce((n, id) => n + (recipeIds(g).has(id) ? 2 : 1), 0);
+const NEW_AUGMENTS = ['team-dinner', 'pancake-drill', 'swing-lab', 'setter-summit', 'front-row-fire', 'back-row-defense'];
 export const LIST = [
   { id: 'first-game', name: 'Opening Serve', desc: 'Finish a game.', name_es: 'Primer saque', desc_es: 'Termina una partida.', test: () => true },
   { id: 'top4', name: 'Top Half', desc: 'Finish in the top 4.', name_es: 'Mitad de arriba', desc_es: 'Termina entre las 4 primeras.', test: ({ g }) => g.you.place <= 4 },
@@ -24,6 +29,14 @@ export const LIST = [
   { id: 'augments', name: 'Fully Boosted', desc: 'Pick three augments in one game.', name_es: 'A tope', desc_es: 'Elige tres mejoras en una partida.', test: ({ g }) => g.you.augments.length >= 3 },
   { id: 'ten-games', name: 'Season Ticket', desc: 'Finish 10 games on this device.', name_es: 'Abono de temporada', desc_es: 'Termina 10 partidas en este dispositivo.', test: ({ records }) => records.length >= 10 },
   { id: 'gold-rank', name: 'Gold Medal', desc: 'Reach Gold rank on the ladder.', name_es: 'Medalla de oro', desc_es: 'Llega al rango Oro en la clasificación.', test: ({ rating, g }) => rating >= g.cfg.ladder.ranks.find(r => r[0] === 'Gold')[1] },
+  { id: 'hyper', name: 'Speed Round', desc: 'Finish a hyper roll game.', name_es: 'Ronda rápida', desc_es: 'Termina una partida rápida.', test: ({ g }) => g.mode === 'hyper' },
+  { id: 'hyper-win', name: 'Lightning Champion', desc: 'Finish 1st in a hyper roll game.', name_es: 'Campeona relámpago', desc_es: 'Termina en 1.º lugar en una partida rápida.', test: ({ g }) => g.mode === 'hyper' && g.you.place === 1 },
+  { id: 'park', name: 'Fresh Air', desc: 'Finish a game on the park court.', name_es: 'Aire libre', desc_es: 'Termina una partida en la cancha del parque.', test: ({ g }) => g.stage === 'park' },
+  { id: 'finished-item', name: 'Kitted Out', desc: 'End a game with a finished item on court.', name_es: 'Bien equipada', desc_es: 'Termina con un objeto terminado en la cancha.', test: ({ g }) => worn(g).some(id => recipeIds(g).has(id)) },
+  { id: 'three-items', name: 'Fully Geared', desc: 'End a game with a player wearing three items.', name_es: 'Equipo completo de pies a cabeza', desc_es: 'Termina con una jugadora que lleve tres objetos.', test: ({ g }) => eco.onCourt(g.you).some(i => (i.items?.length || 0) >= 3) },
+  { id: 'team-kit', name: 'Team Kit', desc: 'End a game with four or more players on court, all wearing gear.', name_es: 'Uniformadas', desc_es: 'Termina con cuatro o más jugadoras en la cancha, todas con equipo.', test: ({ g }) => { const c = eco.onCourt(g.you); return c.length >= 4 && c.every(i => i.items?.length); } },
+  { id: 'gear-collector', name: 'Equipment Manager', desc: 'End a game holding five gear pieces (a finished item counts as two).', name_es: 'Utilera', desc_es: 'Termina con cinco piezas de equipo (un objeto terminado cuenta como dos).', test: ({ g }) => pieces(g) >= 5 },
+  { id: 'new-playbook', name: 'New Playbook', desc: 'Take one of the six newest augments.', name_es: 'Jugada nueva', desc_es: 'Elige una de las seis mejoras más nuevas.', test: ({ g }) => g.you.augments.some(id => NEW_AUGMENTS.includes(id)) },
 ];
 
 export function load() {

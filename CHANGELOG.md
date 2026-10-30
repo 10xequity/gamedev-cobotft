@@ -2,6 +2,16 @@
 
 Player names never appear in this file.
 
+## v2.33.0 — 2026-10-29 · Milestone 53: eight new achievements
+
+- Eight new achievements (25 in all), with Spanish: Speed Round (finish a hyper roll game), Lightning Champion
+  (win one), Fresh Air (finish on the park court), Kitted Out (a finished item on court), Fully Geared (a
+  player wearing three items), Team Kit (four or more on court, all wearing gear), Equipment Manager (five gear
+  pieces; a finished item counts as two), New Playbook (take one of the six newest augments).
+- Self-check sets up a game that meets each one and proves it fires.
+- Fix: the gear line on a player's card trims only a closing full stop (the M52 pattern trimmed any last
+  character; every description ends in a full stop, so nothing visible changed).
+
 ## v2.32.0 — 2026-10-29 · Milestone 52: bots wear gear; gear on the unit card and in help (items part 3)
 
 - Gear, part 3 of 3. Bots now wear their gear: each piece goes to their best court player already wearing a

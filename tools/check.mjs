@@ -465,6 +465,15 @@ const got = ach.earned(ctx, {});
 assert.ok(got.includes('first-game') && got.includes('ten-games') && got.includes('gold-rank'), 'basic achievements fire');
 assert.equal(got.includes('win'), fin.you.place === 1, 'Champion only for 1st');
 assert.deepEqual(ach.earned(ctx, Object.fromEntries(got.map(id => [id, 'x']))), [], 'earned achievements are not earned again');
+// The newer achievements fire on a game set up to meet them.
+{ const g = playGame('ach-new').g, ids = g.units.slice(0, 4).map(u => u.id);
+  g.you.court.fill(null); ids.forEach((id, n) => { g.you.court[n] = { uid: 800 + n, id, star: 1 }; });
+  const court = eco.onCourt(g.you);
+  Object.assign(g, { mode: 'hyper', stage: 'park' }); g.you.place = 1; g.you.augments = ['team-dinner'];
+  court.forEach((i, n) => { i.items = n === 0 ? ['block-sleeves', 'spike-gloves', 'energy-gel'] : ['knee-pads']; });
+  const want = ['hyper', 'hyper-win', 'park', 'finished-item', 'three-items', 'gear-collector', 'new-playbook', ...(court.length >= 4 ? ['team-kit'] : [])];
+  const fired = ach.earned({ g, records: [], rating: 0 }, {});
+  for (const id of want) assert.ok(fired.includes(id), `achievement ${id} fires`); }
 assert.ok(typeof fin.you.bestStreak === 'number' && typeof fin.you.lowHp === 'number' && fin.you.mostGold > 0, 'the game tracks streak, lowest HP and most gold');
 
 // Guided tips: the first game starts with "place"; each tip shows once; hidden tips stay hidden.
