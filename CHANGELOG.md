@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.22.0 — 2026-10-29 · Milestone 42: phone layout pass at 375px
+
+- Phones (under 700px wide), checked at 375px: the page no longer runs wider than the screen (the five shop
+  cards used to push it to 438px, so phones zoomed out); shop and bench figures scale down to fit whole.
+- The header scrolls away on phones instead of staying pinned over a third of the screen; your gold and HP
+  ride on a small tab above the action bar instead.
+
 ## v2.21.0 — 2026-10-29 · Milestone 41: end-of-game recap with MVP and best-fight replay
 
 - The game-over panel adds a recap: your MVP (her figure in her role's pose, damage dealt), your team's total

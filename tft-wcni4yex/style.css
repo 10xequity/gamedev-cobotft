@@ -109,7 +109,7 @@ dialog .players { grid-template-columns: repeat(2, 1fr); }
 dialog .players li { color: var(--cream); }
 dialog .players li.you { color: var(--black); }
 .msg { margin: 8px 12px; min-height: 1.4em; font-weight: 600; }
-.shop { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.shop { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
 .shopcard { border-radius: 10px; border: 3px solid var(--ring); background: var(--cream); color: var(--black); padding: 6px 4px; display: grid; justify-items: center; gap: 2px; min-height: 150px; }
 .shopcard:disabled { background: var(--teal-light); border-style: dashed; }
 .shopcard .spr { background-repeat: no-repeat; }
@@ -241,3 +241,20 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
 .recap .mvp { display: flex; align-items: flex-end; gap: 12px; }
 .recap .mvp .spr { background-repeat: no-repeat; flex: none; }
 .recap button { justify-self: start; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }
+/* ---- phones (under 700px) ---- */
+.pocket { display: none; }
+@media (max-width: 699px) {
+  /* The header scrolls away instead of covering a third of the screen; gold and HP ride on the action bar. */
+  .bar { position: static; gap: 8px 12px; }
+  .bar button { padding: 6px 10px; }
+  .pocket { display: block; position: absolute; left: 12px; bottom: 100%; padding: 3px 8px; border-radius: 6px 6px 0 0; background: var(--teal-dark); color: var(--cream); font-weight: 700; font-size: 13px; }
+  .shopcard { min-width: 0; min-height: 0; padding: 4px 2px; }
+  .shopcard .spr { zoom: .7; }
+  .shopcard .nm { font-size: 10px; padding: 1px 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .shopcard .tr { font-size: 8.5px; }
+  .shopcard .abbr, .shopcard .hint { font-size: 8px; padding: 2px 3px; }
+  .slots.bench { gap: 3px; }
+  .slot .abbr { font-size: 7px; padding: 1px 2px; top: 1px; right: 1px; }
+  .slot .spr { zoom: .5; }
+  .slot .nm { font-size: 8px; }
+}

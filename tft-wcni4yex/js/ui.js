@@ -142,6 +142,7 @@ export class UI {
     const g = this.g, you = g.you, cfg = g.cfg, info = g.round;
     $('hp').textContent = Math.max(0, you.hp);
     $('gold').textContent = you.gold;
+    $('pocket').textContent = t('{g} gold · {hp} HP', { g: you.gold, hp: Math.max(0, you.hp) }); // phones: the header scrolls away
     $('round').textContent = info.label + (info.practice ? t(' practice') : '') + (history.dailyDate(g.seed) ? t(' · daily') : '');
     const toNext = eco.xpToNext(you, cfg);
     $('level').textContent = t('Lv {level}', { level: you.level }) + (toNext === null ? t(' (max)') : t(' · {n} XP to next', { n: toNext }));
