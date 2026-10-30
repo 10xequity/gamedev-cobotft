@@ -3,6 +3,7 @@ import { spriteStyle } from './sprite.js';
 import { Arena } from './arena.js';
 import * as eco from './economy.js';
 import { tagsOf, computeTraits } from './traits.js';
+import { ROW_FOR } from './bots.js';
 import { keywordsAt, statsAt } from './units.js';
 import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
@@ -519,6 +520,10 @@ export class UI {
         if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
         ghost = el('div', { className: 'dragghost' }, this.spr(u, 96));
         document.body.append(ghost);
+        // Suggest a row: light the empty hexes in the row bots use for this role.
+        const row = ROW_FOR[u.role];
+        for (const h of $('court').querySelectorAll('[data-drop^="court:"]')) h.classList.toggle('suggest', !h.dataset.uid && Math.floor(h.dataset.drop.split(':')[1] / 7) === row);
+        this.say(t(['{role}: best at the net', '{role}: best one row back', '{role}: best two rows back'][Math.min(row, 2)], { role: u.role }));
         if (inst) { this.selected = uid; $('sell').disabled = false; $('sell').textContent = t('Sell for {g}g', { g: this.sellValue() }); this.selected = null; }
       }
       if (!raf) raf = requestAnimationFrame(place);
@@ -531,6 +536,7 @@ export class UI {
       document.removeEventListener('pointercancel', onUp);
       if (!ghost) return; // a plain tap: the click handler takes it
       ghost.remove();
+      for (const h of $('court').querySelectorAll('.suggest')) h.classList.remove('suggest');
       over?.classList.remove('drop');
       this.suppressClick = true;
       setTimeout(() => { this.suppressClick = false; }, 0);

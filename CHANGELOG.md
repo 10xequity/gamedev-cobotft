@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.19.0 — 2026-10-29 · Milestone 39: row hints while dragging
+
+- While you drag a unit (or a shop card), the empty hexes in the row that suits her role glow gold and the
+  message line says why: Middles and Liberos at the net, Outsides and Opposites one row back, Setters and
+  Utility two rows back. It is the same table the bots use to place their own teams (`ROW_FOR` in bots.js).
+  A hint only; any hex still works.
+
 ## v2.18.0 — 2026-10-29 · Milestone 38: court units hold their role pose while planning
 
 - During planning, units on the court hold their role's pose, the same one their card shows (spike, block,

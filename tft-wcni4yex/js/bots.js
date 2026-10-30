@@ -11,8 +11,9 @@ export function personality(seed, idx, cfg, difficulty = 'normal') {
   return { favorite: pick(rng, Object.keys(cfg.roles)), pace: pick(rng, Object.keys(cfg.bots.paces)), difficulty };
 }
 
-// Court rows by role (0 = at the net) and the column order to fill, centre out.
-const ROW_FOR = { Middle: 0, Libero: 0, Outside: 1, Opposite: 1, Utility: 2, Setter: 2 };
+// Court rows by role (0 = at the net) and the column order to fill, centre out. The planning
+// screen uses ROW_FOR too, to suggest a row while you drag.
+export const ROW_FOR = { Middle: 0, Libero: 0, Outside: 1, Opposite: 1, Utility: 2, Setter: 2 };
 const COL_ORDER = [3, 2, 4, 1, 5, 0, 6];
 
 const likes = (u, fav) => u.role === fav || u.countsAs.includes(fav);

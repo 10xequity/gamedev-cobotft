@@ -239,3 +239,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 37 ✔ (v2.17.0) drag to buy, drag onto Sell.
 
 ### Milestone 38 ✔ (v2.18.0) court units hold their role pose while planning.
+
+### Milestone 39 ✔ (v2.19.0) row hints while dragging.
