@@ -319,6 +319,24 @@ export class UI {
       el('span', { className: 'n', textContent: x.n.toLocaleString() }))));
   }
 
+  // Game-over recap: your MVP (her figure, in her role's pose), team damage, record, and a button
+  // that replays your best fight.
+  renderRecap() {
+    const g = this.g, rc = g.recap(), kids = [];
+    if (rc.mvp) {
+      const u = g.unitsById[rc.mvp.id];
+      kids.push(el('div', { className: 'mvp' }, this.spr(u, 120),
+        el('p', {}, el('b', { textContent: t('MVP: {name}', { name: u.display }) }), el('br'), t('{n} damage, {style}', { n: rc.mvp.dealt.toLocaleString(), style: u.style }))));
+    }
+    kids.push(el('p', { textContent: t('Your team dealt {n} damage over {w} wins and {l} losses.', { n: rc.total.toLocaleString(), w: rc.wins, l: rc.losses }) }));
+    if (rc.best) {
+      const b = el('button', { type: 'button', textContent: t('Watch best fight: {label} vs {opp}', { label: rc.best.label, opp: rc.best.opponent }) });
+      b.addEventListener('click', async () => { $('over').close(); await this.replay(rc.best.i); if (this.g.over) $('over').showModal(); });
+      kids.push(b);
+    }
+    $('recap').replaceChildren(...kids);
+  }
+
   // After Next round: one line on your fight, and the game-over panel when it ends.
   afterRound(r) {
     const g = this.g;
@@ -335,6 +353,7 @@ export class UI {
       $('overText').textContent += t(' Rating {sign}{delta} to {rating} ({rank}{moved}).', { sign, delta: lad.delta, rating: lad.rating, rank: t(lad.rank), moved });
       const fresh = achievements.record({ g, records: history.load(), rating: lad.rating });
       $('overAch').textContent = fresh.length ? t(fresh.length > 1 ? 'New achievements: {list}' : 'New achievement: {list}', { list: fresh.map(a => loc(a, 'name')).join(', ') }) : '';
+      this.renderRecap();
       $('over').showModal();
       play(g.you.place === 1 ? 'win' : 'lose');
       this.say(t('Game over. You finished {place}.', { place: ordinal(g.you.place) }));

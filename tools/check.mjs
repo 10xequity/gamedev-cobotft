@@ -289,6 +289,10 @@ for (const seed of ['game-a', 'game-b', 'game-c']) {
   assert.ok(g.over && rounds < 100, `${seed}: game must end`);
   if (g.living.length === 1) assert.deepEqual(g.players.map(p => p.place).sort((x, y) => x - y), [1, 2, 3, 4, 5, 6, 7, 8], `${seed}: places 1-8 once each`);
   else assert.ok(g.you.place !== null, `${seed}: game ends early only when you are out`);
+  const rc = g.recap();
+  assert.equal(rc.wins + rc.losses <= g.fights.length, true, `${seed}: recap counts at most one result per fight`);
+  assert.ok(!rc.mvp || (g.unitsById[rc.mvp.id] && rc.mvp.dealt <= rc.total), `${seed}: recap MVP is a real player within the total`);
+  assert.deepEqual(rc, g.recap(), `${seed}: recap is deterministic`);
 }
 assert.deepEqual(playGame('game-a').g.players.map(p => [p.place, p.hp]), playGame('game-a').g.players.map(p => [p.place, p.hp]), 'a whole game replays the same');
 // Difficulty: in mixed lobbies (3 hard bots, 4 easy bots, you as normal) hard bots finish higher.

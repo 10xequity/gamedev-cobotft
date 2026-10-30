@@ -2,6 +2,13 @@
 
 Player names never appear in this file.
 
+## v2.21.0 — 2026-10-29 · Milestone 41: end-of-game recap with MVP and best-fight replay
+
+- The game-over panel adds a recap: your MVP (her figure in her role's pose, damage dealt), your team's total
+  damage, wins and losses, and a "Watch best fight" button that replays it and returns to the panel.
+- The recap re-runs your saved fights (`Game.recap()`), so it is right after a reload too; about 8 ms for a
+  whole game. `check.mjs` checks it is deterministic and its MVP is a real player within the total.
+
 ## v2.20.0 — 2026-10-29 · Milestone 40: role letters beside kit colours, kit contrast check
 
 - Bench, shop and carousel cards carry the role's volleyball letters in the corner, in the kit colour: OH,

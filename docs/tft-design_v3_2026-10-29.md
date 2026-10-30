@@ -243,3 +243,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 39 ✔ (v2.19.0) row hints while dragging.
 
 ### Milestone 40 ✔ (v2.20.0) role letters beside kit colours, kit contrast check.
+
+### Milestone 41 ✔ (v2.21.0) end-of-game recap with MVP and best-fight replay.

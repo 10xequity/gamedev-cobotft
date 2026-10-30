@@ -236,3 +236,8 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
 .tip button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }
 .tip #tipOff { background: transparent; color: var(--black); }
 #lobbyWrap h3 { font-size: 13px; margin: 8px 0 0; color: var(--cream); }
+/* ---- game-over recap ---- */
+.recap { display: grid; gap: 8px; margin: 8px 0; }
+.recap .mvp { display: flex; align-items: flex-end; gap: 12px; }
+.recap .mvp .spr { background-repeat: no-repeat; flex: none; }
+.recap button { justify-self: start; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--black); background: var(--black); color: var(--cream); font-weight: 700; }

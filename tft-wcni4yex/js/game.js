@@ -175,6 +175,26 @@ export class Game {
 
   // Replays one of your fights from this game: same seed, same boards, same augments, so same events.
   replay(i) { return this.rerun(this.fights[i]); }
+  // Game recap from your saved fights (re-run, so it survives a reload): damage your team dealt,
+  // by player; your top scorer; wins and losses; your best fight (the win where your team dealt the
+  // most damage, else the fight where it dealt the most).
+  recap() {
+    const byId = {}, out = { total: 0, wins: 0, losses: 0, mvp: null, best: null };
+    this.fights.forEach((f, i) => {
+      const r = this.rerun(f), mine = new Set((f.side === 'near' ? f.near : f.far).filter(Boolean).map(x => x.uid));
+      const idOf = Object.fromEntries((f.side === 'near' ? f.near : f.far).filter(Boolean).map(x => [x.uid, x.id]));
+      let dealt = 0;
+      for (const e of r.events) if (e.t === 'hit' && mine.has(e.from)) { dealt += e.amount; byId[idOf[e.from]] = (byId[idOf[e.from]] || 0) + e.amount; }
+      out.total += dealt;
+      if (f.won === true) out.wins += 1; else if (f.won === false) out.losses += 1;
+      const score = (f.won === true ? 1e9 : 0) + dealt;
+      if (!out.best || score > out.best.score) out.best = { i, label: f.label, opponent: f.opponent, won: f.won, dealt, score };
+    });
+    const top = Object.entries(byId).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+    if (top) out.mvp = { id: top[0], dealt: top[1] };
+    return out;
+  }
+
   // The latest round's fights between other teams (yours is in fights).
   replayLobby(i) { return this.rerun(this.lobby[i]); }
   rerun(f) {
