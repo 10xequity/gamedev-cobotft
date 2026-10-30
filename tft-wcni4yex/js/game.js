@@ -12,12 +12,15 @@ export const FAR_UID = 100000; // opponent uids are offset so both sides stay un
 
 export class Game {
   constructor(cfg, roster, lookCount) {
-    this.cfg = cfg;
+    this.baseCfg = this.cfg = cfg;
+    this.mode = 'normal';
     this.units = deriveAll(roster, cfg, lookCount);
     this.unitsById = Object.fromEntries(this.units.map(u => [u.id, u]));
   }
 
-  newGame(seed = String(Date.now()), difficulty = 'normal') {
+  // mode 'hyper' (a short game) lays cfg.modes.hyper over the normal settings for this game only.
+  newGame(seed = String(Date.now()), difficulty = 'normal', mode = 'normal') {
+    this.setMode(mode);
     const cfg = this.cfg;
     this.seed = seed;
     this.difficulty = difficulty;
@@ -40,6 +43,11 @@ export class Game {
     this.fights = [];
     this.lobby = [];
     this.startPlanning();
+  }
+
+  setMode(mode) {
+    this.mode = this.baseCfg.modes?.[mode] ? mode : 'normal';
+    this.cfg = this.mode === 'normal' ? this.baseCfg : overlay(structuredClone(this.baseCfg), this.baseCfg.modes[this.mode]);
   }
 
   get you() { return this.players[0]; }
@@ -246,17 +254,24 @@ export class Game {
   // ---- persistence ----
   save() {
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, stage: this.stage, difficulty: this.difficulty, carousel: this.carousel, fights: this.fights, lobby: this.lobby, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, seed: this.seed, stage: this.stage, difficulty: this.difficulty, mode: this.mode, carousel: this.carousel, fights: this.fights, lobby: this.lobby, roundIdx: this.roundIdx, pool: this.pool, players: this.players }));
     } catch { /* private mode, full, or no storage: play on without saving */ }
   }
   load() {
     try {
       const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!s || s.v !== SAVE_VERSION) return false;
+      this.setMode(s.mode || 'normal');
       Object.assign(this, { seed: s.seed, stage: s.stage || this.cfg.game.stageArt[0], difficulty: s.difficulty || 'normal', carousel: s.carousel || null, fights: s.fights || [], lobby: s.lobby || [], roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
       for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; } // saves from before augments
       return true;
     } catch { return false; }
   }
   static clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch { /* ignore */ } }
+}
+
+// Deep-assigns plain objects from `over` into `into` (arrays and numbers replace).
+function overlay(into, over) {
+  for (const [k, v] of Object.entries(over)) { if (v && typeof v === 'object' && !Array.isArray(v)) overlay(into[k] ??= {}, v); else into[k] = v; }
+  return into;
 }

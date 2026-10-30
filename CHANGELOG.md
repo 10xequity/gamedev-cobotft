@@ -2,6 +2,14 @@
 
 Player names never appear in this file.
 
+## v2.29.0 — 2026-10-29 · Milestone 49: hyper roll short game
+
+- New game → "Hyper roll": a short game. Start with 10 gold, 7 base income, faster automatic levels, double
+  damage per lost round, 20-second planning. About 17 rounds instead of 22, at two-thirds the planning time.
+- The settings live in `config.json` under `modes.hyper` and overlay the normal ones for that game only (the
+  check proves the normal settings stay untouched). The mode is saved with the game and in history; hyper games
+  do not change your ladder rating. Spanish text included.
+
 ## v2.28.0 — 2026-10-29 · Milestone 48: outdoor grass court stage
 
 - Fifth stage, "park": an outdoor grass court with sky, sun, soft clouds, a tree line, mown stripes and white

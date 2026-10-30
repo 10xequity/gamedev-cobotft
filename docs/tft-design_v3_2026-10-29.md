@@ -259,3 +259,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 47 ✔ (v2.27.0) saver, reroller and copycat bots.
 
 ### Milestone 48 ✔ (v2.28.0) outdoor grass court stage.
+
+### Milestone 49 ✔ (v2.29.0) hyper roll short game.

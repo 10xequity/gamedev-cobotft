@@ -373,9 +373,23 @@ for (const ic of appManifest.icons) { assert.ok(existsSync(join(GAME, ic.src)), 
 
 // History: a finished game summarises to plain facts only; per-player totals add up.
 const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
+// Hyper roll: its settings apply to that game only, and games end sooner than normal ones.
+{ const base = JSON.stringify(cfg), lengths = { normal: [], hyper: [] };
+  for (const mode of ['normal', 'hyper']) for (let i = 0; i < 6; i++) {
+    const g = new Game(cfg, roster, manifest.looks.length); g.newGame(`len-${mode}-${i}`, 'normal', mode);
+    if (mode === 'hyper') assert.equal(g.cfg.game.planningSeconds, cfg.modes.hyper.game.planningSeconds, 'hyper settings in force');
+    g.you.pers = bots.personality('x', 0, cfg);
+    const plan = () => bots.planBot(g.you, g.pool, g.unitsById, g.cfg, g.round.stage, () => g.roll(g.you), g.living); plan();
+    while (g.living.length > 1 && g.roundIdx < 80) { g.nextRound(); if (g.living.length > 1 && g.over) g.startPlanning(); if (g.you.place === null) plan(); }
+    lengths[mode].push(g.roundIdx);
+  }
+  assert.equal(JSON.stringify(cfg), base, 'a hyper game leaves the normal settings untouched');
+  const avg = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+  assert.ok(avg(lengths.hyper) < avg(lengths.normal) - 2, `hyper games are shorter (${avg(lengths.hyper)} vs ${avg(lengths.normal)} rounds)`);
+  console.log(`hyper roll: ${avg(lengths.hyper).toFixed(1)} rounds vs normal ${avg(lengths.normal).toFixed(1)}`); }
 const { g: done } = playGame('history');
 const rec = hist.summarize(done, new Date('2026-10-29T12:00:00Z'));
-assert.deepEqual(Object.keys(rec).sort(), ['at', 'augments', 'board', 'daily', 'difficulty', 'lastRound', 'level', 'place', 'players', 'seed', 'traits', 'version'], 'history record has only game facts');
+assert.deepEqual(Object.keys(rec).sort(), ['at', 'augments', 'board', 'daily', 'difficulty', 'lastRound', 'level', 'mode', 'place', 'players', 'seed', 'traits', 'version'], 'history record has only game facts');
 assert.ok(rec.place >= 1 && rec.place <= 8 && rec.board.every(b => byId[b.id] && b.name === byId[b.id].display));
 const fake = [{ place: 1, board: [{ id: 'a', name: 'A', star: 1 }, { id: 'b', name: 'B', star: 2 }] }, { place: 5, board: [{ id: 'a', name: 'A', star: 1 }] }];
 const st = hist.unitStats(fake);

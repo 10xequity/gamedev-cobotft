@@ -22,7 +22,7 @@ export function dailyBest(records, date = today()) {
 export function summarize(game, at = new Date()) {
   const you = game.you;
   return {
-    at: at.toISOString(), version: VERSION, seed: game.seed, daily: dailyDate(game.seed), difficulty: game.difficulty || 'normal',
+    at: at.toISOString(), version: VERSION, seed: game.seed, daily: dailyDate(game.seed), difficulty: game.difficulty || 'normal', mode: game.mode || 'normal',
     place: you.place, players: game.players.length, lastRound: game.round.label, level: you.level,
     augments: you.augments.slice(),
     board: eco.onCourt(you).map(i => ({ id: i.id, name: game.unitsById[i.id].display, star: i.star })),

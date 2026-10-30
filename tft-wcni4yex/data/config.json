@@ -418,6 +418,14 @@
     "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.1, 0.2, 0.3], "desc": "Abilities cost 10% / 20% / 30% less", "desc_es": "Las habilidades cuestan un 10% / 20% / 30% menos" }
   },
   "archetypes": ["Hype Captain", "Snack Boss", "Early Bird", "Clutch Closer", "Group Chat Queen", "Gym Rat", "Sunshine", "Mastermind"],
+  "modes": {
+    "hyper": {
+      "game": { "startGold": 10, "planningSeconds": 20 },
+      "income": { "base": 7 },
+      "xp": { "autoPerRoundByStage": { "1": 2, "2": 4, "3": 6, "4": 8, "5": 10, "6": 12, "7": 12 } },
+      "damage": { "perStage": { "2": 2, "3": 3, "4": 4, "5": 6, "6": 8, "7": 10 } }
+    }
+  },
   "jerseyByLevel": {
     "National": "#0E7C86",
     "Regional": "#E5B800",

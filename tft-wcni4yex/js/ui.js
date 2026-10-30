@@ -143,7 +143,7 @@ export class UI {
     $('hp').textContent = Math.max(0, you.hp);
     $('gold').textContent = you.gold;
     $('pocket').textContent = t('{g} gold · {hp} HP', { g: you.gold, hp: Math.max(0, you.hp) }); // phones: the header scrolls away
-    $('round').textContent = info.label + (info.practice ? t(' practice') : '') + (history.dailyDate(g.seed) ? t(' · daily') : '');
+    $('round').textContent = info.label + (info.practice ? t(' practice') : '') + (history.dailyDate(g.seed) ? t(' · daily') : '') + (g.mode === 'hyper' ? t(' · hyper') : '');
     const toNext = eco.xpToNext(you, cfg);
     $('level').textContent = t('Lv {level}', { level: you.level }) + (toNext === null ? t(' (max)') : t(' · {n} XP to next', { n: toNext }));
     $('courtCount').textContent = `${eco.onCourt(you).length} / ${eco.courtMax(you, cfg)}`;
@@ -348,10 +348,13 @@ export class UI {
       $('overText').textContent = t('You finished {place} of {n}.', { place: ordinal(g.you.place), n: g.players.length });
       $('finalPlaces').replaceChildren(...this.playerRows());
       history.record(g);
-      const lad = ladder.record(g.you.place, g.difficulty, g.cfg);
-      const sign = lad.delta >= 0 ? '+' : '';
-      const moved = lad.rank === lad.prevRank ? '' : t(lad.delta >= 0 ? ', up from {rank}' : ', down from {rank}', { rank: t(lad.prevRank) });
-      $('overText').textContent += t(' Rating {sign}{delta} to {rating} ({rank}{moved}).', { sign, delta: lad.delta, rating: lad.rating, rank: t(lad.rank), moved });
+      // Hyper roll is a short side game: it does not move the ladder rating.
+      const lad = g.mode === 'normal' ? ladder.record(g.you.place, g.difficulty, g.cfg) : { rating: ladder.load().rating ?? g.cfg.ladder.start };
+      if (g.mode === 'normal') {
+        const sign = lad.delta >= 0 ? '+' : '';
+        const moved = lad.rank === lad.prevRank ? '' : t(lad.delta >= 0 ? ', up from {rank}' : ', down from {rank}', { rank: t(lad.prevRank) });
+        $('overText').textContent += t(' Rating {sign}{delta} to {rating} ({rank}{moved}).', { sign, delta: lad.delta, rating: lad.rating, rank: t(lad.rank), moved });
+      } else $('overText').textContent += t(' Hyper roll games do not change your rating.');
       const fresh = achievements.record({ g, records: history.load(), rating: lad.rating });
       $('overAch').textContent = fresh.length ? t(fresh.length > 1 ? 'New achievements: {list}' : 'New achievement: {list}', { list: fresh.map(a => loc(a, 'name')).join(', ') }) : '';
       this.renderRecap();
@@ -635,10 +638,10 @@ export class UI {
       try { localStorage.setItem(DIFF_KEY, $('difficulty').value); } catch { /* per-device preference only */ }
       this.say(t('Bots: {d}, from the next new game', { d: $('difficulty').selectedOptions[0].textContent }));
     });
-    const fresh = (daily = false) => {
-      if (daily) this.g.newGame(history.dailySeed(), history.DAILY_DIFFICULTY); else this.g.newGame(undefined, $('difficulty').value);
+    const fresh = (daily = false, mode = 'normal') => {
+      if (daily) this.g.newGame(history.dailySeed(), history.DAILY_DIFFICULTY); else this.g.newGame(undefined, $('difficulty').value, mode);
       this.selected = null; this.scout = null; this.lastFight = null; this.lastLine = '';
-      this.say(daily ? t("Today's challenge, {date}: same players and bots for everyone today", { date: history.today() }) : t('New game'));
+      this.say(daily ? t("Today's challenge, {date}: same players and bots for everyone today", { date: history.today() }) : mode === 'hyper' ? t('Hyper roll: more gold, faster levels, double damage, 20-second rounds') : t('New game'));
       this.render(); this.resetTimer();
     };
     const dailyLine = () => { const best = history.dailyBest(history.load()); return t("Today's challenge ({date}): same pool, shops and bots for everyone today, bots on Normal. ", { date: history.today() }) + (best ? t('Your best today: {place}.', { place: ordinal(best) }) : t('Not played yet today.')); };
@@ -646,6 +649,7 @@ export class UI {
     $('newClose').addEventListener('click', () => $('newDlg').close());
     $('newFree').addEventListener('click', () => { $('newDlg').close(); fresh(false); });
     $('newDaily').addEventListener('click', () => { $('newDlg').close(); fresh(true); });
+    $('newHyper').addEventListener('click', () => { $('newDlg').close(); fresh(false, 'hyper'); });
     $('again').addEventListener('click', () => { $('over').close(); fresh(false); });
     $('againDaily').addEventListener('click', () => { $('over').close(); fresh(true); });
     for (const id of ['court', 'bench', 'shop']) $(id).addEventListener('pointerdown', e => this.drag(e));
