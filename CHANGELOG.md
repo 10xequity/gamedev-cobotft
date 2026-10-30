@@ -2,6 +2,18 @@
 
 Player names never appear in this file.
 
+## v2.30.0 — 2026-10-29 · Milestone 50: gear drops and equipping (items part 1)
+
+- Gear, part 1 of 3. After each practice round from 1-2 on (1-2, 1-3, 2-4, 4-4, 6-4) every player gets one
+  seeded piece: Knee Pads (+12 armor), Wristband (+10% attack), Headband (starts with 15 mana) or Ankle Tape
+  (+10% attack speed). New `js/items.js`; numbers in `config.json` under `items`.
+- Your pieces wait in a gear bag under the bench: tap one, then tap a player (court or bench) to put it on, up
+  to 3 per player. Cards and court units show what they wear ("★ WB"), and the spoken name says it too.
+- Gear follows its player: selling returns it to the bag; merging three copies keeps their gear on the
+  upgraded one (extra pieces go back to the bag). Fight snapshots copy gear, so replays stay exact.
+- Bots receive gear too but do not wear it yet (that is part 3). Self-check covers drops, the 3-piece cap,
+  selling, merging and the armor bonus in a fight.
+
 ## v2.29.0 — 2026-10-29 · Milestone 49: hyper roll short game
 
 - New game → "Hyper roll": a short game. Start with 10 gold, 7 base income, faster automatic levels, double

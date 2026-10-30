@@ -6,6 +6,7 @@ import { rngFrom } from './rng.js';
 import { statsAt, keywordsAt } from './units.js';
 import { neighbors, key, slotToHex, HALF } from './hex.js';
 import { computeTraits, tagsOf, abilityOf } from './traits.js';
+import { modsOf } from './items.js';
 
 function weightedPick(rng, items, weightOf) {
   const weights = items.map(weightOf);
@@ -47,6 +48,8 @@ function fighters(court, side, unitsById, cfg, augments = []) {
     const a = cfg.augments.list.find(x => x.id === id);
     if (a?.kind === 'combat') for (const f of out) if (augmentHits(a.applies, f)) f.mods[a.effect] += a.value;
   }
+  // Gear each unit wears (js/items.js).
+  court.forEach(inst => { if (!inst?.items?.length) return; const f = out.find(x => x.uid === inst.uid); for (const [k, v] of Object.entries(modsOf(inst, cfg))) f.mods[k] += v; });
   for (const f of out) {
     const s = f.base, m = f.mods;
     f.maxHp = f.hp = Math.round((s.hp * (1 + m.allStats) + m.hpFlat) * (1 + m.hpPct));

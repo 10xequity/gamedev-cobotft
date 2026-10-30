@@ -72,7 +72,7 @@ export class Arena {
         // Fights start from idle; playback animates from there.
         const sprite = el('span', { className: 'spr', style: spriteStyle(u2.look, maxHp ? 'idle' : cfg.roleArt[u2.role].pose, 0, h) });
         Object.assign(sprite.dataset, { look: u2.look, h });
-        spr.append(sprite, el('span', { className: 'stars', textContent: '★'.repeat(inst.star) }));
+        spr.append(sprite, el('span', { className: 'stars', textContent: '★'.repeat(inst.star) + (inst.items?.length ? ' ' + inst.items.map(id => cfg.items.components.find(c => c.id === id).abbr).join(' ') : '') }));
         if (maxHp) spr.append(el('span', { className: 'hpbar' }, el('i')));
         spr.style.zIndex = r * 3 + 1;
         tile.append(spr);

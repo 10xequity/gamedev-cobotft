@@ -268,3 +268,9 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
   .tip { bottom: calc(108px + env(safe-area-inset-bottom, 0px)); font-size: 13px; } /* clear the gold/HP tab */
   .slot .nm { font-size: 8px; }
 }
+/* ---- gear bag ---- */
+.gearbag { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.gearbag .lbl { font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--cream); }
+.gearpc { padding: 4px 8px; border-radius: 6px; border: 2px solid var(--black); background: var(--cream); color: var(--black); font: inherit; font-size: 12px; font-weight: 600; }
+.gearpc b { font-family: var(--display); color: var(--teal-dark); }
+.gearpc[aria-pressed="true"] { background: var(--gold); }

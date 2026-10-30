@@ -418,6 +418,17 @@
     "Mastermind": { "family": "Archetype", "breakpoints": [2, 3, 4], "applies": "holders", "effect": "manaCost", "values": [0.1, 0.2, 0.3], "desc": "Abilities cost 10% / 20% / 30% less", "desc_es": "Las habilidades cuestan un 10% / 20% / 30% menos" }
   },
   "archetypes": ["Hype Captain", "Snack Boss", "Early Bird", "Clutch Closer", "Group Chat Queen", "Gym Rat", "Sunshine", "Mastermind"],
+  "items": {
+    "dropRounds": ["1-2", "1-3", "2-4", "4-4", "6-4"],
+    "perUnit": 3,
+    "bagSize": 8,
+    "components": [
+      { "id": "knee-pads", "name": "Knee Pads", "abbr": "KP", "mods": { "armor": 12 }, "desc": "+12 armor.", "name_es": "Rodilleras", "desc_es": "+12 de armadura." },
+      { "id": "wristband", "name": "Wristband", "abbr": "WB", "mods": { "attack": 0.1 }, "desc": "+10% attack.", "name_es": "Muñequera", "desc_es": "+10% de ataque." },
+      { "id": "headband", "name": "Headband", "abbr": "HB", "mods": { "startMana": 15 }, "desc": "Starts with 15 mana.", "name_es": "Cinta", "desc_es": "Empieza con 15 de maná." },
+      { "id": "ankle-tape", "name": "Ankle Tape", "abbr": "AT", "mods": { "speed": 0.1 }, "desc": "+10% attack speed.", "name_es": "Vendaje de tobillo", "desc_es": "+10% de velocidad de ataque." }
+    ]
+  },
   "modes": {
     "hyper": {
       "game": { "startGold": 10, "planningSeconds": 20 },

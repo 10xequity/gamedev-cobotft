@@ -57,7 +57,7 @@ export function newPlayer(cfg) {
     bench: Array(cfg.game.benchSize).fill(null),
     court: Array(cfg.game.hex.cols * cfg.game.hex.rowsPerSide).fill(null), // slot k = row * cols + col, row 0 at the net
     shop: Array(cfg.shop.slots).fill(null),
-    nextUid: 1,
+    nextUid: 1, items: [], // gear bag (js/items.js)
   };
 }
 
@@ -86,14 +86,15 @@ export function buy(player, pool, slot, unitsById, cfg) {
   const inst = { uid: player.nextUid++, id, star: 1 };
   if (benchSlot >= 0) player.bench[benchSlot] = inst;
   else player.bench.push(inst); // temporary overflow, merge() removes it below
-  merge(player);
+  merge(player, cfg);
   player.bench.length = cfg.game.benchSize;
   return { ok: true, unit };
 }
 
 // Three copies at the same star become one at the next star. Keeps the copy that is on
 // court (or the first on the bench) so a merge never moves your placed unit.
-export function merge(player) {
+// Gear on the merged copies stays on the upgraded one, up to items.perUnit; the rest returns to the bag.
+export function merge(player, cfg) {
   for (;;) {
     const groups = {};
     const all = [...player.court.map((i, k) => i && { i, where: 'court', k }), ...player.bench.map((i, k) => i && { i, where: 'bench', k })].filter(Boolean);
@@ -102,6 +103,8 @@ export function merge(player) {
     if (!trio) return;
     const [keep, ...drop] = trio.slice(0, 3);
     keep.i.star += 1;
+    const gear = [...(keep.i.items || []), ...drop.flatMap(d => d.i.items || [])], cap = cfg?.items?.perUnit ?? 3;
+    if (gear.length) { keep.i.items = gear.slice(0, cap); (player.items ??= []).push(...gear.slice(cap)); }
     for (const d of drop) player[d.where][d.k] = null;
   }
 }
@@ -113,6 +116,7 @@ export function sell(player, pool, uid, unitsById) {
     const inst = player[where][k];
     const unit = unitsById[inst.id];
     player[where][k] = null;
+    (player.items ??= []).push(...(inst.items || [])); // her gear goes back to the bag
     player.gold += sellPrice(unit, inst.star);
     pool.copies[inst.id] += copiesIn(inst.star);
     return { ok: true, gold: sellPrice(unit, inst.star) };

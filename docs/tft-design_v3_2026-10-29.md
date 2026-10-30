@@ -261,3 +261,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 48 ✔ (v2.28.0) outdoor grass court stage.
 
 ### Milestone 49 ✔ (v2.29.0) hyper roll short game.
+
+### Milestone 50 ✔ (v2.30.0) gear drops and equipping (items part 1).

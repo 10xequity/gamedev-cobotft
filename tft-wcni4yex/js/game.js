@@ -4,6 +4,7 @@ import { rngFrom, shuffle, hash32 } from './rng.js';
 import { deriveAll } from './units.js';
 import * as eco from './economy.js';
 import { personality, planBot, botAugmentPick, botCarouselPick } from './bots.js';
+import * as items from './items.js';
 import { simulate } from './combat.js';
 
 const SAVE_KEY = 'tacticalboom.save';
@@ -109,7 +110,7 @@ export class Game {
     if (slot >= 0) p.bench[slot] = inst;
     else if (eco.owned(p).filter(i => i.id === id && i.star === 1).length >= 2) p.bench.push(inst);
     else { this.pool.copies[id] += 1; p.gold += this.unitsById[id].tier; return; }
-    eco.merge(p);
+    eco.merge(p, this.cfg);
     p.bench.length = this.cfg.game.benchSize;
   }
 
@@ -135,6 +136,7 @@ export class Game {
   sell(uid) { return this.done(eco.sell(this.you, this.pool, uid, this.unitsById)); }
   move(uid, where, k) { return this.done(eco.move(this.you, uid, where, k, this.cfg)); }
   buyXp() { return this.done(eco.buyXp(this.you, this.cfg)); }
+  equip(k, uid) { return this.done(items.equip(this.you, k, uid, this.cfg)); }
   reroll() {
     if (this.you.freeRerolls > 0) this.you.freeRerolls -= 1;
     else if (this.you.gold < this.cfg.shop.rerollCost) return { ok: false, reason: 'Not enough gold' };
@@ -155,7 +157,7 @@ export class Game {
     this.lobby = [];
     if (!info.practice) {
       for (const [a, b, ghost] of this.pairUp(living)) {
-        const near = a.court.map(i => i && { ...i }), far = b.court.map(i => i && { ...i, uid: i.uid + FAR_UID }); // copies, so later merges never change a past fight
+        const near = a.court.map(i => i && { ...i, items: i.items?.slice() }), far = b.court.map(i => i && { ...i, uid: i.uid + FAR_UID, items: i.items?.slice() }); // copies, so later merges never change a past fight
         const simSeed = `${this.seed}:${this.roundIdx}:${a.idx}:${b.idx}`, augs = { near: a.augments.slice(), far: b.augments.slice() };
         const r = simulate({ seed: simSeed, near, far, unitsById: this.unitsById, cfg, augments: augs });
         const lossA = r.winner === 'far' ? this.hpLoss(info, r.survivors.far) : 0;
@@ -172,6 +174,7 @@ export class Game {
       }
     }
     this.eliminate(living);
+    for (const p of this.living) { const id = items.dropFor(p, this.seed, info.label, cfg); if (p === this.you && id) this.last.item = id; } // gear after drop rounds
     const income = p => eco.incomeFor(p, info, cfg) + this.augSum(p, 'goldPerRound');
     for (const p of this.living) { p.gold += income(p); p.mostGold = Math.max(p.mostGold || 0, p.gold); }
     this.roundIdx += 1;
@@ -263,7 +266,7 @@ export class Game {
       if (!s || s.v !== SAVE_VERSION) return false;
       this.setMode(s.mode || 'normal');
       Object.assign(this, { seed: s.seed, stage: s.stage || this.cfg.game.stageArt[0], difficulty: s.difficulty || 'normal', carousel: s.carousel || null, fights: s.fights || [], lobby: s.lobby || [], roundIdx: s.roundIdx, pool: s.pool, players: s.players, last: null });
-      for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; } // saves from before augments
+      for (const p of this.players) { p.augments ??= []; p.offer ??= null; p.freeRerolls ??= 0; p.items ??= []; } // saves from before augments / gear
       return true;
     } catch { return false; }
   }

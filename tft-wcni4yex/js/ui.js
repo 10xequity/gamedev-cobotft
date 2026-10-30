@@ -4,6 +4,7 @@ import { Arena } from './arena.js';
 import * as eco from './economy.js';
 import { tagsOf, computeTraits } from './traits.js';
 import { ROW_FOR } from './bots.js';
+import * as items from './items.js';
 import { keywordsAt, statsAt } from './units.js';
 import { Playback } from './playback.js';
 import { play, isMuted, setMuted } from './sound.js';
@@ -159,6 +160,7 @@ export class UI {
     this.renderFights();
     this.renderTip();
     $('bench').replaceChildren(...you.bench.map((inst, k) => this.slot(inst, 'bench', k)));
+    this.renderGear();
     $('shop').replaceChildren(...you.shop.map((id, k) => this.card(id, k)));
     this.markLit();
 
@@ -344,6 +346,7 @@ export class UI {
     if (r.practice) this.lastLine = t('{label}: practice, no health lost', { label: r.label });
     else if (!r.opponent) this.lastLine = t('{label}: no fight', { label: r.label });
     else this.lastLine = t('{label} vs {opp}: ', { label: r.label, opp: r.opponent + (r.ghost ? t(' (copy)') : '') }) + (r.won === true ? t('won') : r.won === false ? t('lost, −{n} HP', { n: r.hpLoss }) : t('draw'));
+    if (r.item) this.lastLine += t(' · New gear: {item}', { item: this.itemName(r.item) });
     if (g.over) {
       $('overText').textContent = t('You finished {place} of {n}.', { place: ordinal(g.you.place), n: g.players.length });
       $('finalPlaces').replaceChildren(...this.playerRows());
@@ -376,11 +379,11 @@ export class UI {
       const u = this.g.unitsById[inst.id];
       b.dataset.uid = inst.uid;
       this.kit(b, u);
-      b.setAttribute('aria-label', t('{name}, {star} star, {style}, {where} slot {k}', { name: u.display, star: inst.star, style: u.style, where: t(where), k: k + 1 }) + (inst.uid === this.selected ? t(', selected') : ''));
+      b.setAttribute('aria-label', t('{name}, {star} star, {style}, {where} slot {k}', { name: u.display, star: inst.star, style: u.style, where: t(where), k: k + 1 }) + this.gearSay(inst) + (inst.uid === this.selected ? t(', selected') : ''));
       b.setAttribute('aria-pressed', String(inst.uid === this.selected));
       b.append(
         this.spr(u, 80),
-        el('span', { className: 'stars', textContent: '★'.repeat(inst.star) }),
+        el('span', { className: 'stars', textContent: '★'.repeat(inst.star) + this.gearTag(inst) }),
         el('span', { className: 'nm', textContent: u.display }),
       );
     } else {
@@ -429,6 +432,28 @@ export class UI {
     if (eco.onCourt(you).some(i => i.id === id) || eco.onCourt(you).length >= eco.courtMax(you, g.cfg)) return null;
     const lv = court => computeTraits(court, g.unitsById, g.cfg).traits.reduce((a, tr) => a + tr.level, 0);
     return lv([...you.court, { uid: -1, id, star: 1 }]) > lv(you.court) ? { kind: 'trait', text: t('+ trait') } : null;
+  }
+
+  // ---- gear (js/items.js): the bag under the bench; tap a piece, then a player ----
+  itemName(id) { return loc(items.defOf(id, this.g.cfg), 'name'); }
+  gearTag(inst) { return inst.items?.length ? ' ' + inst.items.map(id => items.defOf(id, this.g.cfg).abbr).join(' ') : ''; }
+  gearSay(inst) { return inst.items?.length ? t(', wearing {list}', { list: inst.items.map(id => this.itemName(id)).join(', ') }) : ''; }
+  renderGear() {
+    const bag = this.g.you.items || [];
+    $('gear').hidden = !bag.length;
+    $('gear').replaceChildren(el('span', { className: 'lbl', textContent: t('Gear') }), ...bag.map((id, k) => {
+      const d = items.defOf(id, this.g.cfg);
+      const b = el('button', { type: 'button', className: 'gearpc' }, el('b', { textContent: d.abbr }), ` ${loc(d, 'name')}`);
+      b.setAttribute('aria-pressed', String(this.selItem === k));
+      b.setAttribute('aria-label', t('{item}: {desc} Tap, then tap a player to equip.', { item: loc(d, 'name'), desc: loc(d, 'desc') }));
+      b.title = loc(d, 'desc');
+      b.addEventListener('click', () => {
+        this.selItem = this.selItem === k ? null : k; this.selected = null;
+        this.say(this.selItem === null ? t('Put down') : t('{item} picked up: {desc} Tap a player to equip.', { item: loc(d, 'name'), desc: loc(d, 'desc') }));
+        this.render();
+      });
+      return b;
+    }));
   }
 
   // Lights every unit (court, bench, shop) that holds the trait picked in the trait panel.
@@ -499,6 +524,12 @@ export class UI {
   tapSlot(inst, where, k) {
     if (this.fighting) return;
     if (this.suppressClick) { this.suppressClick = false; return; }
+    if (this.selItem !== null && this.selItem !== undefined) { // a gear piece is picked up: put it on this player
+      const k2 = this.selItem; this.selItem = null;
+      if (inst) { const r = this.g.equip(k2, inst.uid); if (r.ok) play('buy'); this.say(r.ok ? t('{item} on {name}', { item: this.itemName(r.id), name: this.g.unitsById[inst.id].display }) : t(r.reason, { n: this.g.cfg.items.perUnit })); }
+      else this.say(t('Put down'));
+      this.render(); return;
+    }
     if (this.selected !== null) {
       if (inst && inst.uid === this.selected) { this.selected = null; this.say(t('Put down')); }
       else this.moveSelected(where, k);

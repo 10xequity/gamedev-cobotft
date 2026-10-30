@@ -373,6 +373,36 @@ for (const ic of appManifest.icons) { assert.ok(existsSync(join(GAME, ic.src)), 
 
 // History: a finished game summarises to plain facts only; per-player totals add up.
 const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
+// Gear (js/items.js): drops after drop rounds, equips up to the cap, follows sells and merges, works in combat.
+{ const g = new Game(cfg, roster, manifest.looks.length); g.newGame('gear');
+  while (g.round.label !== cfg.items.dropRounds[0]) g.nextRound();
+  g.nextRound();
+  assert.ok(g.players.every(p => p.items.length === 1), 'every player gets one piece after the first drop round');
+  const you = g.you, inst = you.bench[0], piece = you.items[0];
+  assert.ok(g.equip(0, inst.uid).ok && inst.items[0] === piece && you.items.length === 0, 'equip moves the piece onto the unit');
+  you.items.push('knee-pads', 'knee-pads', 'knee-pads');
+  g.equip(0, inst.uid); g.equip(0, inst.uid);
+  assert.equal(g.equip(0, inst.uid).ok, false, `at most ${cfg.items.perUnit} pieces on a unit`);
+  const before = you.items.length + inst.items.length;
+  eco.sell(you, g.pool, inst.uid, g.unitsById);
+  assert.equal(you.items.length, before, 'selling returns her gear to the bag');
+  // merge: three copies, gear on two of them, ends on the upgraded copy
+  const id = g.units.find(u => u.tier === 1).id; you.bench.fill(null); you.items = [];
+  you.bench[0] = { uid: 900, id, star: 1, items: ['wristband'] }; you.bench[1] = { uid: 901, id, star: 1, items: ['headband'] }; you.bench[2] = { uid: 902, id, star: 1 };
+  eco.merge(you, cfg);
+  const up = eco.owned(you).find(i => i.star === 2);
+  assert.deepEqual(up.items.slice().sort(), ['headband', 'wristband'], 'merged copies keep their gear');
+  // combat: knee pads raise armor
+  const lone = Array(28).fill(null); lone[3] = { uid: 1, id, star: 1 };
+  const padded = Array(28).fill(null); padded[3] = { uid: 1, id, star: 1, items: ['knee-pads'] };
+  const foe = Array(28).fill(null); foe[3] = { uid: 101, id, star: 1 };
+  const arm = c => simulate({ seed: 'gear', near: c, far: foe, unitsById: g.unitsById, cfg }).byUid[1].armor;
+  assert.equal(arm(padded) - arm(lone), cfg.items.components.find(c => c.id === 'knee-pads').mods.armor, 'knee pads add their armor in a fight');
+  // a fight snapshot keeps its own copy of gear, so later equips never change a replay
+  const r = { court: Array(28).fill(null) }; r.court[3] = { uid: 5, id, star: 1, items: ['headband'] };
+  const snap = r.court.map(i => i && { ...i, items: i.items?.slice() }); r.court[3].items.push('wristband');
+  assert.equal(snap[3].items.length, 1, 'fight snapshots copy gear'); }
+
 // Hyper roll: its settings apply to that game only, and games end sooner than normal ones.
 { const base = JSON.stringify(cfg), lengths = { normal: [], hyper: [] };
   for (const mode of ['normal', 'hyper']) for (let i = 0; i < 6; i++) {
