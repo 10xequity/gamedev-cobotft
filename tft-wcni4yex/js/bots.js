@@ -1,5 +1,7 @@
 // Bot players. Each bot has a seeded personality: a favourite role it collects and a pace
-// (how far ahead of the stage it levels, how often it rerolls), plus the game's difficulty
+// (how far ahead of the stage it levels, how often it rerolls; a saver holds its gold until
+// saveUntilStage, then spends), maybe a copycat streak (collects whatever role the leading team
+// fields most), plus the game's difficulty
 // (config bots.difficulty): easy bots buy at random and never reroll; hard bots also chase
 // trait breakpoints when they buy and when they choose who plays. Same state, same choices.
 import * as eco from './economy.js';
@@ -8,7 +10,7 @@ import { computeTraits } from './traits.js';
 
 export function personality(seed, idx, cfg, difficulty = 'normal') {
   const rng = rngFrom(seed, 'bot', idx);
-  return { favorite: pick(rng, Object.keys(cfg.roles)), pace: pick(rng, Object.keys(cfg.bots.paces)), difficulty };
+  return { favorite: pick(rng, Object.keys(cfg.roles)), pace: pick(rng, Object.keys(cfg.bots.paces)), difficulty, copycat: rng() < (cfg.bots.copycat || 0) };
 }
 
 // Court rows by role (0 = at the net) and the column order to fill, centre out. The planning
@@ -22,15 +24,18 @@ const traitLevels = (insts, unitsById, cfg) => computeTraits(insts, unitsById, c
 
 // One planning phase: level, buy (rerolling up to the pace's limit), sell overflow, place.
 // `roll()` returns a fresh shop for this player and keeps the game's roll count in step.
-export function planBot(p, pool, unitsById, cfg, stage, roll) {
-  const fav = p.pers.favorite, pace = cfg.bots.paces[p.pers.pace], d = cfg.bots.difficulty[p.pers.difficulty || 'normal'];
+// `others` (the living players) lets a copycat look at the leader.
+export function planBot(p, pool, unitsById, cfg, stage, roll, others = []) {
+  const fav = p.pers.copycat ? copiedRole(p, others, unitsById) : p.pers.favorite;
+  const pace = cfg.bots.paces[p.pers.pace], d = cfg.bots.difficulty[p.pers.difficulty || 'normal'];
   const rng = rngFrom('botplan', p.idx, p.rolls, p.xp, p.gold);
-  const wantLevel = Math.min(9, stage + pace.levelAhead);
+  const saving = stage < (pace.saveUntilStage || 0), late = pace.saveUntilStage && !saving;
+  const wantLevel = Math.min(9, stage + (late ? pace.lateLevelAhead : pace.levelAhead));
   while (p.level < wantLevel && eco.xpToNext(p, cfg) !== null && p.gold >= cfg.shop.xpCost) eco.buyXp(p, cfg);
 
-  const rerolls = Math.round(pace.rerolls * d.rerollMult);
+  const rerolls = Math.round((late ? pace.lateRerolls : pace.rerolls) * d.rerollMult);
   for (let r = 0; ; r++) {
-    buyWanted(p, pool, unitsById, cfg, fav, d, rng);
+    buyWanted(p, pool, unitsById, cfg, fav, d, rng, saving);
     if (p.freeRerolls > 0) p.freeRerolls -= 1;
     else if (r >= rerolls || p.gold < cfg.shop.rerollCost + 1) break;
     else p.gold -= cfg.shop.rerollCost;
@@ -58,7 +63,16 @@ export function botCarouselPick(p, options, unitsById) {
   return best;
 }
 
-function buyWanted(p, pool, unitsById, cfg, fav, d, rng) {
+// The role the leading team (most HP, then lowest seat) fields most; the bot's own favourite if none.
+function copiedRole(p, others, unitsById) {
+  const leader = others.filter(o => o !== p).sort((a, b) => b.hp - a.hp || a.idx - b.idx)[0];
+  const count = {};
+  for (const i of leader ? eco.onCourt(leader) : []) { const r = unitsById[i.id].role; count[r] = (count[r] || 0) + 1; }
+  return Object.entries(count).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || p.pers.favorite;
+}
+
+// `saving`: only pairs and favourites, never a filler for an empty spot.
+function buyWanted(p, pool, unitsById, cfg, fav, d, rng, saving = false) {
   for (let k = 0; k < p.shop.length; k++) {
     const id = p.shop[k];
     if (!id) continue;
@@ -71,7 +85,7 @@ function buyWanted(p, pool, unitsById, cfg, fav, d, rng) {
       const room = eco.owned(p).length < eco.courtMax(p, cfg) + 2;
       const opensTrait = d.traitAware && !eco.onCourt(p).some(i => i.id === id) &&
         traitLevels([...p.court, { uid: -1, id, star: 1 }], unitsById, cfg) > traitLevels(p.court, unitsById, cfg);
-      want = pairs || likes(u, fav) || room || opensTrait;
+      want = pairs || likes(u, fav) || (!saving && (room || opensTrait));
       if (want && !p.bench.includes(null) && pairs < 2) sellWeakest(p, pool, unitsById, fav);
     }
     if (want) eco.buy(p, pool, k, unitsById, cfg);

@@ -81,12 +81,12 @@ const { Game } = await import(pathToFileURL(join(GAME, 'js', 'game.js')).href);
 const bots = await import(pathToFileURL(join(GAME, 'js', 'bots.js')).href);
 // LOBBY=n plays n games instead of 20 (the lobby report below needs a few hundred to settle).
 const GAMES = Number(process.env.LOBBY || 20), firstOut = [], lastRound = [], favWins = {};
-const placeBy = { role: {}, augment: {} }; // average finishing place, with augments and carousels in play
+const placeBy = { role: {}, augment: {}, pace: {} }; // average finishing place, with augments and carousels in play
 const tally = (map, key, place) => { const s = map[key] ??= { n: 0, sum: 0 }; s.n += 1; s.sum += place; };
 for (let i = 0; i < GAMES; i++) {
   const g = new Game(cfg, roster, 25); g.newGame(`len-${i}`);
   g.you.pers = bots.personality(g.seed, 0, cfg);
-  const plan = () => bots.planBot(g.you, g.pool, g.unitsById, cfg, g.round.stage, () => g.roll(g.you));
+  const plan = () => bots.planBot(g.you, g.pool, g.unitsById, cfg, g.round.stage, () => g.roll(g.you), g.living);
   plan();
   let first = null;
   // Play on after you are out so the whole lobby finishes (the game stops planning once you are out).
@@ -102,6 +102,7 @@ for (let i = 0; i < GAMES; i++) {
   for (const p of g.players) {
     if (p.place === null) continue;
     tally(placeBy.role, p.pers.favorite, p.place);
+    tally(placeBy.pace, p.pers.pace + (p.pers.copycat ? ' copycat' : ''), p.place);
     for (const id of p.augments) tally(placeBy.augment, id, p.place);
   }
 }
@@ -111,6 +112,7 @@ console.log(`${GAMES} bot games: first player out ${avgLabel(firstOut)}, last fi
 // Lobby report: average place (4.5 is fair; lower is stronger) by the bot's favourite role and by each augment taken.
 const avgRows = map => Object.entries(map).map(([k, s]) => [k, s.sum / s.n, s.n]).sort((a, b) => a[1] - b[1]);
 console.log('avg place by favourite role: ' + avgRows(placeBy.role).map(([k, a, n]) => `${k} ${a.toFixed(2)} (${n})`).join(', '));
+console.log('avg place by pace (bot personality): ' + avgRows(placeBy.pace).map(([k, a, n]) => `${k} ${a.toFixed(2)} (${n})`).join(', '));
 const augRows = avgRows(placeBy.augment);
 console.log('avg place by augment, strongest first: ' + augRows.map(([k, a, n]) => `${k} ${a.toFixed(2)} (${n})`).join(', '));
 const off = augRows.filter(([, a, n]) => n >= 15 && (a < 3.8 || a > 5.2)).map(([k, a]) => `${k} ${a.toFixed(2)}`);

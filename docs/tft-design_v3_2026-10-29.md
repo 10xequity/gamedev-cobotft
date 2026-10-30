@@ -255,3 +255,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 45 ✔ (v2.25.0) role letters out of the spoken card names.
 
 ### Milestone 46 ✔ (v2.26.0) six new augments.
+
+### Milestone 47 ✔ (v2.27.0) saver, reroller and copycat bots.

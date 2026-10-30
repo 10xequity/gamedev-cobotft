@@ -2,6 +2,15 @@
 
 Player names never appear in this file.
 
+## v2.27.0 — 2026-10-29 · Milestone 47: saver, reroller and copycat bots
+
+- Three new bot personalities: savers hold their gold (buying only pairs and favourites, no levels or
+  rerolls) until stage 4, then level hard and reroll; rerollers stay low and reroll up to six times a round;
+  copycats (one bot in five, any pace) collect whatever role the leading team fields most.
+- `balance-sim.mjs` now reports average place by personality. 400 games: saver 4.51, reroller 4.15, copycats
+  3.96-5.18 by pace. Left for balance pass 5 (M54): the old "fast" pace averages 5.84, and with the new bot mix
+  Block Party (3.79) and Setter School (5.24) sit just outside the 3.8-5.2 band.
+
 ## v2.26.0 — 2026-10-29 · Milestone 46: six new augments
 
 - Six new augments (30 in all), each with Spanish text: Team Dinner (+6 gold and +4 XP now), Pancake Drill

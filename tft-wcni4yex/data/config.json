@@ -349,7 +349,7 @@
   },
   "bots": {
     "supportRoles": ["Setter", "Libero"],
-    "maxSupport": 3,
+    "maxSupport": 3, "copycat": 0.2,
     "names": ["Team Spike", "Team Dig", "Team Block", "Team Set", "Team Serve", "Team Tip", "Team Pancake"],
     "difficulty": {
       "easy": {
@@ -380,7 +380,9 @@
       "fast": {
         "levelAhead": 3,
         "rerolls": 0
-      }
+      },
+      "saver": { "levelAhead": 1, "rerolls": 0, "saveUntilStage": 4, "lateLevelAhead": 3, "lateRerolls": 4 },
+      "reroller": { "levelAhead": 0, "rerolls": 6 }
     }
   },
   "aggro": {

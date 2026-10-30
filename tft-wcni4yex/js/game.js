@@ -58,7 +58,7 @@ export class Game {
       if (augRound) p.offer = this.offerFor(p);
       if (augRound && p.pers) this.chooseAugment(p, botAugmentPick(p, this.cfg));
     }
-    for (const p of this.living) if (p.pers) planBot(p, this.pool, this.unitsById, this.cfg, this.round.stage, () => this.roll(p));
+    for (const p of this.living) if (p.pers) planBot(p, this.pool, this.unitsById, this.cfg, this.round.stage, () => this.roll(p), this.living);
     this.save();
   }
 
