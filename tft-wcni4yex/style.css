@@ -274,3 +274,4 @@ html[data-motion="reduce"] .spark, html[data-motion="reduce"] .ko { display: non
 .gearpc { padding: 4px 8px; border-radius: 6px; border: 2px solid var(--black); background: var(--cream); color: var(--black); font: inherit; font-size: 12px; font-weight: 600; }
 .gearpc b { font-family: var(--display); color: var(--teal-dark); }
 .gearpc[aria-pressed="true"] { background: var(--gold); }
+.gearpc { touch-action: none; }

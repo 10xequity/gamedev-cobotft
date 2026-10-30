@@ -2,6 +2,16 @@
 
 Player names never appear in this file.
 
+## v2.31.0 — 2026-10-29 · Milestone 51: finished items and drag-to-equip (items part 2)
+
+- Gear, part 2 of 3: finished items. Putting a piece on a player who already wears a lone piece combines the
+  two, like TFT. Ten recipes cover every pair of the four pieces, e.g. Knee Pads + Wristband = Block Sleeves
+  (+15 armor, +15% attack), Wristband + Wristband = Spike Gloves (+30% attack), Headband + Headband = Focus
+  Band (starts with 30 mana, abilities cost 10% less). All in `config.json` `items.recipes`, with Spanish.
+- Drag a piece from the gear bag onto a player (court or bench) to equip it; tapping still works. The message
+  line says what a combination made and what it does.
+- Self-check: every pair makes exactly one recipe, every item uses a known effect and has Spanish text.
+
 ## v2.30.0 — 2026-10-29 · Milestone 50: gear drops and equipping (items part 1)
 
 - Gear, part 1 of 3. After each practice round from 1-2 on (1-2, 1-3, 2-4, 4-4, 6-4) every player gets one

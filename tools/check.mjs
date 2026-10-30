@@ -373,6 +373,7 @@ for (const ic of appManifest.icons) { assert.ok(existsSync(join(GAME, ic.src)), 
 
 // History: a finished game summarises to plain facts only; per-player totals add up.
 const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
+const items = await import(pathToFileURL(join(GAME, 'js', 'items.js')).href);
 // Gear (js/items.js): drops after drop rounds, equips up to the cap, follows sells and merges, works in combat.
 { const g = new Game(cfg, roster, manifest.looks.length); g.newGame('gear');
   while (g.round.label !== cfg.items.dropRounds[0]) g.nextRound();
@@ -380,9 +381,16 @@ const hist = await import(pathToFileURL(join(GAME, 'js', 'history.js')).href);
   assert.ok(g.players.every(p => p.items.length === 1), 'every player gets one piece after the first drop round');
   const you = g.you, inst = you.bench[0], piece = you.items[0];
   assert.ok(g.equip(0, inst.uid).ok && inst.items[0] === piece && you.items.length === 0, 'equip moves the piece onto the unit');
-  you.items.push('knee-pads', 'knee-pads', 'knee-pads');
+  you.items.push('knee-pads');
+  const made = g.equip(0, inst.uid);
+  assert.ok(made.combined && inst.items.length === 1 && made.id === items.recipeFor(piece, 'knee-pads', cfg).id, 'a second piece combines with the lone one');
+  you.items.push('spike-gloves', 'spike-gloves', 'spike-gloves');
   g.equip(0, inst.uid); g.equip(0, inst.uid);
-  assert.equal(g.equip(0, inst.uid).ok, false, `at most ${cfg.items.perUnit} pieces on a unit`);
+  assert.equal(g.equip(0, inst.uid).ok, false, `at most ${cfg.items.perUnit} items on a unit`);
+  // every pair of pieces makes exactly one recipe
+  const ids = cfg.items.components.map(c => c.id);
+  for (const x of ids) for (const y of ids) assert.equal(cfg.items.recipes.filter(r => r.from.slice().sort().join('+') === [x, y].sort().join('+')).length, 1, `one recipe for ${x} + ${y}`);
+  for (const d of [...cfg.items.components, ...cfg.items.recipes]) { assert.ok(d.name_es && d.desc_es, `Spanish for ${d.id}`); for (const k of Object.keys(d.mods)) assert.ok(EFFECTS.includes(k), `${d.id}: unknown effect ${k}`); }
   const before = you.items.length + inst.items.length;
   eco.sell(you, g.pool, inst.uid, g.unitsById);
   assert.equal(you.items.length, before, 'selling returns her gear to the bag');

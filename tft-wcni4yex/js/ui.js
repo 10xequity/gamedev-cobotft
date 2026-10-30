@@ -436,6 +436,11 @@ export class UI {
 
   // ---- gear (js/items.js): the bag under the bench; tap a piece, then a player ----
   itemName(id) { return loc(items.defOf(id, this.g.cfg), 'name'); }
+  equipOn(k, inst) {
+    const r = this.g.equip(k, inst.uid), name = this.g.unitsById[inst.id].display;
+    if (r.ok) play(r.combined ? 'merge' : 'buy');
+    this.say(!r.ok ? t(r.reason, { n: this.g.cfg.items.perUnit }) : r.combined ? t('Combined into {item} on {name}: {desc}', { item: this.itemName(r.id), name, desc: loc(items.defOf(r.id, this.g.cfg), 'desc') }) : t('{item} on {name}', { item: this.itemName(r.id), name }));
+  }
   gearTag(inst) { return inst.items?.length ? ' ' + inst.items.map(id => items.defOf(id, this.g.cfg).abbr).join(' ') : ''; }
   gearSay(inst) { return inst.items?.length ? t(', wearing {list}', { list: inst.items.map(id => this.itemName(id)).join(', ') }) : ''; }
   renderGear() {
@@ -448,6 +453,7 @@ export class UI {
       b.setAttribute('aria-label', t('{item}: {desc} Tap, then tap a player to equip.', { item: loc(d, 'name'), desc: loc(d, 'desc') }));
       b.title = loc(d, 'desc');
       b.addEventListener('click', () => {
+        if (this.suppressClick) { this.suppressClick = false; return; }
         this.selItem = this.selItem === k ? null : k; this.selected = null;
         this.say(this.selItem === null ? t('Put down') : t('{item} picked up: {desc} Tap a player to equip.', { item: loc(d, 'name'), desc: loc(d, 'desc') }));
         this.render();
@@ -526,8 +532,7 @@ export class UI {
     if (this.suppressClick) { this.suppressClick = false; return; }
     if (this.selItem !== null && this.selItem !== undefined) { // a gear piece is picked up: put it on this player
       const k2 = this.selItem; this.selItem = null;
-      if (inst) { const r = this.g.equip(k2, inst.uid); if (r.ok) play('buy'); this.say(r.ok ? t('{item} on {name}', { item: this.itemName(r.id), name: this.g.unitsById[inst.id].display }) : t(r.reason, { n: this.g.cfg.items.perUnit })); }
-      else this.say(t('Put down'));
+      if (inst) this.equipOn(k2, inst); else this.say(t('Put down'));
       this.render(); return;
     }
     if (this.selected !== null) {
@@ -552,13 +557,14 @@ export class UI {
   // Drag: press on a unit, move more than a few pixels, release over a hex or bench slot.
   // Owned units can also be dropped on Sell; shop cards dragged to a slot are bought there.
   drag(e) {
-    const src = e.target.closest('[data-uid], #shop [data-id]');
+    const src = e.target.closest('[data-uid], #shop [data-id], #gear .gearpc');
     if (!src || e.button > 0 || this.fighting) return;
+    const gearK = src.classList.contains('gearpc') ? [...$('gear').querySelectorAll('.gearpc')].indexOf(src) : -1;
     const shopK = src.dataset.id ? [...$('shop').children].indexOf(src) : -1;
-    const uid = shopK < 0 ? Number(src.dataset.uid) : null;
-    const inst = shopK < 0 ? eco.owned(this.g.you).find(i => i.uid === uid) : null;
-    if (shopK < 0 && !inst) return;
-    const u = this.g.unitsById[inst ? inst.id : src.dataset.id];
+    const uid = shopK < 0 && gearK < 0 ? Number(src.dataset.uid) : null;
+    const inst = uid !== null ? eco.owned(this.g.you).find(i => i.uid === uid) : null;
+    if (shopK < 0 && gearK < 0 && !inst) return;
+    const u = gearK < 0 ? this.g.unitsById[inst ? inst.id : src.dataset.id] : null;
     const start = [e.clientX, e.clientY];
     let ghost = null, over = null, last = null, raf = 0;
     // Pointer events arrive faster than frames; the ghost follows on the next frame only.
@@ -575,8 +581,9 @@ export class UI {
       last = ev;
       if (!ghost) {
         if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 6) return;
-        ghost = el('div', { className: 'dragghost' }, this.spr(u, 96));
+        ghost = el('div', { className: 'dragghost' }, u ? this.spr(u, 96) : src.cloneNode(true));
         document.body.append(ghost);
+        if (!u) return void (raf ||= requestAnimationFrame(place)); // gear: no row hint, no Sell
         // Suggest a row: light the empty hexes in the row bots use for this role.
         const row = ROW_FOR[u.role];
         for (const h of $('court').querySelectorAll('[data-drop^="court:"]')) h.classList.toggle('suggest', !h.dataset.uid && Math.floor(h.dataset.drop.split(':')[1] / 7) === row);
@@ -599,7 +606,8 @@ export class UI {
       setTimeout(() => { this.suppressClick = false; }, 0);
       if (!over) { this.render(); return; }
       const [where, k] = over.dataset.drop.split(':');
-      if (where === 'sell') {
+      if (gearK >= 0) { const target = where === 'sell' ? null : this.g.you[where][Number(k)]; if (target) this.equipOn(gearK, target); }
+      else if (where === 'sell') {
         if (inst) { const r = this.g.sell(uid); if (r.ok) play('sell'); this.say(r.ok ? t('Sold for {gold} gold', { gold: r.gold }) : t(r.reason)); }
       } else if (shopK >= 0) {
         const before = new Set(eco.owned(this.g.you).map(i => i.uid));
@@ -683,7 +691,7 @@ export class UI {
     $('newHyper').addEventListener('click', () => { $('newDlg').close(); fresh(false, 'hyper'); });
     $('again').addEventListener('click', () => { $('over').close(); fresh(false); });
     $('againDaily').addEventListener('click', () => { $('over').close(); fresh(true); });
-    for (const id of ['court', 'bench', 'shop']) $(id).addEventListener('pointerdown', e => this.drag(e));
+    for (const id of ['court', 'bench', 'shop', 'gear']) $(id).addEventListener('pointerdown', e => this.drag(e));
     $('court').addEventListener('keydown', e => this.arena.key(e));
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && this.lit && !this.fighting && !document.querySelector('dialog[open]')) { this.lit = null; this.say(t('Trait highlight off')); this.render(); return; }

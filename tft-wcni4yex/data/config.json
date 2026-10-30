@@ -427,6 +427,18 @@
       { "id": "wristband", "name": "Wristband", "abbr": "WB", "mods": { "attack": 0.1 }, "desc": "+10% attack.", "name_es": "Muñequera", "desc_es": "+10% de ataque." },
       { "id": "headband", "name": "Headband", "abbr": "HB", "mods": { "startMana": 15 }, "desc": "Starts with 15 mana.", "name_es": "Cinta", "desc_es": "Empieza con 15 de maná." },
       { "id": "ankle-tape", "name": "Ankle Tape", "abbr": "AT", "mods": { "speed": 0.1 }, "desc": "+10% attack speed.", "name_es": "Vendaje de tobillo", "desc_es": "+10% de velocidad de ataque." }
+    ],
+    "recipes": [
+      {"id": "dig-armor", "name": "Dig Armor", "abbr": "DA", "from": ["knee-pads", "knee-pads"], "mods": {"armor": 30, "shield": 0.1}, "desc": "+30 armor and a shield of 10% HP.", "name_es": "Armadura de defensa", "desc_es": "+30 de armadura y un escudo del 10% de vida."},
+      {"id": "block-sleeves", "name": "Block Sleeves", "abbr": "BS", "from": ["knee-pads", "wristband"], "mods": {"armor": 15, "attack": 0.15}, "desc": "+15 armor, +15% attack.", "name_es": "Mangas de bloqueo", "desc_es": "+15 de armadura, +15% de ataque."},
+      {"id": "captains-band", "name": "Captain's Band", "abbr": "CB", "from": ["headband", "knee-pads"], "mods": {"armor": 12, "startMana": 25}, "desc": "+12 armor, starts with 25 mana.", "name_es": "Brazalete de capitana", "desc_es": "+12 de armadura, empieza con 25 de maná."},
+      {"id": "court-shoes", "name": "Court Shoes", "abbr": "CS", "from": ["ankle-tape", "knee-pads"], "mods": {"armor": 12, "dodge": 0.1}, "desc": "+12 armor, +10% dodge.", "name_es": "Zapatillas de cancha", "desc_es": "+12 de armadura, +10% de esquiva."},
+      {"id": "spike-gloves", "name": "Spike Gloves", "abbr": "SG", "from": ["wristband", "wristband"], "mods": {"attack": 0.3}, "desc": "+30% attack.", "name_es": "Guantes de remate", "desc_es": "+30% de ataque."},
+      {"id": "jump-serve-tape", "name": "Jump Serve Tape", "abbr": "JT", "from": ["headband", "wristband"], "mods": {"attack": 0.1, "abilityDamage": 0.25}, "desc": "+10% attack, +25% ability damage.", "name_es": "Cinta de saque en salto", "desc_es": "+10% de ataque, +25% de daño de habilidad."},
+      {"id": "quick-arm-sleeve", "name": "Quick Arm Sleeve", "abbr": "QA", "from": ["ankle-tape", "wristband"], "mods": {"attack": 0.12, "speed": 0.15}, "desc": "+12% attack, +15% attack speed.", "name_es": "Manga de brazo rápido", "desc_es": "+12% de ataque, +15% de velocidad de ataque."},
+      {"id": "focus-band", "name": "Focus Band", "abbr": "FB", "from": ["headband", "headband"], "mods": {"startMana": 30, "manaCost": 0.1}, "desc": "Starts with 30 mana; abilities cost 10% less.", "name_es": "Cinta de concentración", "desc_es": "Empieza con 30 de maná; las habilidades cuestan un 10% menos."},
+      {"id": "energy-gel", "name": "Energy Gel", "abbr": "EG", "from": ["ankle-tape", "headband"], "mods": {"speed": 0.1, "manaPerAction": 6}, "desc": "+10% attack speed, +6 mana per action.", "name_es": "Gel energético", "desc_es": "+10% de velocidad de ataque, +6 de maná por acción."},
+      {"id": "lightning-shoes", "name": "Lightning Shoes", "abbr": "LS", "from": ["ankle-tape", "ankle-tape"], "mods": {"speed": 0.3}, "desc": "+30% attack speed.", "name_es": "Zapatillas relámpago", "desc_es": "+30% de velocidad de ataque."}
     ]
   },
   "modes": {

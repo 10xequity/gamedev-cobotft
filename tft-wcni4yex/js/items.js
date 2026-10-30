@@ -1,12 +1,16 @@
 // Gear. Every player gets a seeded gear piece after each drop round (config items.dropRounds);
 // it waits in the player's gear bag until equipped on a unit. A unit wears up to
 // items.perUnit pieces, each adding its mods (the same effect names traits and augments use).
+// Putting a piece on a unit that already wears a lone piece combines the two into the finished
+// item from items.recipes (any two pieces make exactly one item).
 // Gear follows its unit: selling a unit returns her gear to the bag, merging three copies
 // keeps all their gear on the upgraded one (extra pieces go back to the bag).
 import { rngFrom } from './rng.js';
 import { owned } from './economy.js';
 
-export const defOf = (id, cfg) => cfg.items.components.find(c => c.id === id);
+export const defOf = (id, cfg) => cfg.items.components.find(c => c.id === id) || cfg.items.recipes.find(c => c.id === id);
+export const isPiece = (id, cfg) => cfg.items.components.some(c => c.id === id);
+export const recipeFor = (a, b, cfg) => { const pair = [a, b].sort().join('+'); return cfg.items.recipes.find(r => r.from.slice().sort().join('+') === pair); };
 
 // After a drop round: one seeded component per living player, if the bag has room.
 export function dropFor(p, seed, label, cfg) {
@@ -21,6 +25,13 @@ export function equip(p, k, uid, cfg) {
   const id = p.items[k], inst = owned(p).find(i => i.uid === uid);
   if (!id || !inst) return { ok: false, reason: 'No such item' };
   inst.items ??= [];
+  const lone = isPiece(id, cfg) ? inst.items.findIndex(x => isPiece(x, cfg)) : -1;
+  if (lone >= 0) { // combine with the piece she already wears
+    const made = recipeFor(inst.items[lone], id, cfg);
+    p.items.splice(k, 1);
+    inst.items[lone] = made.id;
+    return { ok: true, id: made.id, combined: true };
+  }
   if (inst.items.length >= cfg.items.perUnit) return { ok: false, reason: 'She already wears {n} pieces' };
   p.items.splice(k, 1);
   inst.items.push(id);
