@@ -251,3 +251,5 @@ Third set, approved 2026-10-29. Same rules: offline, no accounts, no chat, no ne
 ### Milestone 43 ✔ (v2.23.0) load: no layout shift, modules preloaded.
 
 ### Milestone 44 ✔ (v2.24.0) balance pass 4 (no changes) and bug sweep.
+
+### Milestone 45 ✔ (v2.25.0) role letters out of the spoken card names.

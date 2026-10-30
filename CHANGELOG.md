@@ -2,6 +2,14 @@
 
 Player names never appear in this file.
 
+## v2.25.0 — 2026-10-29 · Milestone 45: role letters out of the spoken card names
+
+- Role letters on cards are drawn by CSS instead of being text inside the button, so a screen reader's name
+  for a bench card matches what it shows (Lighthouse "label-content-name-mismatch" cleared). The spoken name
+  already says the role.
+- Not done: the grey floor shading in the front pose of sheets 04 and 23. Automatic removal also ate kneepads,
+  shoes and the ball, so it needs those two sheets re-drawn. The front pose is only shown in the staff gallery.
+
 ## v2.24.0 — 2026-10-29 · Milestone 44: balance pass 4 (no changes) and bug sweep
 
 - Balance pass 4: no number changes. The report (`LOBBY=300`) still shows 4 lines in the 50-55% band, every
